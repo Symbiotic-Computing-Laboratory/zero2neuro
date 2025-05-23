@@ -1,0 +1,11 @@
+--network_type=fully_connected
+--input_shape
+2
+--number_hidden_units
+10
+6
+--output_shape
+1
+--hidden_activation=elu
+--output_activation=sigmoid
+--dropout=0.1

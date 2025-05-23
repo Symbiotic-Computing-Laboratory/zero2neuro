@@ -1,0 +1,8 @@
+--training_mode=training_only
+--data_format=tabular
+--data_file=xor_data.csv
+--data_inputs
+In 0
+In 1
+--data_outputs
+Out 0
