@@ -9,7 +9,9 @@ mse
 --early_stopping_monitor=loss
 --early_stopping_patience=2000
 --results_path=./results
---output_file_base={args.experiment_name}_{args.rotation:03d}
+--output_file_base={args.experiment_name}_R{args.rotation:02d}
 --save_model
 --render_model
+--log_training_set
+--wandb
 --wandb_project=XOR

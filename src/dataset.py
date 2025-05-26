@@ -1,3 +1,21 @@
+'''
+Uniform handling of data sets for full Deep Learning experiments.
+
+Multiple file formats:
+- Flat representation in tabular files (csv, xlsx, xarray)
+- Indirect representations (tabular files that refer to a list of image files)
+- TF Datasets
+
+Partitioning data sets for training and evaluation:
+- Training set only
+- Training + validation set
+- Training + validation + test set
+- N-fold cross-validation
+
+
+'''
+
+
 import pandas as pd
 
 class SuperDataSet:

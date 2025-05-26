@@ -73,6 +73,9 @@ def create_parser():
     parser.add_argument('--render_model', action='store_true', default=False , help='Write model image')
     parser.add_argument('--save_model', action='store_true', default=False , help='Save a model file')
     parser.add_argument('--no-save_model', action='store_false', dest='save_model', help='Do not save a model file')
+    parser.add_argument('--log_training_set', action='store_true', default=False , help='Log the full training set in results')
+    parser.add_argument('--log_validation_set', action='store_true', default=False , help='Log the full validation set in results')
+    parser.add_argument('--log_test_set', action='store_true', default=False , help='Log the full test set in results')
 
     # Weights and Biases (WandB)
     parser.add_argument('--wandb', action='store_true', help='Report to WandB')
@@ -84,7 +87,7 @@ def create_parser():
     
     parser.add_argument('--input_shape0', '--input_shape', nargs='+', type=int, default=[10], help='Shape of the network input')
     parser.add_argument('--hidden_activation', type=str, default='elu', help='Activation function for hidden fully-connected layers')
-    parser.add_argument('--number_hidden_units', nargs='+', type=int, default=[100, 5], help='Number of hidden units per layer (sequence of ints)')
+    parser.add_argument('--number_hidden_units', nargs='+', type=int, default=None, help='Number of hidden units per layer (sequence of ints)')
     parser.add_argument('--output_shape0', '--output_shape', nargs='+', type=int, default=[10], help='Shape of the network output')
     parser.add_argument('--output_activation', type=str, default=None, help='Activation function for output layer')
     parser.add_argument('--batch_normalization', action='store_true', help='Turn on batch normalization')

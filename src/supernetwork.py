@@ -1,55 +1,69 @@
+'''
+TODO: need a different name
+
+Top-level Deep Neural Network Engine
+
+
+'''
+
 import os
 import sys
-
-# TODO: need a better way to handle this (this path is relative to the executing directory, not the src directory)
-sys.path.append('../../../keras3_tools/src/')
+import socket
 
 
 from parser import *
 from dataset import *
-from fully_connected_tools import *
+from network_builder import *
+
 import wandb
+from keras.utils import plot_model
 
-# TODO: push into its own class
-def args2model(args):
-    if args.network_type == 'fully_connected':
-        model = create_fully_connected_network(input_shape=args.input_shape0,
-                                               n_hidden=args.number_hidden_units,
-                                               output_shape=args.output_shape0,
-                                               dropout_input=args.dropout_input,
-                                               name_base='',
-                                               activation=args.hidden_activation,
-                                               lambda1=args.L1_regularization,
-                                               lambda2=args.L2_regularization,
-                                               dropout=args.dropout,
-                                               name_last='output',
-                                               activation_last=args.output_activation,
-                                               batch_normalization=args.batch_normalization,
-                                               learning_rate=args.learning_rate,
-                                               loss=args.loss,
-                                               metrics=args.metrics)
-                                               
+def args2wandb_name(args):
+    # TODO: make generic like fbase
+    outstr = args.experiment_name
+    if args.rotation is not None:
+        outstr = outstr + '_R%d'%args.rotation
+
+    return outstr
+
+def args2fbase(args):
+    '''
+    '''
+    if args.output_file_base is None:
+        # Generate default output file name
+        outstr = '%s/%s'%(args.results_path, args.experiment_name)
+
+        if args.conv_nfilters is not None:
+            outstr = outstr + '_filt_' + '_'.join(str(x) for x in args.conv_nfilters)
+
+        if args.number_hidden_units is not None:
+            outstr = outstr + '_fc_' + '_'.join(str(x) for x in args.number_hidden_units)
+
+        if args.rotation is not None:
+            outstr = outstr + '_R%d'%args.rotation
+
     else:
-        assert False, 'Unsupported network type (%s)'%args.network_type
+        # Use output file name in the specified format
+        outstr = '%s/%s'%(args.results_path, 
+                          args.output_file_base.format(args=args))
+        
+    return outstr
 
-    return model
-
-
-
+    
 def execute_exp(sds, model, args):
     # 
     if args.verbose >= 2:
         print(model.summary())
 
     # Output file base and pkl file
-    #fbase = generate_fname(args, args_str)
-    #print(fbase)
-    #fname_out = "%s_results.pkl"%fbase
+    fbase = args2fbase(args)
+    print(fbase)
+    fname_out = "%s_results.pkl"%fbase
 
     # Plot the model
-    #if args.render:
-    #render_fname = '%s_model_plot.png'%fbase
-     #   plot_model(model, to_file=render_fname, show_shapes=True, show_layer_names=True)
+    if args.render_model:
+        render_fname = '%s_model_plot.png'%fbase
+        plot_model(model, to_file=render_fname, show_shapes=True, show_layer_names=True)
 
     # Perform the experiment?
     if args.nogo:
@@ -59,22 +73,25 @@ def execute_exp(sds, model, args):
         return
 
     # Check if output file already exists
-    #if not args.force and os.path.exists(fname_out):
+    if not args.force and os.path.exists(fname_out):
         # Results file does exist: exit
-    #    print("File %s already exists"%fname_out)
-    #    return
+        print("File %s already exists"%fname_out)
+        return
 
     #####
-    #if args.wandb:
-    #    # Start wandb
-    #    run = wandb.init(project=args.project, name='%s_R%d'%(args.label,args.rotation), notes=fbase, config=vars(args))
+    if args.wandb:
+        # Start wandb
+        run = wandb.init(project=args.wandb_project,
+                         name=args2wandb_name(args),
+                         notes=fbase,
+                         config=vars(args))
 
         # Log hostname
-    #    wandb.log({'hostname': socket.gethostname()})
+        wandb.log({'hostname': socket.gethostname()})
 
         # Log model design image
-    #    if args.render:
-    #        wandb.log({'model architecture': wandb.Image(render_fname)})
+        if args.render_model:
+            wandb.log({'model architecture': wandb.Image(render_fname)})
 
             
     #####
@@ -107,9 +124,83 @@ def execute_exp(sds, model, args):
                         verbose=args.verbose>=3,
                         callbacks=cbs)
         
-    # TOOD: log results
-    # TODO: save model
+    # LOG RESULTS
+
+    # List of evaluation measures
+    eval_list = [args.loss]
+    if args.metrics is not None:
+        eval_list = eval_list + args.metrics
+
+    results = {}
+    ######
+    # Training
+    ev = model.evaluate(sds.ins_training,
+                        sds.outs_training,
+                        steps=args.steps_per_epoch)
+    d = dict(zip(['training_'+s for s in eval_list], ev))
     
+    results.update(d)
+    
+    if args.wandb:
+        wandb.log(d)
+
+    if args.log_training_set:
+        # TODO: only works for not TF Datasets
+        results['ins_training'] = sds.ins_training
+        results['outs_training'] = sds.outs_training
+        results['predict_training'] = model.predict(sds.ins_training)
+                                                
+    
+    ######
+    if (sds.ins_validation is not None):
+        ev = model.evaluate(sds.ins_validation,
+                            sds.outs_validation)
+        d = dict(zip(['validation_'+s for s in eval_list], ev))
+    
+        results.update(d)
+    
+        if args.wandb:
+            wandb.log(d)
+
+        if args.log_validation_set:
+            # TODO: only works for not TF Datasets
+            results['ins_validation'] = sds.ins_validation
+            results['outs_validation'] = sds.outs_validation
+            results['predict_validation'] = model.predict(sds.ins_validation)
+
+    ######
+    if (sds.ins_testing is not None):
+        ev = model.evaluate(sds.ins_testing,
+                            sds.outs_testing)
+        d = dict(zip(['testing_'+s for s in eval_list], ev))
+    
+        results.update(d)
+    
+        if args.wandb:
+            wandb.log(d)
+
+        if args.log_testing_set:
+            # TODO: only works for not TF Datasets
+            results['ins_testing'] = sds.ins_testing
+            results['outs_testing'] = sds.outs_testing
+            results['predict_testing'] = model.predict(sds.ins_testing)
+
+    ######
+    # Close WANDB
+    if args.wandb:
+        wandb.finish()
+        
+    # Save results
+    results['fname_base'] = fbase
+    results['args'] = args
+    
+    with open("%s_results.pkl"%(fbase), "wb") as fp:
+        pickle.dump(results, fp)
+
+    # Save model
+    if args.save_model:
+        model.save("%s_model.keras"%(fbase))
+
     
 if __name__ == "__main__":
     # Command line arguments
@@ -143,7 +234,7 @@ if __name__ == "__main__":
 
     ######
     # Create the model
-    model=args2model(args)
+    model=NetworkBuilder.args2model(args)
 
     
     ######
