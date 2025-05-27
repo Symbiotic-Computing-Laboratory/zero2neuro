@@ -18,9 +18,9 @@
 #. /home/fagg/tf_setup.sh
 #conda activate dnn
 
-export ZERO2NEURO_PATH=../../src/
+export ZERO2NEURO_PATH=$NEURO_REPOSITORY_PATH/zero2neuro/src
 
 
 ####
 
-python $ZERO2NEURO_PATH/supernetwork.py @network.txt @data.txt @experiment.txt -vvv
+python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv

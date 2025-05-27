@@ -8,4 +8,3 @@
 1
 --hidden_activation=elu
 --output_activation=sigmoid
---dropout=0.1

@@ -1,9 +1,11 @@
 import os
 import sys
 
-# TODO: need to fix this path
-sys.path.append('../../../keras3_tools/src/')
+# Import keras3_tools from proper path
+neuro_path = os.getenv("NEURO_REPOSITORY_PATH")
+assert neuro_path is not None, "Environment variable NEURO_REPOSITORY_PATH must be set to directory above zero2neuro and keras3_tools"
 
+sys.path.append(neuro_path + '/keras3_tools/src/')
 from fully_connected_tools import *
 
 class NetworkBuilder:

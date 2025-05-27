@@ -18,7 +18,10 @@ from network_builder import *
 import wandb
 from keras.utils import plot_model
 
-def args2wandb_name(args):
+def compatibility_checks():
+    pass
+    
+def args2wandb_name(args)->str:
     # TODO: make generic like fbase
     outstr = args.experiment_name
     if args.rotation is not None:
@@ -203,6 +206,9 @@ def execute_exp(sds, model, args):
 
     
 if __name__ == "__main__":
+    # Compatibility checks
+    compatibility_checks()
+    
     # Command line arguments
     parser = create_parser()
     args = parser.parse_args()
