@@ -41,6 +41,7 @@ def create_parser():
     parser.add_argument('--data_files', nargs='+', type=str, default=None, help='Input data file list')
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
+    parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
 
     # TF Dataset configuration
     parser.add_argument('--batch', type=int, default=None, help="Training set batch size")

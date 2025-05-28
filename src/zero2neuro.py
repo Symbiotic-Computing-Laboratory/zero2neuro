@@ -147,6 +147,8 @@ def execute_exp(sds, model, args):
     if args.wandb:
         wandb.log(d)
 
+    # TODO: write history to results
+
     if args.log_training_set:
         # TODO: only works for not TF Datasets
         results['ins_training'] = sds.ins_training
@@ -192,10 +194,14 @@ def execute_exp(sds, model, args):
     # Close WANDB
     if args.wandb:
         wandb.finish()
-        
+
+    # Save description of dataset
+    results['dataset'] = sds.describe()
+
     # Save results
     results['fname_base'] = fbase
     results['args'] = args
+    
     
     with open("%s_results.pkl"%(fbase), "wb") as fp:
         pickle.dump(results, fp)
@@ -204,19 +210,15 @@ def execute_exp(sds, model, args):
     if args.save_model:
         model.save("%s_model.keras"%(fbase))
 
-    
-if __name__ == "__main__":
+
+def prepare_and_execute_experiment(args):
     # Compatibility checks
     compatibility_checks()
     
-    # Command line arguments
-    parser = create_parser()
-    args = parser.parse_args()
-    print(args)
-
     ######
     # GPU configuration
     # Turn off GPU?
+    # TODO: more general handling of CUDA_VISIBLE_DEVICES
     if not args.gpu or "CUDA_VISIBLE_DEVICES" not in os.environ.keys():
         tf.config.set_visible_devices([], 'GPU')
         print('NO VISIBLE DEVICES!!!!')
@@ -236,7 +238,6 @@ if __name__ == "__main__":
     ######
     # Fetch the dataset
     sds = SuperDataSet(args)
-    print(sds.outs_training, sds.ins_training)
 
     ######
     # Create the model
@@ -246,4 +247,12 @@ if __name__ == "__main__":
     ######
     # Execute the experiment
     execute_exp(sds, model, args)
+    
+if __name__ == "__main__":
+    # Command line arguments
+    parser = create_parser()
+    args = parser.parse_args()
+    print(args)
+
+    prepare_and_execute_experiment(args)
     
