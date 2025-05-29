@@ -1,9 +1,7 @@
 --experiment_name=iris
 --rotation=0
---loss=mse
---metrics
-mae
-mse
+--loss=sparse_categorical_crossentropy
+--metrics=sparse_categorical_accuracy
 --learning_rate=0.001
 --epochs=5000
 --early_stopping_monitor=loss
