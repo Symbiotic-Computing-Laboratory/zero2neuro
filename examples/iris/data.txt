@@ -1,0 +1,11 @@
+--data_output_sparse_categorical
+--training_mode=training_only
+--data_format=tabular
+--data_file=iris_data.csv
+--data_inputs
+sepal length
+sepal width
+petal length
+petal width
+--data_outputs
+Class
