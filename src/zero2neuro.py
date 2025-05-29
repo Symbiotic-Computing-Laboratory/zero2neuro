@@ -148,8 +148,8 @@ def execute_exp(sds, model, args):
     if args.wandb:
         wandb.log(d)
 
-    # TODO: write history to results
-
+    ######
+    # Training set
     if args.log_training_set:
         # TODO: only works for not TF Datasets
         results['ins_training'] = sds.ins_training
@@ -158,6 +158,7 @@ def execute_exp(sds, model, args):
                                                 
     
     ######
+    # Validation set
     if (sds.ins_validation is not None):
         ev = model.evaluate(sds.ins_validation,
                             sds.outs_validation)
@@ -175,6 +176,7 @@ def execute_exp(sds, model, args):
             results['predict_validation'] = model.predict(sds.ins_validation)
 
     ######
+    # Testing set
     if (sds.ins_testing is not None):
         ev = model.evaluate(sds.ins_testing,
                             sds.outs_testing)
@@ -203,7 +205,9 @@ def execute_exp(sds, model, args):
     results['fname_base'] = fbase
     results['args'] = args
     
-    
+    # Save history
+    results['history'] = history.history
+
     with open("%s_results.pkl"%(fbase), "wb") as fp:
         pickle.dump(results, fp)
 
@@ -242,7 +246,7 @@ def prepare_and_execute_experiment(args):
 
     ######
     # Create the model
-    model=NetworkBuilder.args2model(args)
+    model = NetworkBuilder.args2model(args)
 
     
     ######

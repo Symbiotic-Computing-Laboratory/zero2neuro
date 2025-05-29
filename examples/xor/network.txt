@@ -4,7 +4,7 @@
 --number_hidden_units
 20
 10
+--hidden_activation=elu
 --output_shape
 1
---hidden_activation=elu
 --output_activation=sigmoid
