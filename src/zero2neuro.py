@@ -118,6 +118,7 @@ def execute_exp(sds, model, args):
     #  steps_per_epoch: how many batches from the training set do we use for training in one epoch?
     #          Note that if you use this, then you must repeat the training set
     #  validation_steps=None means that ALL validation samples will be used
+
     
     history = model.fit(sds.ins_training,
                         sds.outs_training,
@@ -252,6 +253,7 @@ if __name__ == "__main__":
     # Command line arguments
     parser = create_parser()
     args = parser.parse_args()
+
     print(args)
 
     prepare_and_execute_experiment(args)
