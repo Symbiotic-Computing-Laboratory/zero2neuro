@@ -17,8 +17,12 @@ Partitioning data sets for training and evaluation:
 
 
 import pandas as pd
+import numpy as np
 
 class SuperDataSet:
+    
+    
+        
     def __init__(self, args):
         self.dataset_type = None
         self.ins_training = None
@@ -40,9 +44,28 @@ class SuperDataSet:
                                                         args.data_inputs,
                                                         args.data_outputs,
                                                         args.data_output_sparse_categorical)
-        
-            self.ins_training = ins
-            self.outs_training = outs
+            # Start of rotation logic
+            nfolds = 10 # Default nfolds is hardcoded to be 10
+            n = len(ins) # The length of data
+            train_folds = 8 # How many folds training should have
+            rotation = args.rotation # get the rotation
+
+            tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(train_folds, nfolds, rotation) # Call the function to get the fold indexes for each
+            # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
+            val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
+            test_indices = SuperDataSet.calculate_indices(tes_folds, nfolds, n)
+
+            # Since training indices uses 8 folds while the others use 1 fold we have to use a loop.
+            train_indices = [SuperDataSet.calculate_indices(fold_i, nfolds, n) for fold_i in tr_folds]
+            train_indices = np.concatenate(train_indices, axis=0, dtype=int)
+
+            # This tells the model where to start in the data and the corrosponding true outputs.
+            self.ins_training = ins[train_indices]
+            self.outs_training = outs[train_indices]
+            self.ins_validation = ins[val_indices]
+            self.outs_validation =outs[val_indices]
+            self.ins_testing =ins[test_indices]
+            self.outs_testing =outs[test_indices]
             self.dataset_type = 'numpy'
             self.output_mapping = output_mapping
             
@@ -96,4 +119,28 @@ class SuperDataSet:
                 outs = df[output_columns].values
 
         return ins, outs, output_mapping
-    
+
+    # method takes in the amount of training folds, total number of folds, and the rotation
+    @staticmethod
+    def calculate_nfolds(train_folds, nfolds, rotation):
+        trainfolds = (np.arange(train_folds)+rotation) % nfolds
+        valfolds = (nfolds - 2 + rotation) % nfolds
+        testfolds = (nfolds - 1 + rotation) % nfolds
+
+        return trainfolds, valfolds, testfolds
+
+    # method takes in a fold index, number of folds, and total number of variables in data
+    @staticmethod
+    def calculate_indices(fold_i, nfolds, n):
+        splices = n // nfolds # Calculates how much data one fold should use
+
+        # Where to start, i.e a dataset of 10 folds with 100 values and 10 splices per fold the eigth fold would have 
+        # 10 splices * 8 fold index = starting value of 80
+        start_idx = splices * fold_i 
+        # Continuing on that example thie would be 80 + 10, so the data for this fold would end at 90.
+        end_idx_exclusive = start_idx + splices
+
+        # If it is the last fold go ahead and set end index at the end of dataset
+        if(fold_i == nfolds - 1):
+            end_idx_exclusive = n
+        return np.arange(start_idx, end_idx_exclusive)
