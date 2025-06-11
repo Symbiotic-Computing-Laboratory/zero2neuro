@@ -14,13 +14,12 @@
 #################################################
 # Do not change this line unless you have your own python/tensorflow/keras set up 
 
-
-#. /home/fagg/tf_setup.sh
-#conda activate dnn
+. /home/fagg/tf_setup.sh
+conda activate dnn
 
 export ZERO2NEURO_PATH=$NEURO_REPOSITORY_PATH/zero2neuro/src
 
 
 ####
 
-python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
+python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv --wandb --wandb_project 'xor wandb test' --force

@@ -1,5 +1,5 @@
 --experiment_name=iris
---rotation=0
+--rotation=1
 --loss=sparse_categorical_crossentropy
 --metrics=sparse_categorical_accuracy
 --learning_rate=0.001
