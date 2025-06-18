@@ -85,6 +85,7 @@ def create_parser():
 
     # Network specification
     parser.add_argument('--network_type', type=str, default=None, help='Type of network to create')
+    parser.add_argument('--network_test', action='store_true', help='Build the network, but nothing else')
     
     parser.add_argument('--input_shape0', '--input_shape', nargs='+', type=int, default=[10], help='Shape of the network input')
     parser.add_argument('--hidden_activation', type=str, default='elu', help='Activation function for hidden fully-connected layers')
@@ -94,14 +95,15 @@ def create_parser():
     parser.add_argument('--batch_normalization', action='store_true', help='Turn on batch normalization')
 
     # CNN network parameters
-    parser.add_argument('--conv_size', nargs='+', type=int, default=None, help='Convolution filter size per layer (sequence of ints)')
-    parser.add_argument('--conv_nfilters', nargs='+', type=int, default=None, help='Convolution filters (base, output)')
-    parser.add_argument('--kernel_size', type=int, default=3, help='Convolution filter kernel size')
+    parser.add_argument('--conv_kernel_size', nargs='+', type=int, default=None, help='Convolution filter size per layer (sequence of ints)')
+    parser.add_argument('--conv_number_filters', nargs='+', type=int, default=None, help='Convolution filters (base, output)')
 
     
-    #parser.add_argument('--pool', nargs='+', type=int, default=[2,2], help='Max pooling size (1=None)')
-    #parser.add_argument('--padding', type=str, default='valid', help='Padding type for convolutional layers')
-    parser.add_argument('--activation_conv', type=str, default='elu', help='Activation function for convolutional layers')
+    parser.add_argument('--conv_pool_size', nargs='+', type=int, default=None, help='Max pooling size (0=None)')
+    parser.add_argument('--conv_padding', type=str, default='valid', help='Padding type for convolutional layers')
+    parser.add_argument('--conv_activation', type=str, default='elu', help='Activation function for convolutional layers')
+    parser.add_argument('--conv_batch_normalization', action='store_true', help='Turn on batch normalization for convolutional layers')
+    parser.add_argument('--conv_strides', nargs='+', type=int, default=None, help='Strides for each convolutional layer')
 
 
     # Regularization parameters

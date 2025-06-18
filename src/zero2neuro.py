@@ -1,5 +1,4 @@
 '''
-TODO: need a different name
 
 Top-level Deep Neural Network Engine
 
@@ -242,11 +241,17 @@ def prepare_and_execute_experiment(args):
 
     ######
     # Fetch the dataset
-    sds = SuperDataSet(args)
+    if not args.network_test:
+        sds = SuperDataSet(args)
 
     ######
     # Create the model
     model = NetworkBuilder.args2model(args)
+
+    if args.network_test:
+        print(model.summary())
+        # Don't go any further
+        return
 
     
     ######

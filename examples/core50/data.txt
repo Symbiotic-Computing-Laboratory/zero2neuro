@@ -1,0 +1,8 @@
+--training_mode=training_only
+--data_format=tabular_indirect
+--data_file=images.csv
+--data_inputs
+File
+--data_outputs
+Class
+--dataset_directory=/home/fagg/datasets/core50/core50_128x128
