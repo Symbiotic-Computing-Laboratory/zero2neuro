@@ -38,7 +38,6 @@ class SuperDataSet:
         self.args = args
 
         # Convert the args to a full dataset
-
         if args.data_format == 'tabular':
             ins, outs, output_mapping = self.load_table(args.dataset_directory,
                                                         args.data_file,
@@ -72,7 +71,7 @@ class SuperDataSet:
             self.dataset_type = 'numpy'
             self.output_mapping = output_mapping
             
-        if args.data_format == 'tabular_indirect':
+        elif args.data_format == 'tabular_indirect':
             print('INPUTS', args.data_inputs)
             ins, outs, output_mapping = self.load_table_indirect_images(args.dataset_directory,
                                                                         args.data_file,
