@@ -62,6 +62,12 @@ class SuperDataSet:
             train_indices = np.concatenate(train_indices, axis=0, dtype=int)
 
             # This tells the model where to start in the data and the corrosponding true outputs.
+            arr = np.arange(len(ins))
+            np.random.shuffle(arr)
+
+            ins = ins[arr]
+            outs = outs[arr]
+
             self.ins_training = ins[train_indices]
             self.outs_training = outs[train_indices]
             self.ins_validation = ins[val_indices]
