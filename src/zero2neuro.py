@@ -186,7 +186,7 @@ def execute_exp(sds, model, args):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_testing_set:
+        if args.log_test_set:
             # TODO: only works for not TF Datasets
             results['ins_testing'] = sds.ins_testing
             results['outs_testing'] = sds.outs_testing

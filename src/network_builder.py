@@ -23,7 +23,7 @@ class NetworkBuilder:
                                                lambda1=args.L1_regularization,
                                                lambda2=args.L2_regularization,
                                                dropout=args.dropout,
-                                               name_last='output',
+                                               # name_last='output',
                                                activation_last=args.output_activation,
                                                batch_normalization=args.batch_normalization,
                                                learning_rate=args.learning_rate,
