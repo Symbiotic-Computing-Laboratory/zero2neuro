@@ -36,7 +36,11 @@ def create_parser():
     # Dataset details
     parser.add_argument('--dataset_directory', type=str, default=None, help='Data set location')
     parser.add_argument('--training_mode', type=str, default='training_only', help='Data handling mode for training.  One of: training_only; training_validation; training_validation_testing')
-    parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data')
+
+    parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset')
+    parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset')
+    parser.add_argument('--data_split', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, by-group, random, random-stratify, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
+    
     parser.add_argument('--data_file', type=str, default=None, help='Input data file')
     parser.add_argument('--data_files', nargs='+', type=str, default=None, help='Input data file list')
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
