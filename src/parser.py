@@ -1,4 +1,4 @@
-    '''
+'''
 Zero2Neuro Command Line Parser
 
 Author: Andrew H. Fagg (andrewhfagg@gmail.com)
