@@ -1,5 +1,5 @@
 '''
-Parser
+Zero2Neuro Command Line Parser
 
 Author: Andrew H. Fagg (andrewhfagg@gmail.com)
 '''
@@ -28,6 +28,7 @@ def create_parser():
 
 
     # Early stopping
+    parser.add_argument('--early_stopping', action='store_true', help='Use Early Stopping during training')
     parser.add_argument('--early_stopping_min_delta', type=float, default=0.01, help="Minimum delta for early termination")
     parser.add_argument('--early_stopping_patience', type=int, default=20, help="Patience for early termination")
     parser.add_argument('--early_stopping_monitor', type=str, default="loss", help="Metric to monitor for early termination")
@@ -40,9 +41,12 @@ def create_parser():
     parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset')
     parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset')
     parser.add_argument('--data_split', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, by-group, random, random-stratify, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
+    parser.add_argument('--n_folds', type=int, default=None, help='Number of cross-validation folds')
+    parser.add_argument('--n_training_folds', type=int, default=None, help='Number of cross-validation folds for training')
     
     parser.add_argument('--data_file', type=str, default=None, help='Input data file')
     parser.add_argument('--data_files', nargs='+', type=str, default=None, help='Input data file list')
+    parser.add_argument('--data_table_merge', nargs='+', type=str, default=None, help='Table merge specification')
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
@@ -120,7 +124,7 @@ def create_parser():
 
     #####################
     #  WORK ON?
-    #parser.add_argument('--Nfolds', type=int, default=10, help='Maximum number of folds')
+    #
 
     # Specific experiment configuration
     #parser.add_argument('--exp_index', type=int, default=None, help='Experiment index')

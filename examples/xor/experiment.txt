@@ -6,6 +6,7 @@ mae
 mse
 --learning_rate=0.001
 --epochs=5000
+--early_stopping
 --early_stopping_monitor=loss
 --early_stopping_patience=2000
 --results_path=./results

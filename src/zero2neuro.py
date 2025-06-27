@@ -99,11 +99,13 @@ def execute_exp(sds, model, args):
     #####
     # Callbacks
     cbs = []
-    early_stopping_cb = keras.callbacks.EarlyStopping(patience=args.early_stopping_patience,
-                                                      restore_best_weights=True,
-                                                      min_delta=args.early_stopping_min_delta,
-                                                      monitor=args.early_stopping_monitor)
-    cbs.append(early_stopping_cb)
+
+    if args.early_stopping:
+        early_stopping_cb = keras.callbacks.EarlyStopping(patience=args.early_stopping_patience,
+                                                          restore_best_weights=True,
+                                                          min_delta=args.early_stopping_min_delta,
+                                                          monitor=args.early_stopping_monitor)
+        cbs.append(early_stopping_cb)
 
     if args.wandb:
         # Weights and Biases

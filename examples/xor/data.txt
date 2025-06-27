@@ -1,6 +1,7 @@
 --training_mode=training_only
 --data_format=tabular
 --data_file=xor_data.csv
+--data_split=fixed
 --data_inputs
 In 0
 In 1

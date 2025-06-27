@@ -36,66 +36,151 @@ class SuperDataSet:
         self.rotation = None
         self.output_mapping = None
         self.args = args
+        self.data = []
 
-        # Convert the args to a full dataset
-        if args.data_format == 'tabular':
-            ins, outs, output_mapping = self.load_table(args.dataset_directory,
-                                                        args.data_file,
-                                                        args.data_inputs,
-                                                        args.data_outputs,
-                                                        args.data_output_sparse_categorical)
+        # Load data
+        self.load_data()
+        
+        # Combine some tables together
+        self.merge_data()
 
-            # TODO: THIS LOGIC CAN'T BE HERE
-            # Start of rotation logic
-            nfolds = 10 # Default nfolds is hardcoded to be 10
-            n = len(ins) # The length of data
-            train_folds = 8 # How many folds training should have
-            rotation = args.rotation # get the rotation
+        # Translate tables to training/validation/testing
+        self.create_datasets()
+        
 
-            tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(train_folds, nfolds, rotation) # Call the function to get the fold indexes for each
-            # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
-            val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
-            test_indices = SuperDataSet.calculate_indices(tes_folds, nfolds, n)
+    def load_data(self):
+        '''
+        Load the full set of data files
+        '''
+        if self.args.data_files is None:
+            if self.args.data_file is None:
+                assert False, "No data files specified"
+            else:
+                # Create a list of 1
+                self.args.data_files = [self.args.data_file]
+        elif self.args.data_file is not None:
+            assert False, "Cannot have both data_file and data_files specified"
 
-            # Since training indices uses 8 folds while the others use 1 fold we have to use a loop.
-            train_indices = [SuperDataSet.calculate_indices(fold_i, nfolds, n) for fold_i in tr_folds]
-            train_indices = np.concatenate(train_indices, axis=0, dtype=int)
 
-            # This tells the model where to start in the data and the corrosponding true outputs.
-            arr = np.arange(len(ins))
-            np.random.shuffle(arr)
+        # We are assuming that all files are the same format.  Could change this (but a lot more complicated)
 
-            ins = ins[arr]
-            outs = outs[arr]
-
-            self.ins_training = ins[train_indices]
-            self.outs_training = outs[train_indices]
-            self.ins_validation = ins[val_indices]
-            self.outs_validation =outs[val_indices]
-            self.ins_testing =ins[test_indices]
-            self.outs_testing =outs[test_indices]
-            self.dataset_type = 'numpy'
-            self.output_mapping = output_mapping
+        # Different handler for each data type
+        if self.args.data_format == 'tabular':
+            self.data = self.load_table_set()
             
-        elif args.data_format == 'tabular_indirect':
-            print('INPUTS', args.data_inputs)
-            ins, outs, output_mapping = self.load_table_indirect_images(args.dataset_directory,
-                                                                        args.data_file,
-                                                                        args.data_inputs,
-                                                                        args.data_outputs,
-                                                                        args.data_output_sparse_categorical)
-            self.ins_training = ins
-            self.outs_training = outs
-            self.ins_validation = None
-            self.outs_validation = None
-            self.ins_testing = None
-            self.outs_testing = None
-            self.dataset_type = 'numpy'
-            self.output_mapping = output_mapping
-
+        elif self.args.data_format == 'tabular_indirect':
+            self.data = self.load_table_indirect_set()
             
+        elif self.args.data_format == 'pickle':
+            self.data = self.load_pickle_set()
+            
+        elif self.args.data_format == 'tf_dataset':
+            self.data = self.load_tf_set()
         else:
-            assert False, 'Unsupported data format type (%s)'%args.data_format
+            assert False, "Data format %s not recognized"%self.args.data_format
+
+    def merge_data(self):
+        pass
+
+    def create_datasets(self):
+        '''
+        Translate a list of data sets into a training, validation, and testing data set
+        '''
+        if((self.data is None) or (len(self.data) == 0)):
+            raise ValueError("No data specified")
+        
+        if self.args.data_representation == "numpy":
+            if self.args.data_split == "fixed":
+                self.split_fixed()
+            elif self.args.data_split == "by-group":
+                raise ValueError("Split type not supported.")
+            elif self.args.data_split == "random":
+                raise ValueError("Split type not supported.")
+            elif self.args.data_split == "random-stratify":
+                raise ValueError("Split type not supported.")
+            elif self.args.data_split == "holistic-cross-validation":
+                self.split_holistic_cross_validation()
+            elif self.args.data_split == "hold-out-cross-validation":
+                raise ValueError("Split type not supported.")
+            elif self.args.data_split == "orthogonalized-cross-validation":
+                raise ValueError("Split type not supported.")
+            else:
+                raise ValueError("Split type not recognized.")
+        elif self.args.data_representation == "tf-dataset":
+            raise ValueError("TF-Dataset splitting not supported.")
+        else:
+            raise ValueError("Unrecognized data_representation (%s)"%self.args.data_representation)
+
+    def split_fixed(self):
+        '''
+        Assign one data group to each of training, validation, testing
+        '''
+        data_len = len(self.data)
+        
+        if data_len > 3:
+            raise ValueError("Cannot exceed 3 data groups for split=fixed (we have %d)"%(len(self.data)))
+
+        # Training set
+        self.ins_training, self.outs_training = self.data[0]
+
+        if data_len >= 2:
+            # Validation set
+            self.ins_validation, self.outs_validation = self.data[1]
+
+        if data_len == 3:
+            # Testing set
+            self.ins_testing, self.outs_testing = self.data[2]
+        
+        
+    def split_holistic_cross_validation(self):
+        # TODO: need to combine the incoming datasets first
+
+        # TODO add sample weights and groups (?)
+        ins, outs = self.data[0]
+        
+        nfolds = self.args.n_folds 
+        n = len(ins) # The length of data
+        n_train_folds = self.args.n_training_folds # How many folds training should have
+
+        # Default: use all available folds
+        if n_train_folds is None:
+            n_train_folds = nfolds - 2
+            
+        if(n_train_folds > nfolds-2):
+            raise ValueError("n_training_folds must be <= n_folds-2")
+        
+        rotation = self.args.rotation # get the rotation
+
+        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation) # Call the function to get the fold indexes for each
+        
+        # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
+        val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
+        test_indices = SuperDataSet.calculate_indices(tes_folds, nfolds, n)
+
+        # Since training indices uses 8 folds while the others use 1 fold we have to use a loop.
+        train_indices = [SuperDataSet.calculate_indices(fold_i, nfolds, n) for fold_i in tr_folds]
+        train_indices = np.concatenate(train_indices, axis=0, dtype=int)
+
+        # Shuffle the data
+        arr = np.arange(len(ins))
+        np.random.shuffle(arr)
+
+        ins = ins[arr]
+        outs = outs[arr]
+
+        self.ins_training = ins[train_indices]
+        self.outs_training = outs[train_indices]
+        self.ins_validation = ins[val_indices]
+        self.outs_validation = outs[val_indices]
+        self.validation = (ins[val_indices], outs[val_indices])
+        self.ins_testing =ins[test_indices]
+        self.outs_testing =outs[test_indices]
+        self.dataset_type = 'numpy'
+
+        print("DATA")
+        print(self.ins_training)
+        print(self.ins_validation)
+        print(self.ins_testing)
         
     def describe(self):
         return {'dataset_type': self.dataset_type,
@@ -120,7 +205,22 @@ class SuperDataSet:
             assert False, "File type not recognized (%s)"%file_name
 
         return df
+
+    def load_table_set(self):
+        # Right now, can only have one tabular file
+        assert len(self.args.data_files) == 1, "Only support loading single tabular files"
+
+        ins, outs, output_mapping = self.load_table(self.args.dataset_directory,
+                                                    self.args.data_file,
+                                                    self.args.data_inputs,
+                                                    self.args.data_outputs,
+                                                    self.args.data_output_sparse_categorical)
+        self.output_mapping = output_mapping
         
+        return [(ins, outs)] # TODO: add sample weights and group
+
+
+
     @staticmethod
     def load_table(dataset_path, file_name, input_columns, output_columns,
                    output_sparse_categorical=False):
@@ -155,6 +255,19 @@ class SuperDataSet:
 
         return ins, outs, output_mapping
 
+    def load_table_indirect_set(self):
+        # Right now, can only have one tabular file
+        assert len(self.args.dataa_files) == 1, "Only support loading single tabular-indirect files"
+
+        ins, outs, output_mapping = self.load_table_indirect_images(self.args.dataset_directory,
+                                                                    self.args.data_file,
+                                                                    self.args.data_inputs,
+                                                                    self.args.data_outputs,
+                                                                    self.args.data_output_sparse_categorical)
+        self.output_mapping = output_mapping
+        return [(ins, outs)] # TODO: add sample weights and group
+
+        
     @staticmethod
     def load_table_indirect_images(dataset_path:str,
                                    file_name:str,
