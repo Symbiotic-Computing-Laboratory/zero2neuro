@@ -1,0 +1,13 @@
+--data_representation=numpy
+--data_format=pickle
+--data_files
+parity0.pkl,0
+parity1.pkl,0
+parity2.pkl,0
+parity3.pkl,0
+parity.pkl,1
+--data_split=fixed
+--data_inputs
+ins
+--data_outputs
+outs

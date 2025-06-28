@@ -6,12 +6,12 @@ Author: Andrew H. Fagg (andrewhfagg@gmail.com)
 
 import argparse
 
-def create_parser():
+def create_parser(description='Zero2Neuro'):
     '''
     Create argument parser
     '''
     # Parse the command-line arguments
-    parser = argparse.ArgumentParser(description='Supernetwork', fromfile_prefix_chars='@')
+    parser = argparse.ArgumentParser(description=description, fromfile_prefix_chars='@')
 
     # Experiment details
     parser.add_argument('--experiment_name', type=str, default='experiment', help="Prefix for all output files");
@@ -49,6 +49,7 @@ def create_parser():
     parser.add_argument('--data_table_merge', nargs='+', type=str, default=None, help='Table merge specification')
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
+    parser.add_argument('--data_weights', type=str, default=None, help='Columns in the table that are the sample weights')
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
 
     # TF Dataset configuration
@@ -70,6 +71,7 @@ def create_parser():
     parser.add_argument('--nogo', action='store_true', help='Set up data, construct network, but do not perform the experiment')
     parser.add_argument('--force', action='store_true', help='Perform the experiment even if the it was completed previously')
     parser.add_argument('--verbose', '-v', action='count', default=0, help="Verbosity level")
+    parser.add_argument('--debug', '-d', action='count', default=0, help="Debugging level")
 
     
     # CPU/GPU

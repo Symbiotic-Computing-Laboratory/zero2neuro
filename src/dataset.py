@@ -18,6 +18,10 @@ Partitioning data sets for training and evaluation:
 
 import pandas as pd
 import numpy as np
+import re
+import pickle
+from zero2neuro_debug import *
+
 from PIL import Image
 
 class SuperDataSet:
@@ -28,15 +32,23 @@ class SuperDataSet:
         self.dataset_type = None
         self.ins_training = None
         self.outs_training = None
+        self.weights_training = None
+
         self.ins_validation = None
         self.outs_validation = None
+        self.weights_validation = None
         self.validation = None
+        
         self.ins_testing = None
         self.outs_testing = None
+        self.weights_testing = None
+        self.testing = None
+        
         self.rotation = None
         self.output_mapping = None
         self.args = args
         self.data = []
+        self.data_groups = None
 
         # Load data
         self.load_data()
@@ -47,11 +59,26 @@ class SuperDataSet:
         # Translate tables to training/validation/testing
         self.create_datasets()
         
+    @staticmethod
+    def is_missing_values(lst):
+        '''
+        Check to see if any values are missing between 0 and the max of a list
 
+        From: ChatGPT
+        '''
+        expected = set(range(0, max(lst) + 1))
+        actual = set(lst)
+        missing = expected - actual
+        
+        return sorted(missing) if missing else None
+
+
+    
     def load_data(self):
         '''
         Load the full set of data files
         '''
+        # Check list of files
         if self.args.data_files is None:
             if self.args.data_file is None:
                 assert False, "No data files specified"
@@ -61,10 +88,57 @@ class SuperDataSet:
         elif self.args.data_file is not None:
             assert False, "Cannot have both data_file and data_files specified"
 
+        # Must at least be a set of features for inputs
+        if self.args.data_inputs is None:
+            raise ValueError('Must specify data_inputs')
 
+        # If there are weights, then there must also be outputs
+        if (self.args.data_outputs is None) and (self.args.data_weights is not None):
+            raise ValueError('Must specify data_outputs if there are also data_weights')
+
+
+        # Individual file strings could have: just file_name or file_name, data_group
+        # Parse these out
+        split_rows = [re.split(r'[,\s]+', s.strip()) for s in self.args.data_files]
+
+        # Get the set of lengths
+        lengths = {len(row) for row in split_rows}
+        
+        if len(lengths) != 1:
+            raise ValueError(f"Inconsistent number of arguments in data_files: {sorted(lengths)}")
+
+        # Gather by index in each list
+        columns = list(map(list, zip(*split_rows)))
+        if len(columns) > 2:
+            raise ValueError("Each string in data_files must either be just 'file name' or a 'file name, data group'")
+
+        # Replace args.files with just the file names
+        self.args.data_files = columns[0]
+        
+        # Second argument must be ints
+        if len(columns) == 2:
+            # This argument exists
+
+            # Convert to ints
+            try:
+                self.data_groups = [int(s) for s in columns[1]]
+            except ValueError as e:
+                raise ValueError('data_files error parsing group')
+            except TypeError as e:
+                raise ValueError('data_files error parsing group')
+
+            # Check to see if any group numbers are missing
+            missing = SuperDataSet.is_missing_values(self.data_groups)
+            if missing is not None:
+                raise ValueError(f'data_files missing groups: {missing}')
+
+
+        #######
+
+            
         # We are assuming that all files are the same format.  Could change this (but a lot more complicated)
 
-        # Different handler for each data type
+        # Different handler for each file format type
         if self.args.data_format == 'tabular':
             self.data = self.load_table_set()
             
@@ -76,11 +150,51 @@ class SuperDataSet:
             
         elif self.args.data_format == 'tf_dataset':
             self.data = self.load_tf_set()
+            
         else:
             assert False, "Data format %s not recognized"%self.args.data_format
 
+        #######
+        print_debug(1, self.args.debug, "TOTAL DATA FILES: %d"%len(self.data))
+
     def merge_data(self):
-        pass
+        '''
+        Merge data files together by defined group
+        '''
+        if self.data_groups is not None:
+            # Groups are defined
+            if self.args.data_representation == 'numpy':
+                # Numpy array case
+                data_out = []
+                
+                # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights)
+                data_size = len(self.data[0])
+
+                # Loop over every grouping: 0 ... K-1
+                for grp in range(max(self.data_groups)+1):
+                    # Accumulate all of the elements into a new list (which will become a tuple)
+                    data_in_group = []
+                    
+                    # Loop over every element in each data tuple
+                    for i in range(data_size):
+                        # Grab the numpy arrays for this element and every matching group
+                        # Connect the rest of the data with the group number
+                        data_and_group = zip(self.data, self.data_groups)
+                        datas = [d[i] for d, g in data_and_group if g == grp]
+                        # Concatenate these together along the rows
+                        data_in_group.append(np.concatenate(datas, axis=0))
+                        
+                    # Add this data group to the growing list
+                    data_out.append(tuple(zip(data_in_group)))
+                self.data = data_out
+                
+            elif self.args.data_representation == 'tf-dataset':
+                raise ValueError('data_representation tf-dataset not supported')
+            else:
+                raise ValueError('data_representation not recognized (%s)'%self.args.data_representation)
+            
+        print_debug(1, self.args.debug, "TOTAL DATA GROUPS: %d"%len(self.data))
+                
 
     def create_datasets(self):
         '''
@@ -111,6 +225,14 @@ class SuperDataSet:
         else:
             raise ValueError("Unrecognized data_representation (%s)"%self.args.data_representation)
 
+        print_debug(2, self.args.debug, "Training Ins:" + str(self.ins_training))
+        print_debug(2, self.args.debug, "Training Outs:" + str(self.outs_training))
+        print_debug(2, self.args.debug, "Validation Ins:" + str(self.ins_validation))
+        print_debug(2, self.args.debug, "Validation Outs:" + str(self.outs_validation))
+        print_debug(2, self.args.debug, "Testing Ins:" + str(self.ins_testing))
+        print_debug(2, self.args.debug, "Testing Outs:" + str(self.outs_testing))
+
+
     def split_fixed(self):
         '''
         Assign one data group to each of training, validation, testing
@@ -121,15 +243,33 @@ class SuperDataSet:
             raise ValueError("Cannot exceed 3 data groups for split=fixed (we have %d)"%(len(self.data)))
 
         # Training set
-        self.ins_training, self.outs_training = self.data[0]
+        self.ins_training = self.data[0][0]
 
+        if len(self.data[0]) >= 2:
+            self.outs_training = self.data[0][1]
+
+        if len(self.data[0]) >= 3:
+            self.weights_training = self.data[0][2]
+            
         if data_len >= 2:
             # Validation set
-            self.ins_validation, self.outs_validation = self.data[1]
+            self.validation=self.data[1]
+            self.ins_validation = self.validation[0]
+            if len(self.validation) >= 2:
+                self.outs_validation = self.validation[1]
+            if len(self.validation) >= 3:
+                self.weights_validation = self.validation[2]
+            
 
         if data_len == 3:
             # Testing set
-            self.ins_testing, self.outs_testing = self.data[2]
+            self.ins_testing = self.data[2][0]
+
+            if len(self.data[2]) >= 2:
+                self.outs_testing = self.data[2][1]
+                
+            if len(self.data[2]) >= 3:
+                self.weights_testing = self.data[2][2]
         
         
     def split_holistic_cross_validation(self):
@@ -206,6 +346,68 @@ class SuperDataSet:
 
         return df
 
+    @staticmethod
+    def load_pickle_file(dataset_path:str, file_name:str)->dict:
+
+        # Figure out where the file is
+        if dataset_path is None:
+            file_path = file_name
+        else:
+            file_path = '%s/%s'%(dataset_path, file_name)
+
+        # TODO: check that file exists and that object is a dict
+        with open(file_path, "rb") as fp:
+            return pickle.load(fp)
+        
+        return None
+        
+    def load_pickle_set(self):
+        '''
+        Load a set of pickle data files and create a set of (ins, outs, weights) for each one.
+
+        Notes:
+        - Pickle file includes one dict object
+        - The referenced items in the dict for inputs, outputs, and weights are numpy arrays
+        - The numpy arrays have the right shapes.
+        -- Among all the inputs, the shapes are identical except in the last dimension
+        -- Among all the outputs, the shapes are identical except in the last dimension
+        -- The number of rows in the inputs, outputs, and weights must be the same
+        '''
+
+        data = []
+        
+        # Load all of the pickle files
+        d_all = [SuperDataSet.load_pickle_file(self.args.dataset_directory, f) for f in self.args.data_files]
+        print_debug(2, self.args.debug, "Data file list: %d"%len(d_all))
+        print_debug(2, self.args.debug, "Data files: " + str(self.args.data_files))
+
+        # Iterate over all of these data sets
+        for d in d_all:
+            # Contatenate all of the features along the last axis
+            # TODO: check the shapes of these numpy arrays
+            ins = np.concatenate([d[key] for key in self.args.data_inputs], axis=-1)
+            ds = (ins,)
+
+            if self.args.data_outputs is not None:
+                # TODO: check the shapes of these numpy arrays
+                # Concatenate all of the features along the last axis
+                outs = np.concatenate([d[key] for key in self.args.data_outputs], axis=-1)
+                ds = ds + (outs,)
+            
+            if self.args.data_weights is not None:
+                # There is only one weight feature
+                weights = d[self.args.data_weights]
+                ds = ds + (weights,)
+
+            # TODO: check the shapes of the resulting tuples
+
+            # Append this tuple to the dataset
+            data.append(ds)
+        
+        return data
+        
+            
+        
     def load_table_set(self):
         # Right now, can only have one tabular file
         assert len(self.args.data_files) == 1, "Only support loading single tabular files"
@@ -222,14 +424,19 @@ class SuperDataSet:
 
 
     @staticmethod
-    def load_table(dataset_path, file_name, input_columns, output_columns,
-                   output_sparse_categorical=False):
+    def load_table(dataset_path:str,
+                   file_name:str,
+                   input_columns:[str],
+                   output_columns:[str],
+                   output_sparse_categorical:bool=False):
 
         # TODO: assume that file_name is absolute path if it is needed
-        #if dataset_path is None:
-        file_path = file_name
-        #else:
-        #file_path = '%s/%s'%(dataset_path, file_name)
+        if dataset_path is None:
+            file_path = file_name
+        else:
+            # Fix path construction for any OS
+            file_path = '%s/%s'%(dataset_path, file_name)
+            
         df = SuperDataSet.load_tabular_file(file_path)
 
         ins = None
