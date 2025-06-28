@@ -303,6 +303,9 @@ class SuperDataSet:
 
         # Shuffle the data
         arr = np.arange(len(ins))
+        
+        # TODO: Revisit when working with seed arguments. 
+        np.random.seed(8)
         np.random.shuffle(arr)
 
         ins = ins[arr]

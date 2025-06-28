@@ -124,7 +124,8 @@ def execute_exp(sds, model, args):
     history = model.fit(sds.ins_training,
                         sds.outs_training,
                         steps_per_epoch=args.steps_per_epoch,
-                        epochs=args.epochs, 
+                        epochs=args.epochs,
+                        batch_size=args.batch,
                         validation_data=sds.validation,
                         verbose=args.verbose>=3,
                         callbacks=cbs)

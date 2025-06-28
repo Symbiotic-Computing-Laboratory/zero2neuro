@@ -53,7 +53,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
 
     # TF Dataset configuration
-    parser.add_argument('--batch', type=int, default=None, help="Training set batch size")
+    parser.add_argument('--batch', type=int, default=1, help="Training set batch size")
     parser.add_argument('--prefetch', type=int, default=3, help="Number of batches to prefetch")
     parser.add_argument('--num_parallel_calls', type=int, default=4, help="Number of threads to use during batch construction")
     parser.add_argument('--cache', type=str, default=None, help="Cache (default: none; RAM: specify empty string; else specify file")
