@@ -291,7 +291,7 @@ class SuperDataSet:
         
         rotation = self.args.rotation # get the rotation
 
-        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation) # Call the function to get the fold indexes for each
+        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation, args.data_split) # Call the function to get the fold indexes for each
         
         # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
         val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
@@ -323,7 +323,7 @@ class SuperDataSet:
         print("DATA")
         print(self.ins_training)
         print(self.ins_validation)
-        print(self.ins_testing)
+        print(self.ins_testing)        
         
     def describe(self):
         return {'dataset_type': self.dataset_type,
@@ -518,10 +518,17 @@ class SuperDataSet:
 
     # method takes in the amount of training folds, total number of folds, and the rotation
     @staticmethod
-    def calculate_nfolds(train_folds, nfolds, rotation):
-        trainfolds = (np.arange(train_folds)+rotation) % nfolds
-        valfolds = (nfolds - 2 + rotation) % nfolds
-        testfolds = (nfolds - 1 + rotation) % nfolds
+    def calculate_nfolds(train_folds, nfolds, rotation, data_split):
+        # TODO: Look at how rotations are handled (Should be rotations - 1 for this)
+        if(data_split == 'hold-out-cross-validation'):
+            trainfolds = (np.arange(train_folds) + rotation % (nfolds - 1))
+            valfolds = ((nfolds - 1) - 1 + rotation) % (nfolds - 1) 
+            testfolds = nfolds - 1
+
+        else:
+            trainfolds = (np.arange(train_folds)+rotation) % nfolds
+            valfolds = (nfolds - 2 + rotation) % nfolds
+            testfolds = (nfolds - 1 + rotation) % nfolds
 
         return trainfolds, valfolds, testfolds
 
