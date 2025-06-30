@@ -467,7 +467,7 @@ class SuperDataSet:
 
     def load_table_indirect_set(self):
         # Right now, can only have one tabular file
-        assert len(self.args.dataa_files) == 1, "Only support loading single tabular-indirect files"
+        assert len(self.args.data_files) == 1, "Only support loading single tabular-indirect files"
 
         ins, outs, output_mapping = self.load_table_indirect_images(self.args.dataset_directory,
                                                                     self.args.data_file,
