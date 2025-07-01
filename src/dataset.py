@@ -522,7 +522,7 @@ class SuperDataSet:
         if(data_split == 'hold-out-cross-validation'): # Error check for hold out
             if rotation >= nfolds:
                 # Make error message and pass that along with debug level to the handle_error function.
-                message = str(("Rotation can be a maximum of", (nfolds - 1), "cannot be", rotation))
+                message = 'Rotation can be a maximum of {} cannot be {}'.format(nfolds - 1, rotation)
                 handle_error(message, self.args.debug)
             trainfolds = (np.arange(train_folds) + rotation % (nfolds - 1))
             valfolds = ((nfolds - 1) - 1 + rotation) % (nfolds - 1) 
