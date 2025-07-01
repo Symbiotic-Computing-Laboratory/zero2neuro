@@ -215,7 +215,7 @@ class SuperDataSet:
             elif self.args.data_split == "holistic-cross-validation":
                 self.split_holistic_cross_validation()
             elif self.args.data_split == "hold-out-cross-validation":
-                raise ValueError("Split type not supported.")
+                self.split_holistic_cross_validation()
             elif self.args.data_split == "orthogonalized-cross-validation":
                 raise ValueError("Split type not supported.")
             else:
@@ -290,8 +290,7 @@ class SuperDataSet:
             raise ValueError("n_training_folds must be <= n_folds-2")
         
         rotation = self.args.rotation # get the rotation
-
-        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation, args.data_split) # Call the function to get the fold indexes for each
+        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(self, n_train_folds, nfolds, rotation, self.args.data_split) # Call the function to get the fold indexes for each
         
         # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
         val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
@@ -518,9 +517,13 @@ class SuperDataSet:
 
     # method takes in the amount of training folds, total number of folds, and the rotation
     @staticmethod
-    def calculate_nfolds(train_folds, nfolds, rotation, data_split):
+    def calculate_nfolds(self, train_folds, nfolds, rotation, data_split):
         # TODO: Look at how rotations are handled (Should be rotations - 1 for this)
-        if(data_split == 'hold-out-cross-validation'):
+        if(data_split == 'hold-out-cross-validation'): # Error check for hold out
+            if rotation >= nfolds:
+                # Make error message and pass that along with debug level to the handle_error function.
+                message = str(("Rotation can be a maximum of", (nfolds - 1), "cannot be", rotation))
+                handle_error(message, self.args.debug)
             trainfolds = (np.arange(train_folds) + rotation % (nfolds - 1))
             valfolds = ((nfolds - 1) - 1 + rotation) % (nfolds - 1) 
             testfolds = nfolds - 1
