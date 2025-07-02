@@ -16,7 +16,7 @@ def handle_error(msg: str, debug_lvl: int):
         match debug_lvl:
             case 0:
                 # Placeholder, do nothing?
-                print(str)
+                print(msg)
             case 1: 
                 # Just show error message and location of call
                 frame = inspect.currentframe().f_back
