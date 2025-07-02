@@ -20,6 +20,8 @@ import pandas as pd
 import numpy as np
 import re
 import pickle
+import os
+import tensorflow as tf
 from zero2neuro_debug import *
 
 from PIL import Image
@@ -148,7 +150,7 @@ class SuperDataSet:
         elif self.args.data_format == 'pickle':
             self.data = self.load_pickle_set()
             
-        elif self.args.data_format == 'tf_dataset':
+        elif self.args.data_format == 'tf-dataset':
             self.data = self.load_tf_set()
             
         else:
@@ -202,7 +204,6 @@ class SuperDataSet:
         '''
         if((self.data is None) or (len(self.data) == 0)):
             raise ValueError("No data specified")
-        
         if self.args.data_representation == "numpy":
             if self.args.data_split == "fixed":
                 self.split_fixed()
@@ -221,7 +222,49 @@ class SuperDataSet:
             else:
                 raise ValueError("Split type not recognized.")
         elif self.args.data_representation == "tf-dataset":
-            raise ValueError("TF-Dataset splitting not supported.")
+            # TF Cache and repeating 
+            if self.args.cache is not None:
+                if self.args.cache == '':
+                    self.data = [ds.cache() for ds in self.data]
+                elif self.args.cache != '':
+                    # TODO: Add error checking to make sure cache directory exists
+                    self.data = [ds.cache(os.path.join(self.args.cache, 'fold_{i}')) for i, ds in enumerate(self.data)]
+            if self.args.repeat:
+                self.data = [ds.repeat() for ds in self.data]
+                    
+            if self.args.data_split == "fixed":
+                self.tf_split_fixed()
+            else:
+                handle_error('TF Datasets currently only support fixed splitting.', self.args.debug)
+            
+            #####
+            if self.args.shuffle is not None:
+                self.training = self.training.shuffle(self.args.shuffle)
+
+            self.training = self.training.batch(self.args.batch, num_parallel_calls=tf.data.AUTOTUNE)
+
+            if self.args.prefetch is None:
+                self.training = self.training.prefetch(tf.data.AUTOTUNE)
+            elif self.args.prefetch > 0:
+                self.training = self.training.prefetch(self.args.prefetch)
+
+            #####
+            if self.validation is not None:
+                self.validation = self.validation.batch(self.args.batch, num_parallel_calls=tf.data.AUTOTUNE)
+
+                if self.args.prefetch is None:
+                    self.validation = self.validation.prefetch(tf.data.AUTOTUNE)
+                elif self.args.prefetch > 0:
+                    self.validation = self.validation.prefetch(self.args.prefetch)
+            #####
+            if self.testing is not None:
+                self.testing = self.testing.batch(self.args.batch, num_parallel_calls=tf.data.AUTOTUNE)
+
+                if self.args.prefetch is None:
+                    self.testing = self.testing.prefetch(tf.data.AUTOTUNE)
+                elif self.args.prefetch > 0:
+                    self.testing = self.testing.prefetch(self.args.prefetch)
+            
         else:
             raise ValueError("Unrecognized data_representation (%s)"%self.args.data_representation)
 
@@ -270,6 +313,24 @@ class SuperDataSet:
                 
             if len(self.data[2]) >= 3:
                 self.weights_testing = self.data[2][2]
+    
+    def tf_split_fixed(self):
+        data_len = len(self.data)
+
+        if data_len > 3:
+            raise ValueError("Cannot exceed 3 data groups for split=fixed (we have %d)"%(len(self.data)))
+
+        # Training set
+        self.training = self.data[0]
+            
+        if data_len >= 2:
+            # Validation set
+            self.validation=self.data[1]
+            
+        if data_len == 3:
+            # Testing set
+            self.testing = self.data[2]
+            
         
         
     def split_holistic_cross_validation(self):
@@ -513,7 +574,13 @@ class SuperDataSet:
 
         return ins, outs, output_mapping
 
-
+    def load_tf_set(self):
+        # TODO: Add a path to the file names, check to make sure it exists.
+        tf_datasets = []
+        for datafile in self.args.data_files:
+            tf_datasets.append(tf.data.Dataset.load(datafile))
+        
+        return tf_datasets
 
     # method takes in the amount of training folds, total number of folds, and the rotation
     @staticmethod

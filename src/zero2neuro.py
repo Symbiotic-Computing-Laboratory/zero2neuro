@@ -119,16 +119,23 @@ def execute_exp(sds, model, args):
     #  steps_per_epoch: how many batches from the training set do we use for training in one epoch?
     #          Note that if you use this, then you must repeat the training set
     #  validation_steps=None means that ALL validation samples will be used
-
     
-    history = model.fit(sds.ins_training,
-                        sds.outs_training,
-                        steps_per_epoch=args.steps_per_epoch,
-                        epochs=args.epochs,
-                        batch_size=args.batch,
-                        validation_data=sds.validation,
-                        verbose=args.verbose>=3,
-                        callbacks=cbs)
+    if args.data_format == 'tf-dataset':
+        history = model.fit(sds.training,
+                            steps_per_epoch=args.steps_per_epoch,
+                            epochs=args.epochs,
+                            validation_data=sds.validation,
+                            verbose=args.verbose>=3,
+                            callbacks=cbs)
+    else:
+        history = model.fit(sds.ins_training,
+                            sds.outs_training,
+                            steps_per_epoch=args.steps_per_epoch,
+                            epochs=args.epochs,
+                            batch_size=args.batch,
+                            validation_data=sds.validation,
+                            verbose=args.verbose>=3,
+                            callbacks=cbs)
         
     # LOG RESULTS
 
@@ -140,11 +147,14 @@ def execute_exp(sds, model, args):
     results = {}
     ######
     # Training
-    ev = model.evaluate(sds.ins_training,
-                        sds.outs_training,
-                        steps=args.steps_per_epoch)
+    if args.data_format == 'tf-dataset':
+        ev = model.evaluate(sds.training,
+                            steps=args.steps_per_epoch)
+    else:
+        ev = model.evaluate(sds.ins_training,
+                            sds.outs_training,
+                            steps=args.steps_per_epoch)
     d = dict(zip(['training_'+s for s in eval_list], ev))
-    
     results.update(d)
     
     if args.wandb:
@@ -152,18 +162,20 @@ def execute_exp(sds, model, args):
 
     ######
     # Training set
-    if args.log_training_set:
+    if args.log_training_set and args.data_format == 'numpy':
         # TODO: only works for not TF Datasets
         results['ins_training'] = sds.ins_training
         results['outs_training'] = sds.outs_training
         results['predict_training'] = model.predict(sds.ins_training)
-                                                
     
     ######
     # Validation set
-    if (sds.ins_validation is not None):
-        ev = model.evaluate(sds.ins_validation,
-                            sds.outs_validation)
+    if (sds.ins_validation is not None) or (sds.validation is not None):
+        if args.data_format == 'tf-dataset':
+            ev = model.evaluate(sds.validation)
+        else:
+            ev = model.evaluate(sds.ins_validation,
+                                sds.outs_validation)
         d = dict(zip(['validation_'+s for s in eval_list], ev))
     
         results.update(d)
@@ -171,7 +183,7 @@ def execute_exp(sds, model, args):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_validation_set:
+        if args.log_validation_set and args.data_format == 'numpy':
             # TODO: only works for not TF Datasets
             results['ins_validation'] = sds.ins_validation
             results['outs_validation'] = sds.outs_validation
@@ -179,9 +191,12 @@ def execute_exp(sds, model, args):
 
     ######
     # Testing set
-    if (sds.ins_testing is not None):
-        ev = model.evaluate(sds.ins_testing,
-                            sds.outs_testing)
+    if (sds.ins_testing is not None) or (sds.testing is not None):
+        if args.data_format == 'tf-dataset':
+            ev = model.evaluate(sds.testing)
+        else:
+            ev = model.evaluate(sds.ins_testing,
+                                sds.outs_testing)
         d = dict(zip(['testing_'+s for s in eval_list], ev))
     
         results.update(d)
@@ -189,12 +204,12 @@ def execute_exp(sds, model, args):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_test_set:
+        if args.log_test_set and args.data_format == 'numpy':
             # TODO: only works for not TF Datasets
             results['ins_testing'] = sds.ins_testing
             results['outs_testing'] = sds.outs_testing
             results['predict_testing'] = model.predict(sds.ins_testing)
-
+    
     ######
     # Close WANDB
     if args.wandb:
