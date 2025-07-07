@@ -17,8 +17,30 @@ from network_builder import *
 import wandb
 from keras.utils import plot_model
 
-def compatibility_checks():
-    pass
+def compatibility_checks(args):
+    if args.data_output_sparse_categorical:
+        handle_error('data_output_sparse_categorical is no longer supported.  Use data_columns_categorical_to_int instead', args.debug)
+
+    if args.data_split is not None:
+        handle_error('data_split is no longer supported.  Use data_fold_split and data_set_type', args.debug)
+
+    if args.n_folds is not None:
+        handle_error('n_folds is no longer supported.  Use data_n_folds', args.debug)
+        
+    if args.n_training_folds is not None:
+        handle_error('n_training_folds is no longer supported.  Use data_n_training_folds', args.debug)
+        
+    if args.training_mode is not None:
+        handle_error('training_mode is no longer supported', args.debug)
+
+    if not args.data_representation in ['numpy', 'tf-dataset']:
+
+
+        handle_error("data_representation must be either numpy or tf-dataset", args.debug)
+
+    if args.rotation is not None:
+        handle_error("rotation is expired.  Use data_rotation instead", args.debug)
+
     
 def args2wandb_name(args)->str:
     # TODO: make generic like fbase
@@ -235,7 +257,7 @@ def execute_exp(sds, model, args):
 
 def prepare_and_execute_experiment(args):
     # Compatibility checks
-    compatibility_checks()
+    compatibility_checks(args)
     
     ######
     # GPU configuration

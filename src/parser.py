@@ -17,7 +17,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--experiment_name', type=str, default='experiment', help="Prefix for all output files");
     parser.add_argument('--loss', type=str, default='mse', help="Loss function name")
     parser.add_argument('--metrics', nargs='+', type=str, default=[], help="Metrics to compute")
-    parser.add_argument('--rotation', type=int, default=0, help='Cross-validation rotation')
+    parser.add_argument('--rotation', type=int, default=None, help='Expired')
     parser.add_argument('--epochs', type=int, default=100, help='Training epochs')
     parser.add_argument('--learning_rate', '--lrate', type=float, default=0.0001, help="Learning rate")
     parser.add_argument('--clipnorm', type=float, default=None, help="Norm clipping threshold")
@@ -36,21 +36,32 @@ def create_parser(description='Zero2Neuro'):
 
     # Dataset details
     parser.add_argument('--dataset_directory', type=str, default=None, help='Data set location')
-    parser.add_argument('--training_mode', type=str, default='training_only', help='Data handling mode for training.  One of: training_only; training_validation; training_validation_testing')
+    parser.add_argument('--training_mode', type=str, default=None, help='EXPIRED')
 
     parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset')
     parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset')
     parser.add_argument('--data_split', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, by-group, random, random-stratify, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
-    parser.add_argument('--n_folds', type=int, default=None, help='Number of cross-validation folds')
-    parser.add_argument('--n_training_folds', type=int, default=None, help='Number of cross-validation folds for training')
+    parser.add_argument('--data_fold_split', type=str, default='identity', help='Split of data tables into folds (identity, group-by-file, group-by-example, random, random-stratify')
+    parser.add_argument('--data_set_type', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
+    
+    parser.add_argument('--n_folds', type=int, default=None, help='EXPIRED.  Use data_n_folds')
+    parser.add_argument('--n_training_folds', type=int, default=None, help='EXPIRED Use data_n_training_folds')
+    
+    parser.add_argument('--data_n_folds', type=int, default=None, help='Number of cross-validation folds')
+    parser.add_argument('--data_n_training_folds', type=int, default=None, help='Number of cross-validation folds for training')
+    parser.add_argument('--data_rotation', type=int, default=0, help='Cross-validation rotation')
     
     parser.add_argument('--data_file', type=str, default=None, help='Input data file')
     parser.add_argument('--data_files', nargs='+', type=str, default=None, help='Input data file list')
-    parser.add_argument('--data_table_merge', nargs='+', type=str, default=None, help='Table merge specification')
+    #parser.add_argument('--data_table_merge', nargs='+', type=str, default=None, help='Table merge specification')   # removed
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
-    parser.add_argument('--data_weights', type=str, default=None, help='Columns in the table that are the sample weights')
+    parser.add_argument('--data_weights', type=str, default=None, help='Column in the table that are the sample weights')
+    parser.add_argument('--data_groups', type=str, default=None, help='Column in the table that correspond to the dataset group')
+    
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
+    parser.add_argument('--data_columns_categorical_to_int', nargs='+', type=str, default=None, help='Translate')
+    parser.add_argument('--data_seed', type=int, default=1138, help='Random seed used for shuffling data into folds')
 
     # TF Dataset configuration
     parser.add_argument('--batch', type=int, default=1, help="Training set batch size")

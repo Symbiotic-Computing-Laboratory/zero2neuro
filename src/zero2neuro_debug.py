@@ -16,16 +16,25 @@ def handle_error(msg: str, debug_lvl: int):
         match debug_lvl:
             case 0:
                 # Placeholder, do nothing?
+                print()
                 print(msg)
+                sys.exit()
             case 1: 
                 # Just show error message and location of call
+                print()
                 frame = inspect.currentframe().f_back
                 line_num = frame.f_lineno
                 file_name = inspect.stack()[1].filename
                 print(msg, "Occured at line:", line_num, "in:", file_name)
                 sys.exit()
-            case 2:
+            case _:
                 # Show full stack trace 
-                stack = traceback.extract_stack() 
-                print(stack)
+                stack = traceback.extract_stack()
+                print()
+                print("Stack:")
+                for f in stack:
+                    print(f)
+                #print(stack)
+                print()
+                print(msg)
                 sys.exit()
