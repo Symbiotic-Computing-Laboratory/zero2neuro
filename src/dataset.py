@@ -55,6 +55,7 @@ class SuperDataSet:
 
         # Fold list
         self.folds = []
+        self.nfolds = 0
         self.categorical_translation = None
 
         # Load data
@@ -179,8 +180,10 @@ class SuperDataSet:
         elif self.args.data_fold_split == 'group-by-file':
             if self.data_groups is not None:
                 # File-level groups are defined
+                print_debug(3, self.args.debug,
+                            'Data groups: ' + str(self.data_groups))
                 if self.args.data_representation == 'numpy':
-                    self.fold = generate_folds_by_group_numpy()
+                    self.folds = self.generate_folds_by_group_numpy()
                 
                 else:
                     # TODO: LUKE use sample_from_dataset()
@@ -217,7 +220,7 @@ class SuperDataSet:
         else:
             handle_error("data_fold_split %s not recognized."%self.args.data_fold_split, self.debug)
         
-
+        self.nfolds = len(self.folds)
         print_debug(1, self.args.debug, "TOTAL DATA FOLDS: %d"%len(self.folds))
 
     def generate_folds_by_group_numpy(self):
@@ -231,7 +234,9 @@ class SuperDataSet:
         data_size = len(self.data[0])
 
         # Loop over every grouping: 0 ... K-1
-        for grp in range(max(self.data_groups)+1):
+        ngroups = max(self.data_groups)+1
+        print_debug(2, self.args.debug, "Number of fold groups: %d"%ngroups)
+        for grp in range(ngroups):
             # Accumulate all of the elements into a new list (which will become a tuple)
             data_in_group = []
             
@@ -244,9 +249,8 @@ class SuperDataSet:
                 # Concatenate these together along the rows
                 data_in_group.append(np.concatenate(datas, axis=0))
                         
-                # Add this data group to the growing list
-                data_out.append(tuple(zip(data_and_group)))
-                
+            # Add this data group to the growing list
+            data_out.append(tuple(zip(data_in_group)))
         return data_out
                 
     def generate_folds_expired(self):
@@ -308,7 +312,7 @@ class SuperDataSet:
         '''
         
         if((self.folds is None) or (len(self.folds) == 0)):
-            handle_error("No folds specified", args.debug)
+            handle_error("No folds specified", self.args.debug)
             
         if self.args.data_representation == "numpy":
             # Numpy representation
@@ -643,6 +647,7 @@ class SuperDataSet:
     def describe(self):
         return {'dataset_type': self.dataset_type,
                 'rotation': self.args.rotation,
+                'nfolds': self.nfolds,
                 'categorical_translation': self.categorical_translation,
                 }
 

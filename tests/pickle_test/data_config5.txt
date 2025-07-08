@@ -6,7 +6,8 @@ parityB1.pkl,0
 parityB2.pkl,0
 parityB3.pkl,0
 parityB.pkl,1
---data_split=fixed
+--data_fold_split=group-by-file
+--data_set_type=fixed
 --data_inputs
 ins0
 ins1

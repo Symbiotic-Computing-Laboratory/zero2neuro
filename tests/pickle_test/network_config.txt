@@ -2,7 +2,7 @@
 --input_shape
 4
 --number_hidden_units
-20
+100
 10
 --hidden_activation=elu
 --output_shape

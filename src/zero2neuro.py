@@ -68,6 +68,7 @@ def args2fbase(args):
 
     else:
         # Use output file name in the specified format
+        # TODO: need to check that the format string is valid
         outstr = '%s/%s'%(args.results_path, 
                           args.output_file_base.format(args=args))
         
