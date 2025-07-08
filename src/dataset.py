@@ -55,6 +55,7 @@ class SuperDataSet:
 
         # Fold list
         self.folds = []
+        self.nfolds = 0
         self.categorical_translation = None
 
         # Load data
@@ -179,11 +180,14 @@ class SuperDataSet:
         elif self.args.data_fold_split == 'group-by-file':
             if self.data_groups is not None:
                 # File-level groups are defined
+                print_debug(3, self.args.debug,
+                            'Data groups: ' + str(self.data_groups))
                 if self.args.data_representation == 'numpy':
-                    self.fold = generate_folds_by_group_numpy()
+                    self.folds = self.generate_folds_by_group_numpy()
                 
                 else:
                     # TODO: LUKE use sample_from_dataset()
+                    self.fold = self.generate_folds_by_group_tf()
                     handle_error("data_representation tf-dataset not yet supported", self.debug)
             else:
                     handle_error("No file-level groups defined", self.debug)
@@ -216,8 +220,8 @@ class SuperDataSet:
 
         else:
             handle_error("data_fold_split %s not recognized."%self.args.data_fold_split, self.debug)
-        
 
+        self.nfolds = len(self.folds)
         print_debug(1, self.args.debug, "TOTAL DATA FOLDS: %d"%len(self.folds))
 
     def generate_folds_by_group_numpy(self):
@@ -231,7 +235,9 @@ class SuperDataSet:
         data_size = len(self.data[0])
 
         # Loop over every grouping: 0 ... K-1
-        for grp in range(max(self.data_groups)+1):
+        ngroups = max(self.data_groups)+1
+        print_debug(2, self.args.debug, "Number of fold groups: %d"%ngroups)
+        for grp in range(ngroups):
             # Accumulate all of the elements into a new list (which will become a tuple)
             data_in_group = []
             
@@ -244,61 +250,16 @@ class SuperDataSet:
                 # Concatenate these together along the rows
                 data_in_group.append(np.concatenate(datas, axis=0))
                         
-                # Add this data group to the growing list
-                data_out.append(tuple(zip(data_and_group)))
+            # Add this data group to the growing list
+            data_out.append(tuple(zip(data_in_group)))
                 
         return data_out
-                
-    def generate_folds_expired(self):
-        '''
-        Generate folds from the input data tables
-        '''
-        if self.data_groups is not None:
-            # File-level groups are defined
-            if self.args.data_representation == 'numpy':
-                # Numpy array case
-                data_out = []
-                
-                # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights)
-                data_size = len(self.data[0])
 
-                # Loop over every grouping: 0 ... K-1
-                for grp in range(max(self.data_groups)+1):
-                    # Accumulate all of the elements into a new list (which will become a tuple)
-                    data_in_group = []
-                    
-                    # Loop over every element in each data tuple
-                    for i in range(data_size):
-                        # Grab the numpy arrays for this element and every matching group
-                        # Connect the rest of the data with the group number
-                        data_and_group = zip(self.data, self.data_groups)
-                        datas = [d[i] for d, g in data_and_group if g == grp]
-                        # Concatenate these together along the rows
-                        data_in_group.append(np.concatenate(datas, axis=0))
-                        
-                    # Add this data group to the growing list
-                    data_out.append(tuple(zip(data_in_group)))
-                self.fold = data_out
-                
-            elif self.args.data_representation == 'tf-dataset':
-                raise ValueError('data_representation tf-dataset not supported')
-            else:
-                raise ValueError('data_representation not recognized (%s)'%self.args.data_representation)
-        else:
-            # File-level groups not defined
-            #  Check for example-level grouping
-            if len(self.data[0] >= 3) and (self.data[0][3] is not None):
-                if self.args.data_representation == 'numpy':
-                    handle_error("Example-level grouping not yet supported.", self.debug)
-                else:
-                    # TF-Dataset case
-                    handle_error("Example-level grouping not supported for TF-Datasets", self.debug)
-            else:
-                # Default case: folds are data
-                self.folds = self.data
-            
-        print_debug(1, self.args.debug, "TOTAL DATA FOLDS: %d"%len(self.folds))
-                
+    def generate_folds_by_group_tf(self):
+        '''
+        Take in each dataset
+        Use sample from datasets
+        '''                
 
     def generate_datasets(self):
         '''
@@ -308,7 +269,7 @@ class SuperDataSet:
         '''
         
         if((self.folds is None) or (len(self.folds) == 0)):
-            handle_error("No folds specified", args.debug)
+            handle_error("No folds specified", self.args.debug)
             
         if self.args.data_representation == "numpy":
             # Numpy representation
@@ -450,6 +411,9 @@ class SuperDataSet:
         if data_len == 3:
             # Testing set
             self.testing = self.folds[2]
+
+    def tf_split_cross_validation(self):
+        pass
             
 
     def combine_all_data_tables(self):
@@ -625,7 +589,7 @@ class SuperDataSet:
         arr = np.arange(len(ins))
         
         # TODO: Revisit when working with seed arguments. 
-        np.random.seed(8)
+        np.random.seed(self.args.data_seed)
         np.random.shuffle(arr)
 
         ins = ins[arr]
@@ -643,6 +607,7 @@ class SuperDataSet:
     def describe(self):
         return {'dataset_type': self.dataset_type,
                 'rotation': self.args.rotation,
+                'nfolds': self.nfolds
                 'categorical_translation': self.categorical_translation,
                 }
 
@@ -912,7 +877,7 @@ class SuperDataSet:
         # TODO: Look at how rotations are handled (Should be rotations - 1 for this)
         if(data_split == 'hold-out-cross-validation'): 
             # Hold-out cross-validation
-
+            
             # Error check for hold out
             if (rotation >= nfolds-1) or (rotation < 0):
                 # Make error message and pass that along with debug level to the handle_error function.

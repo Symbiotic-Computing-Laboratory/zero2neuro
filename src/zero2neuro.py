@@ -68,6 +68,7 @@ def args2fbase(args):
 
     else:
         # Use output file name in the specified format
+        # TODO: need to check that the format string is valid
         outstr = '%s/%s'%(args.results_path, 
                           args.output_file_base.format(args=args))
         
@@ -184,7 +185,7 @@ def execute_exp(sds, model, args):
 
     ######
     # Training set
-    if args.log_training_set and args.data_format == 'numpy':
+    if args.log_training_set and args.data_representation == 'numpy':
         # TODO: only works for not TF Datasets
         results['ins_training'] = sds.ins_training
         results['outs_training'] = sds.outs_training
@@ -205,7 +206,7 @@ def execute_exp(sds, model, args):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_validation_set and args.data_format == 'numpy':
+        if args.log_validation_set and args.data_representation == 'numpy':
             # TODO: only works for not TF Datasets
             results['ins_validation'] = sds.ins_validation
             results['outs_validation'] = sds.outs_validation
@@ -226,7 +227,7 @@ def execute_exp(sds, model, args):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_test_set and args.data_format == 'numpy':
+        if args.log_test_set and args.data_representation == 'numpy':
             # TODO: only works for not TF Datasets
             results['ins_testing'] = sds.ins_testing
             results['outs_testing'] = sds.outs_testing
