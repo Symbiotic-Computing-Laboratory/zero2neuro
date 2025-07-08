@@ -3,7 +3,7 @@
 --data_files
 parity0.pkl
 parity.pkl
---data_split=fixed
+--data_set_type=fixed
 --data_inputs
 ins
 --data_outputs

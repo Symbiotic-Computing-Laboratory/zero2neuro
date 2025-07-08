@@ -220,7 +220,7 @@ class SuperDataSet:
 
         else:
             handle_error("data_fold_split %s not recognized."%self.args.data_fold_split, self.debug)
-
+            
         self.nfolds = len(self.folds)
         print_debug(1, self.args.debug, "TOTAL DATA FOLDS: %d"%len(self.folds))
 
@@ -252,7 +252,7 @@ class SuperDataSet:
                         
             # Add this data group to the growing list
             data_out.append(tuple(zip(data_in_group)))
-                
+            
         return data_out
 
     def generate_folds_by_group_tf(self):
@@ -607,7 +607,7 @@ class SuperDataSet:
     def describe(self):
         return {'dataset_type': self.dataset_type,
                 'rotation': self.args.rotation,
-                'nfolds': self.nfolds
+                'nfolds': self.nfolds,
                 'categorical_translation': self.categorical_translation,
                 }
 
