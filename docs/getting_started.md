@@ -4,6 +4,7 @@ Assumptions
 - TODO
 - You have git installed
 - You have a python enviroment set up with Keras3 and TensorFlow
+- You have a basic conceptual understanding of DNNs (If this isn't an assumption we should include a markdown that explains the basic of deep neural networks)
 
 **1. Clone the Repositories**
 
