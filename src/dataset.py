@@ -759,8 +759,10 @@ class SuperDataSet:
                     original_values = df[col].copy()
                     
                     # Map the value in each cell to the corresponding int
-                    df[col] = df[col].map(d)
-                    
+                    #df[col] = df[col].map(d)
+                    # First convert the value in the table to a string, then do the mapping
+                    df[col] = df[col].map(lambda x: d.get(str(x)))
+                
                     # Check to make sure there were not any extraneous categorical values
                     unmapped = df[df[col].isna()][col].index
                     if len(unmapped) > 0:

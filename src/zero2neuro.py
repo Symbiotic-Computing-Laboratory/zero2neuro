@@ -69,8 +69,14 @@ def args2fbase(args):
     else:
         # Use output file name in the specified format
         # TODO: need to check that the format string is valid
-        outstr = '%s/%s'%(args.results_path, 
-                          args.output_file_base.format(args=args))
+        try:
+            output_file_base = args.output_file_base.format(args=args)
+        except (ValueError, AttributeError, KeyError) as e:
+            print(e)
+            handle_error('Error: args.output_file_base cannot be parsed (%s)'%
+                         args.output_file_base, args.debug)
+            
+        outstr = '%s/%s'%(args.results_path, output_file_base)
         
     return outstr
 
