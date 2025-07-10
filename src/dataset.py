@@ -87,6 +87,14 @@ class SuperDataSet:
         Load the full set of data files
         '''
         #####
+
+        # Build translation table for categorical variables
+        if self.args.data_columns_categorical_to_int is not None:
+            # Each string is a new mapping: translate all of them
+            self.categorical_translation = [SuperDataSet.parse_value_mapping(s) for s in self.args.data_columns_categorical_to_int]
+                
+        ####
+        
         # Check list of files
         if self.args.data_files is None:
             if self.args.data_file is None:
@@ -664,8 +672,34 @@ class SuperDataSet:
         print_debug(2, self.args.debug, "Data file list: %d"%len(d_all))
         print_debug(2, self.args.debug, "Data files: " + str(self.args.data_files))
 
-        # Iterate over all of these data sets
+        # Iterate over all of these data sets: each is a dict
         for d in d_all:
+            # Translate numpy fields for categorical variables
+            if self.categorical_translation is not None:
+                # Iterate over the variable/translation table pairs 
+                for var, tr_dict in self.categorical_translation:
+                    if var in d.keys():
+                        # var is a field in the data dict
+                    
+                        # Map the value in each cell to the corresponding int
+                        # First convert the value in the table to a string, then do the mapping
+                        # Map missing values to -999 (valid mapped values will be natural numbers)
+                        map_func = np.vectorize(lambda x: tr_dict.get(str(x), -999))
+                        d_tmp = map_func(d[var])
+                        
+                        # Detect bad values
+                        d_tmp_bad = d_tmp == -999
+                        
+                        # Check to make sure there were not any extraneous categorical values
+                        if np.any(d_tmp_bad):
+                            # There are some unrecognized categorical values
+                            failed_values = np.unique(d[var][d_tmp_bad])
+                            handle_error(f"data_columns_categorical_to_int error: unmapped values in key '{var}': {failed_values.tolist()}",
+                                         self.args.debug)
+
+                        # All okay - copy the updated numpy array over
+                        d[var] = d_tmp
+            
             # Contatenate all of the features along the last axis
             # TODO: check the shapes of these numpy arrays
             ins = np.concatenate([d[key] for key in self.args.data_inputs], axis=-1)
@@ -705,12 +739,6 @@ class SuperDataSet:
         #assert len(self.args.data_files) == 1, "Only support loading single tabular files"
 
 
-        ####
-        # Build translation table for categorical variables
-        if self.args.data_columns_categorical_to_int is not None:
-            # Each string is a new mapping: translate all of them
-            self.categorical_translation = [SuperDataSet.parse_value_mapping(s) for s in self.args.data_columns_categorical_to_int]
-                
         ####
         data = []
         

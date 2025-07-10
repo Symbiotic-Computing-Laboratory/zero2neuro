@@ -14,6 +14,7 @@ import pickle
 
 parser = argparse.ArgumentParser('Pickle Viewer')
 parser.add_argument('--file', type=str, default=None, help='File to summarize')
+parser.add_argument('--verbose', '-v', action='count', default=0, help="Verbosity level")
 
 args = parser.parse_args()
 
@@ -29,4 +30,6 @@ else:
         # Loop over all key, value pairs and report
         for k,v in d.items():
             print(k, v.shape)
+            if args.verbose > 0:
+                print(v)
 
