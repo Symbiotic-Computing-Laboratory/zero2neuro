@@ -14,4 +14,3 @@ mse
 --render_model
 --log_training_set
 -dddd
--vvv

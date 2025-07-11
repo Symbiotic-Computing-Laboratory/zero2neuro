@@ -22,4 +22,4 @@ export ZERO2NEURO_PATH=$NEURO_REPOSITORY_PATH/zero2neuro/src
 
 ####
 
-python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv --wandb --wandb_project 'breast_cancer training' --force --log_training_set
+python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv --force

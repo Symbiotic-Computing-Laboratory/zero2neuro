@@ -1,7 +1,10 @@
---data_output_sparse_categorical
---training_mode=training_only
 --data_format=tabular
+--data_columns_categorical_to_int
+Diagnosis:M,B
 --data_file=wdbc.csv
+--data_fold_split=random
+--data_set_type=holistic-cross-validation
+--data_n_folds=10
 --data_inputs
 radius1
 texture1
