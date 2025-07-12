@@ -56,6 +56,7 @@ class SuperDataSet:
         # Fold list
         self.folds = []
         self.nfolds = 0
+        self.n_train_folds = None
         self.categorical_translation = None
 
         # Load data
@@ -80,7 +81,13 @@ class SuperDataSet:
         
         return sorted(missing) if missing else None
 
+    @staticmethod
+    def is_list_of_tuples(obj):
+        return isinstance(obj, list) and all(isinstance(item, tuple) for item in obj)
 
+    @staticmethod
+    def is_list_of_tf_datasets(obj):
+        return isinstance(obj, list) and all(isinstance(item, tf.data.Dataset) for item in obj)
     
     def load_data(self):
         '''
@@ -171,6 +178,24 @@ class SuperDataSet:
         else:
             assert False, "Data format %s not recognized"%self.args.data_format
 
+        ######
+        # Clean up data if composed of numpy arrays: we want each item
+        #  in the list to be a 4-tuple (anything less, we will add Nones
+        #  to make them 4-tuples)
+        if SuperDataSet.is_list_of_tuples(self.data):
+            # We will assume that each tuple is the same size
+            tuple_size = len(self.data[0])
+            if tuple_size < 4:
+                # Add some Nones
+                #print(f"ADDING tuple elements: {4-tuple_size}")
+                self.data = [d + (None,) * (4-tuple_size) for d in self.data]
+                
+        elif SuperDataSet.is_list_of_tf_datasets(self.data):
+            pass
+        else:
+            handle_error('Data must all be numpy arrays or all tf.data.Datasets', self.args.debug)
+            
+        
         #######
         print_debug(1, self.args.debug, "TOTAL DATA FILES: %d"%len(self.data))
 
@@ -553,6 +578,8 @@ class SuperDataSet:
         # Default: use all available folds
         if n_train_folds is None:
             n_train_folds = nfolds - 2
+
+        self.n_train_fodls = n_train_folds
             
         if(n_train_folds > nfolds-2):
             handle_error("n_training_folds must be <= n_folds-2", self.args.debug)
