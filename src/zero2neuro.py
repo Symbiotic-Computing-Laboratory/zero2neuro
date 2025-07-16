@@ -159,6 +159,7 @@ def execute_exp(sds, model, args):
     else:
         history = model.fit(sds.ins_training,
                             sds.outs_training,
+                            sample_weight=sds.weights_training,
                             steps_per_epoch=args.steps_per_epoch,
                             epochs=args.epochs,
                             batch_size=args.batch,

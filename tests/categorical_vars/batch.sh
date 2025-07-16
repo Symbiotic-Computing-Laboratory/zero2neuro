@@ -22,4 +22,4 @@ export ZERO2NEURO_PATH=$NEURO_REPOSITORY_PATH/zero2neuro/src
 
 ####
 
-python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data_p2.txt @experiment.txt -vvv --force --log_training_set -dddd
+python $ZERO2NEURO_PATH/zero2neuro.py @network.txt @data_p.txt @experiment.txt -vvv --force --log_training_set -dddd
