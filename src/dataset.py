@@ -100,6 +100,16 @@ class SuperDataSet:
             # Each string is a new mapping: translate all of them
             self.categorical_translation = [SuperDataSet.parse_value_mapping(s) for s in self.args.data_columns_categorical_to_int]
                 
+        if self.args.data_columns_categorical_to_int_direct is not None:
+            # Each string is a new mapping: translate all of them
+            tmp = [SuperDataSet.parse_value_mapping_direct(s) for s in self.args.data_columns_categorical_to_int_direct]
+
+            # Add to the categorial translation
+            if self.categorical_translation is None:
+                self.categorical_translation = tmp
+            else:
+                self.categorical_translation = self.categorical_translation + tmp
+                
         ####
         
         # Check list of files
@@ -773,7 +783,7 @@ class SuperDataSet:
         
             
 
-    #staticmethod
+    @staticmethod
     def parse_value_mapping(s):
         '''
         from ChatGPT
@@ -781,6 +791,29 @@ class SuperDataSet:
         key, raw_values = s.split(":", 1)
         items = [item.strip() for item in raw_values.split(",")]
         return key.strip(), {v: i for i, v in enumerate(items)}
+
+    @staticmethod
+    def parse_value_mapping_direct(s):
+        '''
+        Parse a string of the form:
+        VAR:STR0->INT0,STR1->INT1,...
+        into:
+        ('VAR', {'STR0': INT0, 'STR1': INT1, ...})
+        '''
+        # Extract variable name first
+        key, raw_values = s.split(":", 1)
+        # Split individual items
+        items = [item.strip() for item in raw_values.split(",")]
+
+        # Build the mapping
+        mapping = {}
+
+        # Iterate over each string/value pair
+        for item in items:
+            str_part, int_part = item.split("->")
+            mapping[str_part.strip()] = int(int_part.strip())
+
+        return key.strip(), mapping
 
     def load_table_set(self):
         # Right now, can only have one tabular file

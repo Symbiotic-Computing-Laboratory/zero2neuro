@@ -2,7 +2,12 @@
 
 Use inverse order
 
-2025-07-06 Andrew H. Fagg
+##2025-07-17 Andrew H. Fagg
+
+SuperDataSet:
+* Added args.data_columns_categorical_to_int_direct
+
+##2025-07-06 Andrew H. Fagg
 
 SuperDataSet:
 * Data files are loaded into self.data (refer to these as *data tables*)
@@ -14,3 +19,4 @@ SuperDataSet:
 Command Line Arguments:
 * Many arguments names have been changed to reflect the module that they refer to
 * Use of expired arguments now generates errors
+

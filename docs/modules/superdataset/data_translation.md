@@ -1,10 +1,6 @@
-# SuperDataset
+# Data Translation
 
-
-
-## Data Translation
-
-### Categorical Variables
+## Categorical Variables
 
 A categorical variable typically takes on a value of one of several
 strings.  Because deep networks work exclusively with numerical data,
@@ -73,3 +69,6 @@ __Notes:__
 removed before the translation is performed.  However, internal white
 space are kept for the translation process.
 - All strings are case sensitive.
+
+
+## One-Hot Encoding

@@ -60,7 +60,8 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_groups', type=str, default=None, help='Column in the table that correspond to the dataset group')
     
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
-    parser.add_argument('--data_columns_categorical_to_int', nargs='+', type=str, default=None, help='Translate')
+    parser.add_argument('--data_columns_categorical_to_int', nargs='+', type=str, default=None, help='Translation of categorical variable to a unique integer in string order (line format: VAR NAME:STR0,STR1,STR2...')
+    parser.add_argument('--data_columns_categorical_to_int_direct', nargs='+', type=str, default=None, help='Translation of categorical variable to a specified integer (line format: VAR NAME:STR0->INT0,STR1->INT1,STR2->INT2,...')
     parser.add_argument('--data_seed', type=int, default=1138, help='Random seed used for shuffling data into folds')
 
     # TF Dataset configuration
