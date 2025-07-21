@@ -97,10 +97,14 @@ class SuperDataSet:
 
         # Build translation table for categorical variables
         if self.args.data_columns_categorical_to_int is not None:
+            # Automatically assign strings to integers
+            
             # Each string is a new mapping: translate all of them
             self.categorical_translation = [SuperDataSet.parse_value_mapping(s) for s in self.args.data_columns_categorical_to_int]
                 
         if self.args.data_columns_categorical_to_int_direct is not None:
+            # User assigns strings to integers (and multiple strings can map to the same int)
+            
             # Each string is a new mapping: translate all of them
             tmp = [SuperDataSet.parse_value_mapping_direct(s) for s in self.args.data_columns_categorical_to_int_direct]
 
@@ -276,16 +280,21 @@ class SuperDataSet:
                 
         # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights) vs (ins,outs,weights,groups)
         data_size = len(self.data[0])
-        print('DATA:', self.data)
+        
         # Loop over every grouping: 0 ... K-1
         ngroups = max(self.data_groups)+1
-        print_debug(2, self.args.debug, "Number of fold groups: %d"%ngroups)
+        print_debug(2, self.args.verbose, "Number of fold groups: %d"%ngroups)
+        print_debug(2, self.args.verbose, "data_size: %d"%data_size)
+        
         for grp in range(ngroups):
             # Accumulate all of the elements into a new list (which will become a tuple)
             data_in_group = []
+            print_debug(3, self.args.verbose, "\tFold %d"%grp)
             
             # Loop over every element in each data tuple (ins, outs, weights)
             for i in range(data_size):
+                print_debug(3, self.args.verbose, "\t\tData %d"%i)
+                
                 # Grab the numpy arrays for this element and every matching group
                 # Connect the rest of the data with the group number
                 data_and_group = zip(self.data, self.data_groups)
