@@ -2,6 +2,10 @@
 
 Use inverse order
 
+##2025-07-22 Andrew H. Fagg
+SuperDataSet:
+* All numpy folds and data sets are now represented as 4-tuples.  Nones are used if a tuple entry has no data.
+
 ##2025-07-17 Andrew H. Fagg
 
 SuperDataSet:

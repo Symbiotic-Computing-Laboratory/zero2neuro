@@ -42,6 +42,10 @@ mkdir -p logs
 #python $ZERO2NEURO_PATH/zero2neuro.py @network_config.txt @data_config4.txt @experiment_config.txt -vvv -dddd
 
 # Both tests at the same time
-python $ZERO2NEURO_PATH/zero2neuro.py @network_config.txt @data_config5.txt @experiment_config.txt -vvv -dddd
+#python $ZERO2NEURO_PATH/zero2neuro.py @network_config.txt @data_config5.txt @experiment_config.txt -vvv -dddd
 
 # --wandb --wandb_project 'parity'
+
+# Both tests at the same time + testing holistic-cross-validation
+python $ZERO2NEURO_PATH/zero2neuro.py @network_config.txt @data_config6.txt @experiment_config.txt -vvv -dddd --force
+

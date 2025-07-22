@@ -180,7 +180,7 @@ class SuperDataSet:
         if self.args.data_format == 'tabular':
             self.data = self.load_table_set()
             
-        elif self.args.data_format == 'tabular_indirect':
+        elif self.args.data_format == 'tabular-indirect':
             self.data = self.load_table_indirect_set()
             
         elif self.args.data_format == 'pickle':
@@ -224,6 +224,7 @@ class SuperDataSet:
         if self.args.data_fold_split == 'identity':
             # No translation
             self.folds = self.data
+            
         elif self.args.data_fold_split == 'group-by-file':
             if self.data_groups is not None:
                 # File-level groups are defined
@@ -279,19 +280,21 @@ class SuperDataSet:
         data_out = []
                 
         # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights) vs (ins,outs,weights,groups)
-        data_size = len(self.data[0])
+        # Some of the elements of the tuple can be None - so deal with this case
+        data_size = sum(d is not None for d in self.data[0])
+        data_size_extra = 4-data_size
         
-        # Loop over every grouping: 0 ... K-1
+        # Loop over every fold: 0 ... K-1
         ngroups = max(self.data_groups)+1
         print_debug(2, self.args.verbose, "Number of fold groups: %d"%ngroups)
         print_debug(2, self.args.verbose, "data_size: %d"%data_size)
-        
+
         for grp in range(ngroups):
             # Accumulate all of the elements into a new list (which will become a tuple)
             data_in_group = []
             print_debug(3, self.args.verbose, "\tFold %d"%grp)
             
-            # Loop over every element in each data tuple (ins, outs, weights)
+            # Loop over every element in each data tuple (ins, outs, weights, groups)
             for i in range(data_size):
                 print_debug(3, self.args.verbose, "\t\tData %d"%i)
                 
@@ -301,9 +304,13 @@ class SuperDataSet:
                 datas = [d[i] for d, g in data_and_group if g == grp]
                 # Concatenate these together along the rows
                 data_in_group.append(np.concatenate(datas, axis=0))
-                        
-            # Add this data group to the growing list
-            data_out.append(tuple(zip(data_in_group)))
+
+            # Add this data group to the growing list, with extra None's if necessary
+            fold_tuple = tuple(data_in_group) + (None,) * data_size_extra
+            data_out.append(fold_tuple) 
+
+            print("@@@@@@")
+            print(fold_tuple)
             
         return data_out
 
@@ -605,7 +612,7 @@ class SuperDataSet:
 
         rotation = self.args.data_rotation # get the rotation
         
-        print("NFOLDS=%d; NTRAIN=%d; ROTATION=%d"%(nfolds, n_train_folds,rotation))
+        #print("NFOLDS=%d; NTRAIN=%d; ROTATION=%d"%(nfolds, n_train_folds,rotation))
 
         # Call the function to get the fold indexes for each
         tr_folds, val_fold, test_fold = SuperDataSet.calculate_nfolds(n_train_folds,
@@ -994,6 +1001,9 @@ class SuperDataSet:
         :return: Tuple of [training fold list], validation fold, testing fold
         
         '''
+        if nfolds < 3:
+            handle_error('Cross-valication requires at least 3 folds of data.', debug)
+
         # TODO: Look at how rotations are handled (Should be rotations - 1 for this)
         if(data_split == 'hold-out-cross-validation'): 
             # Hold-out cross-validation
@@ -1014,7 +1024,8 @@ class SuperDataSet:
 
         else:
             # Holistic cross-validation
-            print("- NFOLDS=%d; NTRAIN=%d; ROTATION=%d"%(nfolds, n_train_folds,rotation))
+            #print("- NFOLDS=%d; NTRAIN=%d; ROTATION=%d"%(nfolds, n_train_folds,rotation))
+                
             if (rotation >= nfolds) or (rotation < 0):
                 # Make error message and pass that along with debug level to the handle_error function.
                 message = 'Rotation can be a maximum of {} cannot be {}'.format(nfolds - 1, rotation)
