@@ -1,5 +1,5 @@
 --experiment_name=breast_cancer
---rotation=0
+--data_rotation=0
 --loss=sparse_categorical_crossentropy
 --metrics=sparse_categorical_accuracy
 --learning_rate=0.0001
@@ -7,7 +7,7 @@
 --early_stopping_monitor=loss
 --early_stopping_patience=2000
 --results_path=./results
---output_file_base={args.experiment_name}_R{args.rotation:02d}
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
 --save_model
 --render_model
 --log_training_set

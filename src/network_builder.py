@@ -30,6 +30,8 @@ class NetworkBuilder:
                                                                          loss=args.loss,
                                                                          metrics=args.metrics)
         elif args.network_type == 'cnn':
+            #print_debug(3, args.verbose, 'Output shape: ' + str(args.output_shape0))
+                
             model = ConvolutionalNeuralNetwork.create_cnn_network(input_shape=args.input_shape0,
                                                                   conv_kernel_size=args.conv_kernel_size,
                                                                   conv_padding=args.conv_padding,
