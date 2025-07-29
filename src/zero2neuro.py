@@ -157,12 +157,6 @@ def execute_exp(sds, model, args):
                             verbose=args.verbose>=3,
                             callbacks=cbs)
     else:
-        print("!!!!!!!!!!!!!!!!!!")
-        print("TRAINING:")
-        print(sds.ins_training)
-        print(sds.outs_training)
-        print(sds.weights_training)
-        
         history = model.fit(sds.ins_training,
                             sds.outs_training,
                             sample_weight=sds.weights_training,

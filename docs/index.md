@@ -1,4 +1,7 @@
 # Zero2Neuro
+<img SRC="../images/zero2neuro2.png" height="250" alt="Zero2Neuro Icon">
+
+
 
 Zero2Neuro is a no-code solution for constructing, training and
 evaluating Deep Neural Network (DNN) models for a wide range of modeling
@@ -18,6 +21,8 @@ supports the production of result reports in various formats,
 including hooks for [Weights and Biases](https://wandb.ai).
 
 ## Supported Environments
+
+You can execute Zero2Neuro in several different environments, depending on your needs:
 
 - Bash shell command line
 - Supercomputer using SLURM
@@ -61,6 +66,6 @@ Laboratory, Department of Computer Science, University of Oklahoma
 - [Examples](../examples/index.md)
 - [Modules](modules/index.md)
 - [Model Configuration](api/index.md)
-
+- [Weights and Biases Support](wandb.md)
 
 
