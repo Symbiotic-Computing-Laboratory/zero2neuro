@@ -1,7 +1,7 @@
 --data_format=tabular
 --data_columns_categorical_to_int
 Class:Iris-setosa,Iris-versicolor,Iris-virginica
---data_file=iris_data.csv
+--data_files=iris_data.csv
 --data_fold_split=random
 --data_set_type=holistic-cross-validation
 --data_n_folds=10

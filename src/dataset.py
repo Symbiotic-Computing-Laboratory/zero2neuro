@@ -125,6 +125,8 @@ class SuperDataSet:
                 self.args.data_files = [self.args.data_file]
         elif self.args.data_file is not None:
             assert False, "Cannot have both data_file and data_files specified"
+
+
         #####
         # Error checks
 
@@ -309,8 +311,6 @@ class SuperDataSet:
             fold_tuple = tuple(data_in_group) + (None,) * data_size_extra
             data_out.append(fold_tuple) 
 
-            print("@@@@@@")
-            print(fold_tuple)
             
         return data_out
 
@@ -840,9 +840,8 @@ class SuperDataSet:
         data = []
         
         for f in self.args.data_files:
-            
             ins, outs, weights, groups = self.load_table(self.args.dataset_directory,
-                                                         self.args.data_file,
+                                                         f,
                                                          self.args.data_inputs,
                                                          self.args.data_outputs,
                                                          self.args.data_weights,

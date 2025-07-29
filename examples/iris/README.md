@@ -2,6 +2,7 @@
 
 ## Data
 - File: [iris_data.csv](iris_data.csv)
+- Citation: [UCI Iris](https://archive.ics.uci.edu/dataset/53/iris)
 
 ## Network
 - Sparse Categorical
