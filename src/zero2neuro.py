@@ -48,14 +48,12 @@ def args2wandb_name(args)->str:
     #outstr = outstr + '_R%d'%args.rotation
 
     try:
-        output_name = args.experiment_name.format(args=args)
+        output_name = args.wandb_name.format(args=args)
     except (ValueError, AttributeError, KeyError) as e:
         print(e)
-        handle_error('Error: args.experiment_name (%s)'%
-                         args.experiment_name, args.debug)
+        handle_error('Error: args.wandb_name (%s)'%
+                         args.wandb_name, args.debug)
             
-        outstr = '%s/%s'%(args.results_path, output_file_base)
-        
     return output_name
 
 

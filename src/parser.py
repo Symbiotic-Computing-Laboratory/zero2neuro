@@ -103,6 +103,7 @@ def create_parser(description='Zero2Neuro'):
     # Weights and Biases (WandB)
     parser.add_argument('--wandb', action='store_true', help='Report to WandB')
     parser.add_argument('--wandb_project', type=str, default='Supernetwork', help='WandB project name')
+    parser.add_argument('--wandb_name', type=str, default='{args.experiment_name}', help='WandB experiment name')
     parser.add_argument('--note', type=str, default=None, help="Just text to give to WandB")
 
     # Network specification
