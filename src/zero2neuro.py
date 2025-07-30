@@ -43,12 +43,21 @@ def compatibility_checks(args):
 
     
 def args2wandb_name(args)->str:
-    # TODO: make generic like fbase
-    outstr = args.experiment_name
-    if args.rotation is not None:
-        outstr = outstr + '_R%d'%args.rotation
+    #outstr = args.experiment_name
+    #if args.rotation is not None:
+    #outstr = outstr + '_R%d'%args.rotation
 
-    return outstr
+    try:
+        output_name = args.experiment_name.format(args=args)
+    except (ValueError, AttributeError, KeyError) as e:
+        print(e)
+        handle_error('Error: args.experiment_name (%s)'%
+                         args.experiment_name, args.debug)
+            
+        outstr = '%s/%s'%(args.results_path, output_file_base)
+        
+    return output_name
+
 
 def args2fbase(args):
     '''
