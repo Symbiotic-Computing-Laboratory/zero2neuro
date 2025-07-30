@@ -63,7 +63,7 @@ Laboratory, Department of Computer Science, University of Oklahoma
 ## Links
 - [Requirements](requirements.md)
 - [Getting Started](getting_started.md)
-- [Examples](../examples/index.md)
+- [Examples](examples/index.md)
 - [Modules](modules/index.md)
 - [Model Configuration](api/index.md)
 - [Weights and Biases Support](wandb.md)
