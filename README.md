@@ -1,6 +1,8 @@
-# Zero2Neuro
 
-No-code solutions to deep networks.
+
+# <div style="display: flex; justify-content: center; align-items: center; height: 300px"> <img SRC="images/zero2neuro2.png" height="250" style="margin-right: 100px;" alt="Zero2Neuro Icon"> Zero2Neuro </div>
+
+
 
 ## Authors
 
