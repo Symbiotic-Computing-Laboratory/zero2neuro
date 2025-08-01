@@ -1,9 +1,23 @@
 # Example: Implementing the Exclusive OR (XOR) Function
 
 ## Data
-- File: [xor_data.csv](xor_data.csv)
+- XOR Data: [xor_data.csv](xor_data.csv)
+- Data configuration: [data.txt](data.txt)
 
 ## Network
 - Two binary inputs
-- One or more hidden layers
+- Two hidden layers: 20 and 10 hidden units
 - One binary output
+- Network configuration: [network.txt](network.txt)
+
+## Training Details
+- [experiment.txt](experiment.txt)
+
+## Training Process: Command Line
+```
+python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
+
+```
+
+## Training Process: SLURM Batch File
+- File: [batch.sh](batch.sh)

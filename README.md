@@ -15,34 +15,42 @@ Luke Sewell
 - Python environment with Keras3 and Tensorflow 2.xx
 
 
-## Getting Started
+## Quick Start
 
-Assumptions
-- TODO
-
-**1. Clone the Repositories**
+### 1. Clone the Repositories
 
 Place the repository clones inside of a common directory:
 - [Zero2Neuro](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
 - [Keras 3 Tools](https://github.com/Symbiotic-Computing-Laboratory/keras3_tools)
 
-**2. Declare Path**
-Add to your .bashrc file:
+### 2. Declare Path
+Execute:
 
-`export NEURO_REPOSITORY_PATH=/path/to/common/directory`
+```
+export NEURO_REPOSITORY_PATH=/path/to/common/directory
+```
 
-**3. Python Environment**
+### 3. Activate Python Environment
+
 Activate Keras 3 / Tensorflow xx environment
 
 Example:  
 `conda activate tf`
 
-**4. Example: XOR**
+### 4. Example: XOR
 
-Change your directory to: `examples/xor/`
+Change your directory:
+```
+cd examples/xor
+```
 
-Execute the batch script:  
-`./batch.sh`
+Execute:  
+```
+python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
+
+```
+
+- [Full XOR Description](examples/xor/README.md)
 
 
 ## Documentation
