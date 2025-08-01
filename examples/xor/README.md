@@ -14,6 +14,7 @@
 - [experiment.txt](experiment.txt)
 
 ## Training Process: Command Line
+Execute from the examples/xor/ directory:
 ```
 python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
 
