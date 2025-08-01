@@ -45,5 +45,5 @@ Execute the batch script:
 
 ## Documentation
 
-- [Zero2Neuro Documentatoin](docs/index.md)
+- [Zero2Neuro Documentation](docs/index.md)
 - [Zero2Neuro Presentation](https://docs.google.com/presentation/d/12ZBsMVq-6mW498PQZfDNP1_Mfu_3sIMWwnczJN84O5I/edit?usp=sharing)
