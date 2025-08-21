@@ -15,7 +15,12 @@ def create_parser(description='Zero2Neuro'):
 
     # Experiment details
     parser.add_argument('--experiment_name', type=str, default='experiment', help="Prefix for all output files");
+
+    # TODO: change to list
     parser.add_argument('--loss', type=str, default='mse', help="Loss function name")
+    # TODO: add loss_weights for model.compile step
+
+    # TODO: change to list of lists
     parser.add_argument('--metrics', nargs='+', type=str, default=[], help="Metrics to compute")
     parser.add_argument('--rotation', type=int, default=None, help='Expired')
     parser.add_argument('--epochs', type=int, default=100, help='Training epochs')
@@ -65,7 +70,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_seed', type=int, default=1138, help='Random seed used for shuffling data into folds')
 
     # TF Dataset configuration
-    parser.add_argument('--batch', type=int, default=1, help="Training set batch size")
+    parser.add_argument('--batch', type=int, default=None, help="Training set batch size")
     parser.add_argument('--prefetch', type=int, default=None, help="Number of batches to prefetch")
     parser.add_argument('--num_parallel_calls', type=int, default=4, help="Number of threads to use during batch construction")
     parser.add_argument('--cache', type=str, default=None, help="Cache (default: none; RAM: specify empty string; else specify file")
@@ -107,13 +112,18 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--note', type=str, default=None, help="Just text to give to WandB")
 
     # Network specification
-    parser.add_argument('--network_type', type=str, default=None, help='Type of network to create')
-    parser.add_argument('--network_test', action='store_true', help='Build the network, but nothing else')
+    parser.add_argument('--load_trained_model', type=str, default=None, help='Load a trained model instead of creating a new one')
     
+    parser.add_argument('--network_type', type=str, default=None, help='Type of network to create')
+    #parser.add_argument('--network_test', action='store_true', help='Build the network, but nothing else')
+
     parser.add_argument('--input_shape0', '--input_shape', nargs='+', type=int, default=[10], help='Shape of the network input')
     parser.add_argument('--hidden_activation', type=str, default='elu', help='Activation function for hidden fully-connected layers')
     parser.add_argument('--number_hidden_units', nargs='+', type=int, default=None, help='Number of hidden units per layer (sequence of ints)')
+
+    # TODO: parser.add_argument("--mylist", nargs='+', action='append', type=int)
     parser.add_argument('--output_shape0', '--output_shape', nargs='+', type=int, default=[10], help='Shape of the network output')
+
     parser.add_argument('--output_activation', type=str, default=None, help='Activation function for output layer')
     parser.add_argument('--batch_normalization', action='store_true', help='Turn on batch normalization')
 

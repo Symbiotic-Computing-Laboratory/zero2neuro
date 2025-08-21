@@ -53,22 +53,69 @@ SuperDataSet provides support for a range of different ways of
 constructing data sets, depending on what your goals are - all the
 way from only using a training set for a quick, informal exaperiment,
 to assembling multiple training, validation, and testing data sets to
-be used for formal evalution.
+be used for formal evalution, including _Cross-Validation_.
+
+___
+## Examples
 
 ___
 
-## Internal Data Representation
+## From Data Files to Data Sets
+
+The translation from a set of files to the training/validation/testing
+data sets is handled as a multi-step process, with two intermediate
+representations: _data tables_ and _data folds_.  Both intermedidate
+representations include all of the input/desired output examples, but
+serve different purposes in the model training process.  
 
 <img src="../../../images/superdataset_detail.png" height=350>
 
+The translation process is as follows:
 
-TODO: Short intro material for these concepts
+1. __File Loader__: Each data file is loaded into a single _data
+table_.  Each table consists of multiple input/desired output
+examples.
 
-### Numpy Arrays
+   a. Optional: each data table may be tagged as belong to a specific
+fold.
 
-TODO: inputs, outputs, weights, groups
+   b. Optional: each example within a table may be tagged as belonging
+to a specific fold.
 
-### TF-Dataset
+2. __Fold Generator__: the examples contained within the data tables
+are sorted into one or more _data folds_.
+
+   a. By default, one data table is assigned to one fold.
+
+   b. The examples may also be sorted by how they are tagged.
+
+3. __Dataset Generator__: Assembles training/validation/testing data
+sets by combining discrete data folds.  Specifically:
+
+   a. The training set is one or more folds
+
+   b. The validation set is zero or one fold
+
+   c. The testing set is zero or one fold
+
+   d. The exact assignment is determined by several different data set
+options.
+
+
+### Internal Representation
+
+Internally, data tables, data folds, and training/validation/testing
+data sets are represented internally in one of two ways:
+
+1. __Numpy Arrays__ are appropriate for small data sets that can be
+contained entirely within the available RAM.  This representation
+offers the most flexibility in how data are handled.
+
+2. __Tensorflow Datasets__ represent data sets as data processing
+pipelines.  These are most appropriate for large data sets, especially
+those that are expensive to load from disk.  This option allows for
+training of models to begin before all data are loaded from disk, and
+allow caching of data to high-speed storage.
 
 ___
 

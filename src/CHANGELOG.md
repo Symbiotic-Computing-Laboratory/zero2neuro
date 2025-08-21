@@ -2,16 +2,21 @@
 
 Use inverse order
 
-##2025-07-22 Andrew H. Fagg
+## 2025-08-20 Andrew H. Fagg
+* Changed use of print_debug() to match argument order of handle_error()
+* New standard: use args.debug for print_debug() and args.verbose for handle_error()
+* Added --load_trained_model, allowing the user to specify a model file instead of starting from scratch
+
+## 2025-07-22 Andrew H. Fagg
 SuperDataSet:
 * All numpy folds and data sets are now represented as 4-tuples.  Nones are used if a tuple entry has no data.
 
-##2025-07-17 Andrew H. Fagg
+## 2025-07-17 Andrew H. Fagg
 
 SuperDataSet:
 * Added args.data_columns_categorical_to_int_direct
 
-##2025-07-06 Andrew H. Fagg
+## 2025-07-06 Andrew H. Fagg
 
 SuperDataSet:
 * Data files are loaded into self.data (refer to these as *data tables*)

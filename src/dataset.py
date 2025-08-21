@@ -213,7 +213,7 @@ class SuperDataSet:
             
         
         #######
-        print_debug(1, self.args.debug, "TOTAL DATA FILES: %d"%len(self.data))
+        print_debug("TOTAL DATA FILES: %d"%len(self.data), 1, self.args.debug)
 
     def generate_folds(self):
         '''
@@ -230,8 +230,8 @@ class SuperDataSet:
         elif self.args.data_fold_split == 'group-by-file':
             if self.data_groups is not None:
                 # File-level groups are defined
-                print_debug(3, self.args.debug,
-                            'Data groups: ' + str(self.data_groups))
+                print_debug('Data groups: ' + str(self.data_groups), 3, self.args.debug)
+
                 if self.args.data_representation == 'numpy':
                     self.folds = self.generate_folds_by_group_numpy()
                 
@@ -272,7 +272,7 @@ class SuperDataSet:
             handle_error("data_fold_split %s not recognized."%self.args.data_fold_split, self.args.debug)
             
         self.nfolds = len(self.folds)
-        print_debug(1, self.args.debug, "TOTAL DATA FOLDS: %d"%len(self.folds))
+        print_debug("TOTAL DATA FOLDS: %d"%len(self.folds), 1, self.args.debug)
 
     def generate_folds_by_group_numpy(self):
         '''
@@ -288,17 +288,17 @@ class SuperDataSet:
         
         # Loop over every fold: 0 ... K-1
         ngroups = max(self.data_groups)+1
-        print_debug(2, self.args.verbose, "Number of fold groups: %d"%ngroups)
-        print_debug(2, self.args.verbose, "data_size: %d"%data_size)
+        print_debug("Number of fold groups: %d"%ngroups, 2, self.args.debug)
+        print_debug("data_size: %d"%data_size, 2, self.args.debug)
 
         for grp in range(ngroups):
             # Accumulate all of the elements into a new list (which will become a tuple)
             data_in_group = []
-            print_debug(3, self.args.verbose, "\tFold %d"%grp)
+            print_debug("\tFold %d"%grp, 3, self.args.debug)
             
             # Loop over every element in each data tuple (ins, outs, weights, groups)
             for i in range(data_size):
-                print_debug(3, self.args.verbose, "\t\tData %d"%i)
+                print_debug("\t\tData %d"%i, 3, self.args.debug)
                 
                 # Grab the numpy arrays for this element and every matching group
                 # Connect the rest of the data with the group number
@@ -323,7 +323,7 @@ class SuperDataSet:
 
         # Grab the number of folds. 
         nfolds = max(self.data_groups)+1
-        print_debug(2, self.args.debug, "Number of fold groups: %d"%nfolds)
+        print_debug("Number of fold groups: %d"%nfolds, 2, self.args.debug)
 
         # Loop over the data and datagroups, store the datasets for a specific group in datas
         for grp in range(nfolds):
@@ -365,13 +365,12 @@ class SuperDataSet:
             else:
                 handle_error("Dataset type not recognized (%s)."%self.args.self_data_set_type, self.args.debug)
 
-            # TODO: clean this up (should not be debug, it should be verbosity)
-            print_debug(4, self.args.debug, "Training Ins:" + str(self.ins_training))
-            print_debug(4, self.args.debug, "Training Outs:" + str(self.outs_training))
-            print_debug(4, self.args.debug, "Validation Ins:" + str(self.ins_validation))
-            print_debug(4, self.args.debug, "Validation Outs:" + str(self.outs_validation))
-            print_debug(4, self.args.debug, "Testing Ins:" + str(self.ins_testing))
-            print_debug(4, self.args.debug, "Testing Outs:" + str(self.outs_testing))
+            print_debug("Training Ins:" + str(self.ins_training), 4, self.args.debug)
+            print_debug("Training Outs:" + str(self.outs_training), 4, self.args.debug)
+            print_debug("Validation Ins:" + str(self.ins_validation), 4, self.args.debug)
+            print_debug("Validation Outs:" + str(self.outs_validation), 4, self.args.debug)
+            print_debug("Testing Ins:" + str(self.ins_testing), 4, self.args.debug)
+            print_debug("Testing Outs:" + str(self.outs_testing), 4, self.args.debug)
 
             # Create self.validation for model.fit
             self.validation = (self.ins_validation, self.outs_validation) if self.ins_validation is not None else None
@@ -743,8 +742,8 @@ class SuperDataSet:
         
         # Load all of the pickle files
         d_all = [SuperDataSet.load_pickle_file(self.args.dataset_directory, f) for f in self.args.data_files]
-        print_debug(2, self.args.debug, "Data file list: %d"%len(d_all))
-        print_debug(2, self.args.debug, "Data files: " + str(self.args.data_files))
+        print_debug("Data file list: %d"%len(d_all), 2, self.args.debug)
+        print_debug("Data files: " + str(self.args.data_files), 2, self.args.debug)
 
         # Iterate over all of these data sets: each is a dict
         for d in d_all:
@@ -1034,9 +1033,9 @@ class SuperDataSet:
             valfold = (nfolds - 2 + rotation) % nfolds
             testfold = (nfolds - 1 + rotation) % nfolds
 
-        print_debug(2, debug, "TRAINING FOLDS: " + str(trainfolds))
-        print_debug(2, debug, "VALIDATION FOLD: %d"%valfold)
-        print_debug(2, debug, "TESTING FOLD: %d"%testfold)
+        print_debug("TRAINING FOLDS: " + str(trainfolds), 2, debug)
+        print_debug("VALIDATION FOLD: %d"%valfold, 2, debug)
+        print_debug("TESTING FOLD: %d"%testfold, 2, debug)
         return trainfolds, valfold, testfold
 
     # method takes in a fold index, number of folds, and total number of variables in data

@@ -155,25 +155,30 @@ def execute_exp(sds, model, args):
     #  steps_per_epoch: how many batches from the training set do we use for training in one epoch?
     #          Note that if you use this, then you must repeat the training set
     #  validation_steps=None means that ALL validation samples will be used
-    
-    if args.data_format == 'tf-dataset':
-        history = model.fit(sds.training,
-                            steps_per_epoch=args.steps_per_epoch,
-                            epochs=args.epochs,
-                            validation_data=sds.validation,
-                            verbose=args.verbose>=3,
-                            callbacks=cbs)
-    else:
-        history = model.fit(sds.ins_training,
-                            sds.outs_training,
-                            sample_weight=sds.weights_training,
-                            steps_per_epoch=args.steps_per_epoch,
-                            epochs=args.epochs,
-                            batch_size=args.batch,
-                            validation_data=sds.validation,
-                            verbose=args.verbose>=3,
-                            callbacks=cbs)
-        
+
+    if args.epochs > 0:
+        # Train model
+        if args.data_format == 'tf-dataset':
+            # TF-Datasets
+            history = model.fit(sds.training,
+                                steps_per_epoch=args.steps_per_epoch,
+                                epochs=args.epochs,
+                                validation_data=sds.validation,
+                                verbose=args.verbose>=3,
+                                callbacks=cbs)
+        else:
+            # Numpy arrays
+            history = model.fit(sds.ins_training,
+                                sds.outs_training,
+                                sample_weight=sds.weights_training,
+                                steps_per_epoch=args.steps_per_epoch,
+                                epochs=args.epochs,
+                                batch_size=args.batch,
+                                validation_data=sds.validation,
+                                verbose=args.verbose>=3,
+                                callbacks=cbs)
+
+    #######
     # LOG RESULTS
 
     # List of evaluation measures
@@ -184,13 +189,18 @@ def execute_exp(sds, model, args):
     results = {}
     ######
     # Training
+    print_debug('Training eval', 4, args.debug)
     if args.data_format == 'tf-dataset':
         ev = model.evaluate(sds.training,
-                            steps=args.steps_per_epoch)
+                            steps=args.steps_per_epoch,
+                            batch_size=args.batch,
+                            )
     else:
         ev = model.evaluate(sds.ins_training,
                             sds.outs_training,
-                            steps=args.steps_per_epoch)
+                            steps=args.steps_per_epoch,
+                            batch_size=args.batch,
+                            )
     d = dict(zip(['training_'+s for s in eval_list], ev))
     results.update(d)
     
@@ -200,6 +210,7 @@ def execute_exp(sds, model, args):
     ######
     # Training set
     if args.log_training_set and args.data_representation == 'numpy':
+        print_debug('Training predict', 4, args.debug)
         # TODO: only works for not TF Datasets
         results['ins_training'] = sds.ins_training
         results['outs_training'] = sds.outs_training
@@ -296,17 +307,17 @@ def prepare_and_execute_experiment(args):
 
     ######
     # Fetch the dataset
-    if not args.network_test:
-        sds = SuperDataSet(args)
+    #if not args.network_test:
+    sds = SuperDataSet(args)
 
     ######
     # Create the model
     model = NetworkBuilder.args2model(args)
 
-    if args.network_test:
-        print(model.summary())
-        # Don't go any further
-        return
+    #if args.network_test:
+    #print(model.summary())
+    #    # Don't go any further
+    #    return
 
     
     ######

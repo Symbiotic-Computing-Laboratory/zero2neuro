@@ -13,4 +13,3 @@ mse
 --save_model
 --render_model
 --log_training_set
--dddd
