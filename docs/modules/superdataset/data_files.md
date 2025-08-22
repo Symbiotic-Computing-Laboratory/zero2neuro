@@ -1,4 +1,4 @@
-# Data Files  
+# Data File Formats
   
 ## Tabular  
 Tabular data format refers to a spreadsheet formatting of the data with rows and columns. Two popular types of tabular data files are .csv files and .xlsx files. When using tabular data you take the columns as the data's features and the rows as a specific point in the data. The individual cells inside of a row and column contain the data that is used by the model during experiments.

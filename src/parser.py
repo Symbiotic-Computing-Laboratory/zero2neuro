@@ -45,7 +45,8 @@ def create_parser(description='Zero2Neuro'):
 
     parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset')
     parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset')
-    parser.add_argument('--data_split', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, by-group, random, random-stratify, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
+    # TOOD: fix set of options
+    parser.add_argument('--data_split', type=str, default=None, help='Deprecated')
     parser.add_argument('--data_fold_split', type=str, default='identity', help='Split of data tables into folds (identity, group-by-file, group-by-example, random, random-stratify')
     parser.add_argument('--data_set_type', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
     
@@ -62,7 +63,9 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
     parser.add_argument('--data_weights', type=str, default=None, help='Column in the table that are the sample weights')
-    parser.add_argument('--data_groups', type=str, default=None, help='Column in the table that correspond to the dataset group')
+    parser.add_argument('--data_groups', '--data_folds', type=str, default=None, help='Column in the table that correspond to the dataset group')
+    parser.add_argument('--data_stratify', type=str, default=None, help='Column in the table that correspond to the stratification class')  # TODO: implement
+
     
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
     parser.add_argument('--data_columns_categorical_to_int', nargs='+', type=str, default=None, help='Translation of categorical variable to a unique integer in string order (line format: VAR NAME:STR0,STR1,STR2...')
