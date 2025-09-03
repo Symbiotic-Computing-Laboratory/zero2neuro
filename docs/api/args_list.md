@@ -1,3 +1,5 @@
+[Base Index](../index.md)  
+[Previous Index](index.md)  
 ## Note:  
 Arguments are being added, removed, and renamed often. To get the most up to date information look in [parser.py](../../src/parser.py).  
 The formatting for this arguments list is **Argument Call** | Description of argument | Expected variable type.  
