@@ -269,12 +269,56 @@ def execute_exp(sds, model, args):
     # Save results
     results['fname_base'] = fbase
     results['args'] = args
-    
+
     # Save history
     results['history'] = history.history
-
+     
     with open("%s_results.pkl"%(fbase), "wb") as fp:
         pickle.dump(results, fp)
+
+    if args.xlsx:
+        # Creates a writer for excel files.
+        writer = pd.ExcelWriter("%s_results.xlsx"%(fbase), engine='xlsxwriter')
+        
+        if args.log_training_set:
+            # Find out how many columns for to designate for each key and then append them to a list
+            predict_columns = []
+            for i in range(results['predict_training'].shape[1]):
+                predict_columns.append('Prediction_%i' % i)
+        
+            # Make a dataframe for each metric and designate the correct number of columns. (i.e [5, 6, 9] would need 3 columns)
+            df_tr_ins = pd.DataFrame(results['ins_training'], columns=args.data_inputs)
+            df_tr_outs = pd.DataFrame(results['outs_training'], columns=args.data_outputs)
+            df_tr_predict = pd.DataFrame(results['predict_training'], columns=predict_columns)
+    
+            # Combine the dataframes into one.
+            df_combined_training = pd.concat([df_tr_ins, df_tr_outs, df_tr_predict], axis=1)
+    
+            # Write the dataframe to the appropiate sheet in the excel file (This one is for training)
+            df_combined_training.to_excel(writer, sheet_name='Training Data', index=False)
+    
+        if args.log_validation_set:
+            predict_columns = []
+            for i in range(results['predict_validation'].shape[1]):
+                predict_columns.append('Prediction_%i' % i)
+            df_val_ins = pd.DataFrame(results['ins_validation'], columns=args.data_inputs)
+            df_val_outs = pd.DataFrame(results['outs_validation'], columns=args.data_outputs)
+            df_val_predict = pd.DataFrame(results['predict_validation'], columns=predict_columns)
+            df_combined_validation = pd.concat([df_val_ins, df_val_outs, df_val_predict], axis=1)
+            df_combined_validation.to_excel(writer, sheet_name='Validation Data', index=False)
+    
+        if args.log_test_set:
+            predict_columns = []
+            for i in range(results['predict_testing'].shape[1]):
+                predict_columns.append('Prediction_%i' % i)
+            df_test_ins = pd.DataFrame(results['ins_testing'], columns=args.data_inputs)
+            df_test_outs = pd.DataFrame(results['outs_testing'], columns=args.data_outputs)
+            df_test_predict = pd.DataFrame(results['predict_testing'], columns=predict_columns)
+            df_combined_validation = pd.concat([df_test_ins, df_test_outs, df_test_predict], axis=1)
+            df_combined_validation.to_excel(writer, sheet_name='Testing Data', index=False)
+    
+        # Create the excel file and save it.
+        writer.close()
 
     # Save model
     if args.save_model:
