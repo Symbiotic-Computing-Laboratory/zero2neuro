@@ -107,6 +107,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--log_training_set', action='store_true', default=False , help='Log the full training set in results')
     parser.add_argument('--log_validation_set', action='store_true', default=False , help='Log the full validation set in results')
     parser.add_argument('--log_test_set', action='store_true', default=False , help='Log the full test set in results')
+    parser.add_argument('--xlsx', action='store_true', default=False, help='WIP: Enable the ability to store results in xlsx file.')
 
     # Weights and Biases (WandB)
     parser.add_argument('--wandb', action='store_true', help='Report to WandB')

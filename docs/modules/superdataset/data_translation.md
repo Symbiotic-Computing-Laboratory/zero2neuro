@@ -1,3 +1,5 @@
+[Base Index](../../index.md)  
+[Previous Index](index.md)  
 # Data Translation
 
 ## Categorical Variables

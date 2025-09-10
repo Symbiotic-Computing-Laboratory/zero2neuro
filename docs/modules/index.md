@@ -1,3 +1,5 @@
+[Base Index](../index.md)   
+
 # Zero2Neuro Modules
 
 
@@ -14,5 +16,5 @@ python code by taking in user-defined .txt configuration files.
 ## Modules
 - [SuperDataSet](superdataset/index.md)
 - [Network Builder](networkbuilder/index.md)
-- [Zero2Neuro Engine](engine/index.md)
+- [Zero2Neuro Engine](zero2neuro/index.md)
 

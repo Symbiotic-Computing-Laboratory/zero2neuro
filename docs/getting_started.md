@@ -1,3 +1,4 @@
+[Base Index](index.md)    
 # Getting Started
 
 Assumptions
@@ -38,4 +39,8 @@ There are several other examples in `examples/` look at their README file for mo
 
 By now you should be ready to go with Zero2Neuro.  
   
-Find a dataset online or input your own and set up a model using the examples as references. 
+Find a dataset online or input your own and set up a model using the examples as references.
+
+**Supercomputer**
+  
+Zero2Neuro was built with supercomputer usage in mind. For information about OU's supercomputer Schooner and how to utilize it visit https://www.ou.edu/oscer. Examples provided in [/examples](../examples/) contain `batch.sh` files to use as examples for running jobs on Schooner.  
