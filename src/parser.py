@@ -107,7 +107,19 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--log_training_set', action='store_true', default=False , help='Log the full training set in results')
     parser.add_argument('--log_validation_set', action='store_true', default=False , help='Log the full validation set in results')
     parser.add_argument('--log_test_set', action='store_true', default=False , help='Log the full test set in results')
-    parser.add_argument('--xlsx', action='store_true', default=False, help='WIP: Enable the ability to store results in xlsx file.')
+
+    # Post: reporting
+    parser.add_argument('--report', action='store_true', default=False, help='Generate a report file (xlsx format)')
+
+    parser.add_argument('--report_training', action='store_true', default=False, help='Include the training data set results in the report')
+    parser.add_argument('--report_training_ins', action='store_true', default=False, help='Include the training data set inputs in the report')
+    
+    parser.add_argument('--report_validation', action='store_true', default=False, help='Include the validation data set results in the report')
+    parser.add_argument('--report_validation_ins', action='store_true', default=False, help='Include the validation data set inputs in the report')
+    
+    parser.add_argument('--report_testing', action='store_true', default=False, help='Include the testing data set results in the report')
+    parser.add_argument('--report_testing_ins', action='store_true', default=False, help='Include the testing data set inputs in the report')
+    
 
     # Weights and Biases (WandB)
     parser.add_argument('--wandb', action='store_true', help='Report to WandB')
