@@ -132,11 +132,11 @@ class SuperDataSet:
 
         # Must at least be a set of features for inputs
         if self.args.data_inputs is None:
-            handle_error('Must specify data_inputs', self.args.debug)
+            handle_error('Must specify data_inputs', self.args.verbose)
 
         # If there are weights, then there must also be outputs
         if (self.args.data_outputs is None) and (self.args.data_weights is not None):
-            handle_error("Must specify data_outputs if there are also data_weights", self.args.debug)
+            handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
 
         ####
         # Individual file strings could have: just file_name or file_name, data_group
@@ -147,12 +147,13 @@ class SuperDataSet:
         lengths = {len(row) for row in split_rows}
         
         if len(lengths) != 1:
+            # TODO
             raise ValueError(f"Inconsistent number of arguments in data_files: {sorted(lengths)}")
 
         # Gather by index in each list
         columns = list(map(list, zip(*split_rows)))
         if len(columns) > 2:
-            handle_error("Each string in data_files must either be just 'file name' or a 'file name, data group'", self.args.debug)
+            handle_error("Each string in data_files must either be just 'file name' or a 'file name, data group'", self.args.verbose)
 
         # Replace args.files with just the file names
         self.args.data_files = columns[0]
@@ -165,9 +166,9 @@ class SuperDataSet:
             try:
                 self.data_groups = [int(s) for s in columns[1]]
             except ValueError as e:
-                handle_error('data_files error parsing group', self.args.debug)
+                handle_error('data_files error parsing group', self.args.verbose)
             except TypeError as e:
-                handle_error('data_files error parsing group', self.args.debug)
+                handle_error('data_files error parsing group', self.args.verbose)
 
             # Check to see if any group numbers are missing
             missing = SuperDataSet.is_missing_values(self.data_groups)
@@ -209,12 +210,50 @@ class SuperDataSet:
         elif SuperDataSet.is_list_of_tf_datasets(self.data):
             pass
         else:
-            handle_error('Data must all be numpy arrays or all tf.data.Datasets', self.args.debug)
+            handle_error('Data must all be numpy arrays or all tf.data.Datasets', self.args.verbose)
             
+        
+        #######
+        # Check data tables for consistency
+        self.check_data_tables()
         
         #######
         print_debug("TOTAL DATA FILES: %d"%len(self.data), 1, self.args.debug)
 
+    def check_data_tables(self):
+        '''
+        Check in self.data that:
+        - For each numpy array, we must have equal numbers of examples in
+        ins, outs, weights, groups
+        
+        
+        '''
+
+        if not self.args.data_format is 'tf-dataset':
+            # Loop over each data table
+            for i, dt in enumerate(self.data):
+                n_examples = dt[0].shape[0]
+
+                # Check outs
+                if (dt[1] is not None) and (not (dt[1].shape[0] == n_examples)):
+                    handle_error('Data table %d: outputs has a different number of examples from inputs (%d vs %d)'%(i,d1[1].shape[0], n_examples),
+                                 self.args.verbose)
+                    
+
+                # Check weights
+                if (dt[2] is not None) and (not (dt[2].shape[0] == n_examples)):
+                    handle_error('Data table %d: weights has a different number of examples from inputs (%d vs %d)'%(i,d1[2].shape[0], n_examples),
+                                 self.args.verbose)
+                    
+                # Check groups
+                if (dt[3] is not None) and (not (dt[3].shape[0] == n_examples)):
+                    handle_error('Data table %d: groups has a different number of examples from inputs (%d vs %d)'%(i,d1[3].shape[0], n_examples),
+                                 self.args.verbose)
+                    
+
+
+            
+        
     def generate_folds(self):
         '''
         Generate folds from the input data tables
@@ -240,16 +279,18 @@ class SuperDataSet:
                     self.folds = self.generate_folds_by_group_tf()
 
             else:
-                    handle_error("No file-level groups defined", self.args.debug)
+                    handle_error("No file-level groups defined", self.args.verbose)
                 
                 
         elif self.args.data_fold_split == 'group-by-example':
             if self.args.data_representation == 'numpy':
                 # TODO: Andy
-                handle_error("data_fold_split group-by-example not yet supported", self.args.debug)            
+                handle_error("data_fold_split group-by-example not yet supported",
+                             self.args.verbose)            
                 
             else:
-                handle_error("data_fold_split group-by-example not supported for tf-dataset", self.args.debug)
+                handle_error("data_fold_split group-by-example not supported for tf-dataset",
+                             self.args.verbose)
                     
 
         elif self.args.data_fold_split == 'random':
@@ -257,19 +298,23 @@ class SuperDataSet:
                 self.generate_folds_random_numpy()
                 
             else:
-                handle_error("data_fold_split random not supported for tf-dataset", self.args.debug)
+                handle_error("data_fold_split random not supported for tf-dataset",
+                             self.args.verbose)
 
         
         elif self.args.data_fold_split == 'random-stratify':
             if self.args.data_representation == 'numpy':
                 # TODO: LUKE.  Need to think about whether we should just stratify based on the output or an arbitrary column
-                handle_error("data_fold_split random-stratify not yet supported", self.args.debug)
+                handle_error("data_fold_split random-stratify not yet supported",
+                             self.args.verbose)
                 
             else:
-                handle_error("data_fold_split random-stratify not supported for tf-dataset", self.args.debug)
+                handle_error("data_fold_split random-stratify not supported for tf-dataset",
+                             self.args.verbose)
 
         else:
-            handle_error("data_fold_split %s not recognized."%self.args.data_fold_split, self.args.debug)
+            handle_error("data_fold_split %s not recognized."%self.args.data_fold_split,
+                         self.args.verbose)
             
         self.nfolds = len(self.folds)
         print_debug("TOTAL DATA FOLDS: %d"%len(self.folds), 1, self.args.debug)
@@ -304,7 +349,16 @@ class SuperDataSet:
                 # Connect the rest of the data with the group number
                 data_and_group = zip(self.data, self.data_groups)
                 datas = [d[i] for d, g in data_and_group if g == grp]
+                
                 # Concatenate these together along the rows
+                strg = ''
+                for d in datas:
+                    if d is None:
+                        strg = strg + 'None, '
+                    else:
+                        strg = strg + str(d.shape)
+                print_debug('Data shape: ' + strg, 3, self.args.debug)
+                
                 data_in_group.append(np.concatenate(datas, axis=0))
 
             # Add this data group to the growing list, with extra None's if necessary
@@ -349,7 +403,7 @@ class SuperDataSet:
         '''
         
         if((self.folds is None) or (len(self.folds) == 0)):
-            handle_error("No folds specified", self.args.debug)
+            handle_error("No folds specified", self.args.verbose)
             
         if self.args.data_representation == "numpy":
             # Numpy representation
@@ -361,9 +415,11 @@ class SuperDataSet:
                 self.split_cross_validation()
             elif self.args.data_set_type == "orthogonalized-cross-validation":
                 # TODO
-                handle_error("Dataset type not yet supported (%s)."%self.args.self_data_set_type, self.args.debug)
+                handle_error("Dataset type not yet supported (%s)."%self.args.self_data_set_type,
+                             self.args.verbose)
             else:
-                handle_error("Dataset type not recognized (%s)."%self.args.self_data_set_type, self.args.debug)
+                handle_error("Dataset type not recognized (%s)."%self.args.self_data_set_type,
+                             self.args.verbose)
 
             print_debug("Training Ins:" + str(self.ins_training), 4, self.args.debug)
             print_debug("Training Outs:" + str(self.outs_training), 4, self.args.debug)
@@ -397,10 +453,12 @@ class SuperDataSet:
                 self.tf_split_cross_validation()
             elif self.args.data_set_type == "orthogonalized-cross-validation":
                 # TODO
-                handle_error('TF Datasets does not yet support orthogonalized-cross-validation.', self.args.debug)
+                handle_error('TF Datasets does not yet support orthogonalized-cross-validation.',
+                             self.args.verbose)
                 
             else:
-                handle_error('data_set_type not recognized (%s)'%self.data_set_type, self.args.debug)
+                handle_error('data_set_type not recognized (%s)'%self.data_set_type,
+                             self.args.verbose)
             
             #####
             # Handle final pipeline elements of training/validation/testing data sets
@@ -432,45 +490,60 @@ class SuperDataSet:
                     self.testing = self.testing.prefetch(self.args.prefetch)
             
         else:
-            handle_error("Unrecognized data_representation (%s)"%self.args.data_representation, self.args.debug)
+            handle_error("Unrecognized data_representation (%s)"%self.args.data_representation,
+                         self.args.verbose)
 
 
     def dataset_split_fixed(self):
         '''
         Assign one data group to each of training, validation, testing
+
         '''
+        # Number of data sets we have
         data_len = len(self.folds)
         
         if data_len > 3:
-            handle_error("Cannot exceed 3 data folds for data_set_type=fixed (we have %d)"%(len(self.folds)), self.args.debug)
+            handle_error("Cannot exceed 3 data folds for data_set_type=fixed (we have %d)"%(len(self.folds)),
+                         self.args.verbose)
 
         # Training set
+        # Ins
         self.ins_training = self.folds[0][0]
 
+        # Outs
         if len(self.data[0]) >= 2:
             self.outs_training = self.folds[0][1]
 
+        # Weights
         if len(self.data[0]) >= 3:
             self.weights_training = self.folds[0][2]
-            
+
+        # Validation set
         if data_len >= 2:
             # Validation set is fold #1
             self.validation=self.folds[1]
+            # Ins
             self.ins_validation = self.validation[0]
-            
+
+            # Outs
             if len(self.validation) >= 2:
                 self.outs_validation = self.validation[1]
-                
+
+            # Weights
             if len(self.validation) >= 3:
                 self.weights_validation = self.validation[2]
 
+        # Test set
         if data_len == 3:
             # Testing set
+            # Ins
             self.ins_testing = self.folds[2][0]
 
+            # Outs
             if len(self.folds[2]) >= 2:
                 self.outs_testing = self.folds[2][1]
-                
+
+            # Weights
             if len(self.folds[2]) >= 3:
                 self.weights_testing = self.folds[2][2]
     
@@ -478,7 +551,8 @@ class SuperDataSet:
         data_len = len(self.folds)
 
         if data_len > 3:
-            handle_error("Cannot exceed 3 data groups for split=fixed (we have %d)"%(len(self.data)), self.args.debug)
+            handle_error("Cannot exceed 3 data groups for split=fixed (we have %d)"%(len(self.data)),
+                         self.args.verbose)
 
         # Training set
         self.training = self.folds[0]
@@ -592,7 +666,8 @@ class SuperDataSet:
         '''
         if self.args.data_n_folds is not None:
             if not (self.args.data_n_folds == len(self.folds)):
-                handle_error("n_folds must match the number of loaded data folds", self.args.debug)
+                handle_error("n_folds must match the number of loaded data folds",
+                             self.args.verbose)
             nfolds = self.args.data_n_folds
         else:
             # Infer number of folds
@@ -607,7 +682,8 @@ class SuperDataSet:
         self.n_train_fodls = n_train_folds
             
         if(n_train_folds > nfolds-2):
-            handle_error("n_training_folds must be <= n_folds-2", self.args.debug)
+            handle_error("n_training_folds must be <= n_folds-2",
+                         self.args.verbose)
 
         rotation = self.args.data_rotation # get the rotation
         
@@ -618,6 +694,7 @@ class SuperDataSet:
                                                                       nfolds,
                                                                       rotation,
                                                                       self.args.data_set_type,
+                                                                      self.args.verbose,
                                                                       self.args.debug) 
         ## Training set
         # Inputs
@@ -653,10 +730,14 @@ class SuperDataSet:
             n_train_folds = nfolds - 2
             
         if(n_train_folds > nfolds-2):
-            handle_error("n_training_folds must be <= n_folds-2")
+            handle_error("n_training_folds must be <= n_folds-2",
+                         args.verbose)
         
         rotation = self.args.rotation # get the rotation
-        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation, self.args.data_split) # Call the function to get the fold indexes for each
+        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation,
+                                                                       self.args.data_split,
+                                                                       self.args.verbose,
+                                                                       self.args.debug) # Call the function to get the fold indexes for each
         
         # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
         val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
@@ -768,7 +849,7 @@ class SuperDataSet:
                             # There are some unrecognized categorical values
                             failed_values = np.unique(d[var][d_tmp_bad])
                             handle_error(f"data_columns_categorical_to_int error: unmapped values in key '{var}': {failed_values.tolist()}",
-                                         self.args.debug)
+                                         self.args.verbose)
 
                         # All okay - copy the updated numpy array over
                         d[var] = d_tmp
@@ -791,7 +872,9 @@ class SuperDataSet:
 
             # TODO: check the shapes of the resulting tuples
 
-            # Append this tuple to the dataset
+            # TODO: add group loading
+
+            # Append this tuple to the datasets list
             data.append(ds)
         
         return data
@@ -803,6 +886,7 @@ class SuperDataSet:
         '''
         from ChatGPT
         '''
+        # TODO: should : be , ?
         key, raw_values = s.split(":", 1)
         items = [item.strip() for item in raw_values.split(",")]
         return key.strip(), {v: i for i, v in enumerate(items)}
@@ -846,7 +930,7 @@ class SuperDataSet:
                                                          self.args.data_weights,
                                                          self.args.data_groups,
                                                          self.categorical_translation,
-                                                         self.args.debug)
+                                                         self.args.verbose)
             data.append((ins, outs, weights, groups))
         
         return data
@@ -861,7 +945,7 @@ class SuperDataSet:
                    data_weights:str,
                    data_groups:str,
                    categorical_translation:list[tuple[str, dict]]=None,
-                   debug_level:int=0):
+                   verbose_level:int=0):   
 
         # TODO: assume that file_name is absolute path if it is needed
         if dataset_path is None:
@@ -892,7 +976,7 @@ class SuperDataSet:
                         # There are some unrecognized categorical values
                         failed_values = original_values.loc[unmapped]
                         handle_error(f"data_columns_categorical_to_int error: unmapped values in column '{col}': {failed_values.unique().tolist()}",
-                                     debug_level)
+                                     verbose_level)
                     
                     
         ##
@@ -988,19 +1072,21 @@ class SuperDataSet:
 
     # method takes in the amount of training folds, total number of folds, and the rotation
     @staticmethod
-    def calculate_nfolds(n_train_folds:int, nfolds:int, rotation:int, data_split:str, debug:int=0):
+    def calculate_nfolds(n_train_folds:int, nfolds:int, rotation:int, data_split:str, verbose:int=0, debug:int=0):
         '''
         :param n_train_folds: Number of training folds
         :param nfolds: Total number of folds
         :param rotation: Cross-validation rotation
         :param data_split: Type of split (holistic-cross-validation, or hold-out-cross-validation)
-        :param debug: Debug level
+        :param debug: Debug level  
+        :param verbose: Verbosity level  
 
         :return: Tuple of [training fold list], validation fold, testing fold
         
         '''
         if nfolds < 3:
-            handle_error('Cross-valication requires at least 3 folds of data.', debug)
+            handle_error('Cross-valication requires at least 3 folds of data.',
+                         verbose)
 
         # TODO: Look at how rotations are handled (Should be rotations - 1 for this)
         if(data_split == 'hold-out-cross-validation'): 
@@ -1010,7 +1096,7 @@ class SuperDataSet:
             if (rotation >= nfolds-1) or (rotation < 0):
                 # Make error message and pass that along with debug level to the handle_error function.
                 message = 'Rotation can be a maximum of {}; it cannot be {}'.format(nfolds - 2, rotation)
-                handle_error(message, debug)
+                handle_error(message, verbose)
 
             trainfolds = ((np.arange(n_train_folds) + rotation) % (nfolds - 1))
 
@@ -1027,7 +1113,7 @@ class SuperDataSet:
             if (rotation >= nfolds) or (rotation < 0):
                 # Make error message and pass that along with debug level to the handle_error function.
                 message = 'Rotation can be a maximum of {} cannot be {}'.format(nfolds - 1, rotation)
-                handle_error(message, debug)
+                handle_error(message, verbose)
                 
             trainfolds = (np.arange(n_train_folds)+rotation) % nfolds
             valfold = (nfolds - 2 + rotation) % nfolds
