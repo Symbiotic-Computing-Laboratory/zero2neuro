@@ -129,6 +129,7 @@ def create_parser(description='Zero2Neuro'):
 
     # Network specification
     parser.add_argument('--load_trained_model', type=str, default=None, help='Load a trained model instead of creating a new one')
+    parser.add_argument('--optimizer', type=str, default='adam', help ='Optimizer used for model training.')
     
     parser.add_argument('--network_type', type=str, default=None, help='Type of network to create')
     #parser.add_argument('--network_test', action='store_true', help='Build the network, but nothing else')

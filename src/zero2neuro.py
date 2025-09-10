@@ -276,11 +276,11 @@ def execute_exp(sds, model, args):
     with open("%s_results.pkl"%(fbase), "wb") as fp:
         pickle.dump(results, fp)
 
-    if args.xlsx:
+    if args.report:
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_results.xlsx"%(fbase), engine='xlsxwriter')
         
-        if args.log_training_set:
+        if args.log_training_set and args.report_training :
             # Find out how many columns for to designate for each key and then append them to a list
             predict_columns = []
             for i in range(results['predict_training'].shape[1]):
@@ -297,7 +297,7 @@ def execute_exp(sds, model, args):
             # Write the dataframe to the appropiate sheet in the excel file (This one is for training)
             df_combined_training.to_excel(writer, sheet_name='Training Data', index=False)
     
-        if args.log_validation_set:
+        if args.log_validation_set and args.report_validation:
             predict_columns = []
             for i in range(results['predict_validation'].shape[1]):
                 predict_columns.append('Prediction_%i' % i)
@@ -307,7 +307,7 @@ def execute_exp(sds, model, args):
             df_combined_validation = pd.concat([df_val_ins, df_val_outs, df_val_predict], axis=1)
             df_combined_validation.to_excel(writer, sheet_name='Validation Data', index=False)
     
-        if args.log_test_set:
+        if args.log_test_set and args.report_testing:
             predict_columns = []
             for i in range(results['predict_testing'].shape[1]):
                 predict_columns.append('Prediction_%i' % i)

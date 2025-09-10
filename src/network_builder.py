@@ -37,7 +37,9 @@ class NetworkBuilder:
                                                                              batch_normalization=args.batch_normalization,
                                                                              learning_rate=args.learning_rate,
                                                                              loss=args.loss,
-                                                                             metrics=args.metrics)
+                                                                             metrics=args.metrics,
+                                                                             opt=args.optimizer)
+                
             elif args.network_type == 'cnn':
                 model = ConvolutionalNeuralNetwork.create_cnn_network(input_shape=args.input_shape0,
                                                                       conv_kernel_size=args.conv_kernel_size,
@@ -61,7 +63,8 @@ class NetworkBuilder:
                                                                       batch_normalization=args.batch_normalization,
                                                                       learning_rate=args.learning_rate,
                                                                       loss=args.loss,
-                                                                      metrics=args.metrics)
+                                                                      metrics=args.metrics,
+                                                                      opt=args.optimizer)
                                                
             else:
                 handle_error('Unsupported network type (%s)'%args.network_type, args.verbosity)
