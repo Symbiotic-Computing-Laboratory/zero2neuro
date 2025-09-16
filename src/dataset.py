@@ -428,8 +428,20 @@ class SuperDataSet:
             print_debug("Testing Ins:" + str(self.ins_testing), 4, self.args.debug)
             print_debug("Testing Outs:" + str(self.outs_testing), 4, self.args.debug)
 
+            # TODO: what happens if there are no outs?
             # Create self.validation for model.fit
-            self.validation = (self.ins_validation, self.outs_validation) if self.ins_validation is not None else None
+            if self.ins_validation is None:
+                # There is no validation data
+                self.validation = None
+            elif self.weights_validation is None:
+                # Ins/Outs only
+                self.validation = (self.ins_validation, self.outs_validation)
+            else:
+                # Ins/Outs/Weights
+                self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
+
+            # OLD IMPL
+            #self.validation = (self.ins_validation, self.outs_validation) if self.ins_validation is not None else None
 
         # TF-Datasets
         elif self.args.data_representation == "tf-dataset":
@@ -687,8 +699,6 @@ class SuperDataSet:
 
         rotation = self.args.data_rotation # get the rotation
         
-        #print("NFOLDS=%d; NTRAIN=%d; ROTATION=%d"%(nfolds, n_train_folds,rotation))
-
         # Call the function to get the fold indexes for each
         tr_folds, val_fold, test_fold = SuperDataSet.calculate_nfolds(n_train_folds,
                                                                       nfolds,

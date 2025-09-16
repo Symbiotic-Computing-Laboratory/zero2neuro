@@ -19,27 +19,45 @@ from keras.utils import plot_model
 
 def compatibility_checks(args):
     if args.data_output_sparse_categorical:
-        handle_error('data_output_sparse_categorical is no longer supported.  Use data_columns_categorical_to_int instead', args.debug)
+        handle_error('data_output_sparse_categorical is no longer supported.  Use data_columns_categorical_to_int instead', args.verbose)
 
     if args.data_split is not None:
-        handle_error('data_split is no longer supported.  Use data_fold_split and data_set_type', args.debug)
+        handle_error('data_split is no longer supported.  Use data_fold_split and data_set_type', args.verbose)
 
     if args.n_folds is not None:
-        handle_error('n_folds is no longer supported.  Use data_n_folds', args.debug)
+        handle_error('n_folds is no longer supported.  Use data_n_folds', args.verbose)
         
     if args.n_training_folds is not None:
-        handle_error('n_training_folds is no longer supported.  Use data_n_training_folds', args.debug)
+        handle_error('n_training_folds is no longer supported.  Use data_n_training_folds', args.verbose)
         
     if args.training_mode is not None:
-        handle_error('training_mode is no longer supported', args.debug)
+        handle_error('training_mode is no longer supported', args.verbose)
 
     if not args.data_representation in ['numpy', 'tf-dataset']:
-
-
-        handle_error("data_representation must be either numpy or tf-dataset", args.debug)
+        handle_error("data_representation must be either numpy or tf-dataset", args.verbose)
 
     if args.rotation is not None:
-        handle_error("rotation is expired.  Use data_rotation instead", args.debug)
+        handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
+
+    # reporting relies on logging
+    if args.report_training and not args.log_training:
+        handle_error("If report_training=True, then log_training must also be True", args.verbose)
+
+    if args.report_validation and not args.log_validation:
+        handle_error("If report_validation=True, then log_validation must also be True", args.verbose)
+
+    if args.report_testing and not args.log_testing:
+        handle_error("If report_testing=True, then log_testing must also be True", args.verbose)
+
+    # reporting_ins relies on reporting
+    if args.report_training_ins and not args.report_training:
+        handle_error("If report_training_ins=True, then report_training must also be True", args.verbose)
+
+    if args.report_validation_ins and not args.report_validation:
+        handle_error("If report_validation_in=True, then report_validation must also be True", args.verbose)
+
+    if args.report_testing_ins and not args.report_testing:
+        handle_error("If report_testing_in=True, then report_testing must also be True", args.verbose)
 
     
 def args2wandb_name(args)->str:
