@@ -236,18 +236,18 @@ class SuperDataSet:
 
                 # Check outs
                 if (dt[1] is not None) and (not (dt[1].shape[0] == n_examples)):
-                    handle_error('Data table %d: outputs has a different number of examples from inputs (%d vs %d)'%(i,d1[1].shape[0], n_examples),
+                    handle_error('Data table %d: outputs has a different number of examples from inputs (%d vs %d)'%(i,dt[1].shape[0], n_examples),
                                  self.args.verbose)
                     
 
                 # Check weights
                 if (dt[2] is not None) and (not (dt[2].shape[0] == n_examples)):
-                    handle_error('Data table %d: weights has a different number of examples from inputs (%d vs %d)'%(i,d1[2].shape[0], n_examples),
+                    handle_error('Data table %d: weights has a different number of examples from inputs (%d vs %d)'%(i,dt[2].shape[0], n_examples),
                                  self.args.verbose)
                     
                 # Check groups
                 if (dt[3] is not None) and (not (dt[3].shape[0] == n_examples)):
-                    handle_error('Data table %d: groups has a different number of examples from inputs (%d vs %d)'%(i,d1[3].shape[0], n_examples),
+                    handle_error('Data table %d: groups has a different number of examples from inputs (%d vs %d)'%(i,dt[3].shape[0], n_examples),
                                  self.args.verbose)
                     
 
