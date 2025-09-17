@@ -40,14 +40,14 @@ def compatibility_checks(args):
         handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
 
     # reporting relies on logging
-    if args.report_training and not args.log_training:
-        handle_error("If report_training=True, then log_training must also be True", args.verbose)
+    if args.report_training and not args.log_training_set:
+        handle_error("If report_training=True, then log_training_set must also be True", args.verbose)
 
-    if args.report_validation and not args.log_validation:
-        handle_error("If report_validation=True, then log_validation must also be True", args.verbose)
+    if args.report_validation and not args.log_validation_set:
+        handle_error("If report_validation=True, then log_validation_set must also be True", args.verbose)
 
-    if args.report_testing and not args.log_testing:
-        handle_error("If report_testing=True, then log_testing must also be True", args.verbose)
+    if args.report_testing and not args.log_testing_set:
+        handle_error("If report_testing=True, then log_testing_set must also be True", args.verbose)
 
     # reporting_ins relies on reporting
     if args.report_training_ins and not args.report_training:
