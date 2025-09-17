@@ -233,6 +233,12 @@ class SuperDataSet:
             # Loop over each data table
             for i, dt in enumerate(self.data):
                 n_examples = dt[0].shape[0]
+                print_debug("TABLE %d: ins_shape=%s, out_shape=%s, weights_shape=%s, groups_shape=%s"%(i,
+                                                                                                       None if dt[0] is None else dt[0].shape,
+                                                                                                       None if dt[1] is None else dt[1].shape,
+                                                                                                       None if dt[2] is None else dt[2].shape,
+                                                                                                       None if dt[3] is None else dt[3].shape),
+                            4, self.args.debug)
 
                 # Check outs
                 if (dt[1] is not None) and (not (dt[1].shape[0] == n_examples)):
