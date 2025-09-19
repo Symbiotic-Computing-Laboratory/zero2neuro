@@ -790,13 +790,22 @@ class SuperDataSet:
                 }
 
     @staticmethod
-    def load_tabular_file(file_name:str):
+    def load_tabular_file(file_name:str, col_range:[int]=None, col_list:[int]=None, skiprows:int=None):
         '''
         Load a CSV or XLSX file
         '''
         if file_name[-3:] == 'csv':
             print("CSV file")
-            df = pd.read_csv(file_name)
+
+            # Figure out which columns to use
+            cols = None
+            if col_range is not None:
+                cols=range(col_range[0], col_range[1]+1)
+            elif col_list is not None:
+                cols = col_list
+
+            # Read the CSV file
+            df = pd.read_csv(file_name, usecols=cols, skiprows=skiprows)
         
         elif file_name[-4:] == 'xlsx':
             # TODO
@@ -946,7 +955,11 @@ class SuperDataSet:
                                                          self.args.data_weights,
                                                          self.args.data_groups,
                                                          self.categorical_translation,
-                                                         self.args.verbose)
+                                                         self.args.verbose,
+                                                         tabular_column_range=self.args.tabular_column_range,
+                                                         tabular_column_list=self.args.tabular_column_list,
+                                                         tabular_header_row=self.args.tabular_header_row,
+                                                         debug=self.args.debug)
             data.append((ins, outs, weights, groups))
         
         return data
@@ -961,7 +974,11 @@ class SuperDataSet:
                    data_weights:str,
                    data_groups:str,
                    categorical_translation:list[tuple[str, dict]]=None,
-                   verbose_level:int=0):   
+                   verbose_level:int=0,
+                   tabular_column_range=None,
+                   tabular_column_list=None,
+                   tabular_header_row=None,
+                   debug=0):   
 
         # TODO: assume that file_name is absolute path if it is needed
         if dataset_path is None:
@@ -970,7 +987,10 @@ class SuperDataSet:
             # Fix path construction for any OS
             file_path = '%s/%s'%(dataset_path, file_name)
             
-        df = SuperDataSet.load_tabular_file(file_path)
+        df = SuperDataSet.load_tabular_file(file_path,
+                                            col_range=tabular_column_range,
+                                            col_list=tabular_column_list,
+                                            skiprows=tabular_header_row)
 
         ##
         # Translate dataframe columns for categorical variables
@@ -1004,27 +1024,42 @@ class SuperDataSet:
         output_mapping = None
         
         if len(input_columns) > 0:
+            # Check that all of the input columns are in the table
+            diff = set(input_columns) - set(df.columns)
+            
+            if len(diff) > 0:
+                handle_error("Columns %s not in file %s"%(str(diff), file_name), verbose_level)
+
+            # Extract their values
             ins = df[input_columns].values
 
         if len(output_columns) > 0:
-            #assert len(output_columns) == 1, "Dataset only supports a single output column"
-            
-            #if output_sparse_categorical:
-            ## Interpret the column as sparse categorical
-            #categories = df[output_columns[0]].astype(pd.CategoricalDtype()).cat
-            #output_mapping = dict(enumerate(categories.categories))
-            #outs = categories.codes.astype(pd.SparseDtype("int", fill_value=-1)).values
-                
-            #else:
             # Interpret as ints or floats
+            print_debug("Table dataframe columns: %s"%(df.columns), 4, debug)
+
+            # Check that the output columns are all in the table
+            diff = set(output_columns) - set(df.columns)
+            if len(diff) > 0:
+                handle_error("Columns %s not in %s"%(str(diff), file_name), verbose_level)
+            
             outs = df[output_columns].values
 
         # Some datasets will have weights associated with each example
         if data_weights is not None:
+            # Check that the column exists
+            if not data_weights in df.columns:
+                handle_error("Column %s not in %s"%(data_weights, file_name), verbose_level)
+
+            # Get the data
             weights = df[data_weights].values
 
         # Dataset groups
         if data_groups is not None:
+            # Check that the column exists
+            if not data_groups in df.columns:
+                handle_error("Column %s not in %s"%(data_weights, file_name), verbose_level)
+
+            # Get the data
             groups = df[data_groups].values
 
         return ins, outs, weights, groups
@@ -1037,7 +1072,10 @@ class SuperDataSet:
                                                                     self.args.data_file,
                                                                     self.args.data_inputs,
                                                                     self.args.data_outputs,
-                                                                    self.args.data_output_sparse_categorical)
+                                                                    self.args.data_output_sparse_categorical,
+                                                                    tabular_column_range=self.args.tabular_column_range,
+                                                                    tabular_column_list=self.args.tabular_column_list,
+                                                                    tabular_header_row=self.args.tabular_header_row)
         self.output_mapping = output_mapping
         return [(ins, outs)] # TODO: add sample weights and group
 
@@ -1047,10 +1085,17 @@ class SuperDataSet:
                                    file_name:str,
                                    input_columns:[str],
                                    output_columns:[str],
-                                   output_sparse_categorical:bool=False):
+                                   output_sparse_categorical:bool=False,
+                                   tabular_column_range=None,
+                                   tabular_column_list=None,
+                                   tabular_header_row=None):
 
         # Load the table
-        df = SuperDataSet.load_tabular_file(file_name)
+        df = SuperDataSet.load_tabular_file(file_name,
+                                            col_range=tabular_column_range,
+                                            col_list=tabular_column_list,
+                                            skiprows=tabular_header_row)
+        
         print(df['File'][0])
 
         ins = None

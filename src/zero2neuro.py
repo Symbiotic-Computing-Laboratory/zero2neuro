@@ -59,6 +59,10 @@ def compatibility_checks(args):
     if args.report_testing_ins and not args.report_testing:
         handle_error("If report_testing_in=True, then report_testing must also be True", args.verbose)
 
+    # Check tabular arguments
+    if args.tabular_column_range is not None and args.tabular_column_list is not None:
+        handle_error("Can only provide at most one of tabular_column_range or tabular_column_list", args.verbose)
+
     
 def args2wandb_name(args)->str:
     #outstr = args.experiment_name

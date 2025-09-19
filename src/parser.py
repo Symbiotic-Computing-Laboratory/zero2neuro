@@ -43,12 +43,12 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--dataset_directory', type=str, default=None, help='Data set location')
     parser.add_argument('--training_mode', type=str, default=None, help='EXPIRED')
 
-    parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset')
-    parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset')
+    parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset)')
+    parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset)')
     # TOOD: fix set of options
     parser.add_argument('--data_split', type=str, default=None, help='Deprecated')
-    parser.add_argument('--data_fold_split', type=str, default='identity', help='Split of data tables into folds (identity, group-by-file, group-by-example, random, random-stratify')
-    parser.add_argument('--data_set_type', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation')
+    parser.add_argument('--data_fold_split', type=str, default='identity', help='Split of data tables into folds (identity, group-by-file, group-by-example, random, random-stratify)')
+    parser.add_argument('--data_set_type', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation)')
     
     parser.add_argument('--n_folds', type=int, default=None, help='EXPIRED.  Use data_n_folds')
     parser.add_argument('--n_training_folds', type=int, default=None, help='EXPIRED Use data_n_training_folds')
@@ -65,6 +65,11 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_weights', type=str, default=None, help='Column in the table that are the sample weights')
     parser.add_argument('--data_groups', '--data_folds', type=str, default=None, help='Column in the table that correspond to the dataset group')
     parser.add_argument('--data_stratify', type=str, default=None, help='Column in the table that correspond to the stratification class')  # TODO: implement
+
+    # For tabular data, control which row/col the headers are
+    parser.add_argument('--tabular_header_row', type=int, default=None, help='Row that contains the table headers (0/None = first row; the following row is the start of the data)')
+    parser.add_argument('--tabular_column_range', nargs=2, type=int, default=None, help='Column range that contains the headers/data ([10,15] means use columns 10,11,12,13,14,15)')
+    parser.add_argument('--tabular_column_list', nargs='+', type=int, default=None, help='List of column range that contain the headers/data')
 
     
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')

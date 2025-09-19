@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## 2025-09-18 Andrew H. Fagg
+* Added row and column offsets for tabular data (csv only right now)
+
 ## 2025-08-20 Andrew H. Fagg
 * Changed use of print_debug() to match argument order of handle_error()
 * New standard: use args.debug for print_debug() and args.verbose for handle_error()
