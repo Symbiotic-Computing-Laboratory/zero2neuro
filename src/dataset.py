@@ -751,7 +751,7 @@ class SuperDataSet:
             
         # Weights
         if self.folds[tr_folds[0]][2] is not None:
-            self.outs_training = np.concatenate([self.folds[f][2] for f in tr_folds], axis=0)
+            self.weights_training = np.concatenate([self.folds[f][2] for f in tr_folds], axis=0)
             
         ## Validation
         self.ins_validation, self.outs_validation, self.weights_validation, _ = self.folds[val_fold]
