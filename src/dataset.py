@@ -374,6 +374,13 @@ class SuperDataSet:
             
         return data_out
 
+    @staticmethod
+    def shape2str(mat:np.array)->str:
+        if mat is None:
+            return 'None'
+        else:
+            return str(mat.shape)
+
     def generate_folds_by_group_tf(self):
         '''
         Folds by file group for tf datasets
@@ -427,12 +434,34 @@ class SuperDataSet:
                 handle_error("Dataset type not recognized (%s)."%self.args.self_data_set_type,
                              self.args.verbose)
 
-            print_debug("Training Ins:" + str(self.ins_training), 4, self.args.debug)
-            print_debug("Training Outs:" + str(self.outs_training), 4, self.args.debug)
-            print_debug("Validation Ins:" + str(self.ins_validation), 4, self.args.debug)
-            print_debug("Validation Outs:" + str(self.outs_validation), 4, self.args.debug)
-            print_debug("Testing Ins:" + str(self.ins_testing), 4, self.args.debug)
-            print_debug("Testing Outs:" + str(self.outs_testing), 4, self.args.debug)
+            print_debug("Training Ins:" + SuperDataSet.shape2str(self.ins_training), 4, self.args.debug)
+            print_debug("Training Ins:" + str(self.ins_training), 5, self.args.debug)
+            
+            print_debug("Training Outs:" + SuperDataSet.shape2str(self.outs_training), 4, self.args.debug)
+            print_debug("Training Outs:" + str(self.outs_training), 5, self.args.debug)
+            
+            print_debug("Training Weights:" + SuperDataSet.shape2str(self.weights_training), 4, self.args.debug)
+            print_debug("Training Weights:" + str(self.weights_training), 5, self.args.debug)
+
+            
+            print_debug("Validation Ins:" + SuperDataSet.shape2str(self.ins_validation), 4, self.args.debug)
+            print_debug("Validation Ins:" + str(self.ins_validation), 5, self.args.debug)
+            
+            print_debug("Validation Outs:" + SuperDataSet.shape2str(self.outs_validation), 4, self.args.debug)
+            print_debug("Validation Outs:" + str(self.outs_validation), 5, self.args.debug)
+
+            print_debug("Validation Weights:" + SuperDataSet.shape2str(self.weights_validation), 4, self.args.debug)
+            print_debug("Validation Weights:" + str(self.weights_validation), 5, self.args.debug)
+
+            
+            print_debug("Testing Ins:" + SuperDataSet.shape2str(self.ins_testing), 4, self.args.debug)
+            print_debug("Testing Ins:" + str(self.ins_testing), 5, self.args.debug)
+            
+            print_debug("Testing Outs:" + SuperDataSet.shape2str(self.outs_testing), 4, self.args.debug)
+            print_debug("Testing Outs:" + str(self.outs_testing), 5, self.args.debug)
+
+            print_debug("Testing Weights:" + SuperDataSet.shape2str(self.weights_testing), 4, self.args.debug)
+            print_debug("Testing Weights:" + str(self.weights_testing), 5, self.args.debug)
 
             # TODO: what happens if there are no outs?
             # Create self.validation for model.fit
