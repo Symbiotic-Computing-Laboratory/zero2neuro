@@ -111,7 +111,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--no-save_model', action='store_false', dest='save_model', help='Do not save a model file')
     parser.add_argument('--log_training_set', action='store_true', default=False , help='Log the full training set in results')
     parser.add_argument('--log_validation_set', action='store_true', default=False , help='Log the full validation set in results')
-    parser.add_argument('--log_test_set', action='store_true', default=False , help='Log the full test set in results')
+    parser.add_argument('--log_testing_set', action='store_true', default=False , help='Log the full test set in results')
 
     # Post: reporting
     parser.add_argument('--report', action='store_true', default=False, help='Generate a report file (xlsx format)')

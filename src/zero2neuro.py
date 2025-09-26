@@ -63,6 +63,15 @@ def compatibility_checks(args):
     if args.tabular_column_range is not None and args.tabular_column_list is not None:
         handle_error("Can only provide at most one of tabular_column_range or tabular_column_list", args.verbose)
 
+    # Check that results path exists
+    if not os.path.exists(args.results_path):
+        handle_error("results_path must exist", args.verbose)
+        
+    if not os.path.isdir(args.results_path):
+        handle_error("results_path must be a directory", args.verbose)
+        
+    
+
     
 def args2wandb_name(args)->str:
     #outstr = args.experiment_name
@@ -274,7 +283,7 @@ def execute_exp(sds, model, args):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_test_set and args.data_representation == 'numpy':
+        if args.log_testing_set and args.data_representation == 'numpy':
             # TODO: only works for not TF Datasets
             results['ins_testing'] = sds.ins_testing
             results['outs_testing'] = sds.outs_testing
@@ -329,7 +338,7 @@ def execute_exp(sds, model, args):
             df_combined_validation = pd.concat([df_val_ins, df_val_outs, df_val_predict], axis=1)
             df_combined_validation.to_excel(writer, sheet_name='Validation Data', index=False)
     
-        if args.log_test_set and args.report_testing:
+        if args.log_testing_set and args.report_testing:
             predict_columns = []
             for i in range(results['predict_testing'].shape[1]):
                 predict_columns.append('Prediction_%i' % i)
