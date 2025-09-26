@@ -300,7 +300,7 @@ def execute_exp(sds, model, args):
 
     if args.report:
         # Creates a writer for excel files.
-        writer = pd.ExcelWriter("%s_results.xlsx"%(fbase), engine='xlsxwriter')
+        writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
         
         if args.log_training_set and args.report_training :
             # Find out how many columns for to designate for each key and then append them to a list
