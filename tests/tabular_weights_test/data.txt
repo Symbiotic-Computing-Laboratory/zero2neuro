@@ -1,0 +1,12 @@
+--data_format=tabular
+--data_files
+xor_data.csv
+xor_data.csv
+xor_data.csv
+--data_set_type=fixed
+--data_inputs
+In 0
+In 1
+--data_outputs
+Out 0
+--data_weights=weights
