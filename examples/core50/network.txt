@@ -3,6 +3,11 @@
 128
 128
 3
+--conv_pool_average_size
+2
+0
+0
+0
 --conv_kernel_size
 3
 3

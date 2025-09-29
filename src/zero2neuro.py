@@ -109,7 +109,7 @@ def args2fbase(args):
         # TODO: need to check that the format string is valid
         try:
             output_file_base = args.output_file_base.format(args=args)
-        except (ValueError, AttributeError, KeyError) as e:
+        except (ValueError, AttributeError, TypeError, KeyError) as e:
             print(e)
             handle_error('Error: args.output_file_base cannot be parsed (%s)'%
                          args.output_file_base, args.debug)

@@ -1,5 +1,5 @@
---training_mode=training_only
---data_format=tabular_indirect
+--data_format=tabular-indirect
+--data_set_type=fixed
 --data_file=images.csv
 --data_inputs
 File

@@ -154,7 +154,8 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--conv_number_filters', nargs='+', type=int, default=None, help='Convolution filters (base, output)')
 
     
-    parser.add_argument('--conv_pool_size', nargs='+', type=int, default=None, help='Max pooling size (0=None)')
+    parser.add_argument('--conv_pool_size', nargs='+', type=int, default=None, help='Max pooling size (default=None)')
+    parser.add_argument('--conv_pool_average_size', nargs='+', type=int, default=None, help='Averaging pooling size (default=None)')
     parser.add_argument('--conv_padding', type=str, default='valid', help='Padding type for convolutional layers')
     parser.add_argument('--conv_activation', type=str, default='elu', help='Activation function for convolutional layers')
     parser.add_argument('--conv_batch_normalization', action='store_true', help='Turn on batch normalization for convolutional layers')

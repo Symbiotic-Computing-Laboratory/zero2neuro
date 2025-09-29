@@ -46,6 +46,7 @@ class NetworkBuilder:
                                                                       conv_padding=args.conv_padding,
                                                                       conv_number_filters=args.conv_number_filters,
                                                                       conv_activation=args.conv_activation,
+                                                                      conv_pool_average_size=args.conv_pool_average_size,
                                                                       conv_pool_size=args.conv_pool_size,
                                                                       conv_strides=args.conv_strides,
                                                                       spatial_dropout=args.spatial_dropout,

@@ -428,10 +428,10 @@ class SuperDataSet:
                 self.split_cross_validation()
             elif self.args.data_set_type == "orthogonalized-cross-validation":
                 # TODO
-                handle_error("Dataset type not yet supported (%s)."%self.args.self_data_set_type,
+                handle_error("Dataset type not yet supported (%s)."%self.args.data_set_type,
                              self.args.verbose)
             else:
-                handle_error("Dataset type not recognized (%s)."%self.args.self_data_set_type,
+                handle_error("Dataset type not recognized (%s)."%self.args.data_set_type,
                              self.args.verbose)
 
             print_debug("Training Ins:" + SuperDataSet.shape2str(self.ins_training), 4, self.args.debug)
