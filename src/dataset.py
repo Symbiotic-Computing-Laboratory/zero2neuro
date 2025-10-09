@@ -237,7 +237,7 @@ class SuperDataSet:
         
         '''
 
-        if not self.args.data_format is 'tf-dataset':
+        if self.args.data_format != 'tf-dataset':
             # Loop over each data table
             for i, dt in enumerate(self.data):
                 n_examples = dt[0].shape[0]
