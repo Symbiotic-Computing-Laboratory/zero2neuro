@@ -59,6 +59,9 @@ class SuperDataSet:
         self.n_train_folds = None
         self.categorical_translation = None
 
+        # XLSX files
+        self.data_xlsx_sheet_names = None
+
         # Load data
         self.load_data()
         
@@ -140,6 +143,7 @@ class SuperDataSet:
 
         ####
         # Individual file strings could have: just file_name or file_name, data_group
+        #   or file_name, data_group, sheet_name
         # Parse these out
         split_rows = [re.split(r'[,\s]+', s.strip()) for s in self.args.data_files]
 
@@ -152,14 +156,14 @@ class SuperDataSet:
 
         # Gather by index in each list
         columns = list(map(list, zip(*split_rows)))
-        if len(columns) > 2:
-            handle_error("Each string in data_files must either be just 'file name' or a 'file name, data group'", self.args.verbose)
+        if len(columns) > 3:
+            handle_error("Each string in data_files must either be just 'file name' or a 'file name, data group or a 'file name, data group, sheet name''", self.args.verbose)
 
         # Replace args.files with just the file names
         self.args.data_files = columns[0]
         
         # Second argument must be ints
-        if len(columns) == 2:
+        if len(columns) >= 2:
             # This argument exists
             # TODO: Check to make sure data groups start at 0 and increment by 1
             # Convert to ints
@@ -175,6 +179,10 @@ class SuperDataSet:
             if missing is not None:
                 raise ValueError(f'data_files missing groups: {missing}')
 
+        # Third argument must is strings (used for xlsx files)
+        if len(columns) >= 3:
+            # This argument exists
+            self.data_xlsx_sheet_names = [s for s in columns[2]]
 
         #######
         # We are assuming that all files are the same format.  
@@ -819,7 +827,11 @@ class SuperDataSet:
                 }
 
     @staticmethod
-    def load_tabular_file(file_name:str, col_range:[int]=None, col_list:[int]=None, skiprows:int=None):
+    def load_tabular_file(file_name:str,
+                          col_range:[int]=None,
+                          col_list:[int]=None,
+                          skiprows:int=None,
+                          sheet_name:str=None):
         '''
         Load a CSV or XLSX file
         '''
@@ -834,11 +846,29 @@ class SuperDataSet:
                 cols = col_list
 
             # Read the CSV file
-            df = pd.read_csv(file_name, usecols=cols, skiprows=skiprows)
+            df = pd.read_csv(file_name,
+                             usecols=cols,
+                             skiprows=skiprows)
         
         elif file_name[-4:] == 'xlsx':
-            # TODO
             print("XLSX file")
+
+            # Figure out which columns to use
+            cols = None
+            if col_range is not None:
+                cols=range(col_range[0], col_range[1]+1)
+            elif col_list is not None:
+                cols = col_list
+
+            xlsx = pd.ExcelFile(file_name)
+            if not sheet_name in xlsx.sheet_names:
+                handle_error("Sheet name %s is not contained in data file %s"%(sheet_name, file_name))
+                
+            df = pd.read_excel(xlsx,
+                               usecols=cols,
+                               skiprows=skiprows,
+                               sheet_name=sheet_name or 0)
+            
 
         else:
             assert False, "File type not recognized (%s)"%file_name
@@ -975,8 +1005,12 @@ class SuperDataSet:
 
         ####
         data = []
+
+        # List of file name, sheet name pairs (Sheet name is None if not specified)
+        file_list = zip(self.args.data_files,
+                        self.data_xlsx_sheet_names if self.data_xlsx_sheet_names is not None else [None]*len(self.args.data_files))
         
-        for f in self.args.data_files:
+        for f, sn in file_list: #self.args.data_files:
             ins, outs, weights, groups = self.load_table(self.args.dataset_directory,
                                                          f,
                                                          self.args.data_inputs,
@@ -985,6 +1019,7 @@ class SuperDataSet:
                                                          self.args.data_groups,
                                                          self.categorical_translation,
                                                          self.args.verbose,
+                                                         tabular_xlsx_sheet_name=sn,
                                                          tabular_column_range=self.args.tabular_column_range,
                                                          tabular_column_list=self.args.tabular_column_list,
                                                          tabular_header_row=self.args.tabular_header_row,
@@ -1004,6 +1039,7 @@ class SuperDataSet:
                    data_groups:str,
                    categorical_translation:list[tuple[str, dict]]=None,
                    verbose_level:int=0,
+                   tabular_xlsx_sheet_name:str=None,
                    tabular_column_range=None,
                    tabular_column_list=None,
                    tabular_header_row=None,
@@ -1019,7 +1055,8 @@ class SuperDataSet:
         df = SuperDataSet.load_tabular_file(file_path,
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
-                                            skiprows=tabular_header_row)
+                                            skiprows=tabular_header_row,
+                                            sheet_name=tabular_xlsx_sheet_name)
 
         ##
         # Translate dataframe columns for categorical variables

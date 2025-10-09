@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## 2025-10-08 Andrew H. Fagg
+* Added support for xlsx files
+
 ## 2025-09-18 Andrew H. Fagg
 * Added row and column offsets for tabular data (csv only right now)
 
