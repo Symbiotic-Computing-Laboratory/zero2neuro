@@ -1,6 +1,9 @@
 # Zero2Neuro Change Log
 
 Use inverse order
+  
+## 2025-10-13 Luke Sewell  
+* Added an arguments list sheet to xlsx export.  
 
 ## 2025-10-08 Andrew H. Fagg
 * Added support for xlsx files

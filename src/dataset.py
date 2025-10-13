@@ -22,6 +22,7 @@ import re
 import pickle
 import os
 import tensorflow as tf
+from itertools import zip_longest
 from zero2neuro_debug import *
 
 from PIL import Image

@@ -310,7 +310,10 @@ def execute_exp(sds, model, args):
     if args.report:
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
+
         
+        df_args_list = xlsx_args_list(args)
+        df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
         if args.log_training_set and args.report_training :
             # Find out how many columns for to designate for each key and then append them to a list
             predict_columns = []
@@ -354,6 +357,35 @@ def execute_exp(sds, model, args):
     # Save model
     if args.save_model:
         model.save("%s_model.keras"%(fbase))
+
+def xlsx_args_list(args):
+    # Turn the args list into a dictionary
+    args_dict = args.__dict__
+    
+    # We're going to change all the values be lists to ensure consistency 
+    normalized_args_dict = {}
+    for key, value in args_dict.items():
+        if not isinstance(value, list):
+            normalized_args_dict[key] = [value]
+        else:
+            normalized_args_dict[key] = value
+    
+    # Grab the values for dictionary and assign to a variable for simplicity
+    values = normalized_args_dict.values()
+    
+    # DataFrames don't like it when values aren't the same length, so we'll pad the values so all keys have the same amount.
+    padded_values = list(zip_longest(*values, fillvalue = None))
+    
+    # Make the dataframe where the column header is the key and the rows contain the values for that key.
+    df_args = pd.DataFrame(padded_values, columns=normalized_args_dict.keys())
+    
+    # If a column is missing values, just remove the column.
+    df_args = df_args.dropna(axis=1, how='all')
+    
+    # Replace the null values with an empty space for readability
+    df_args = df_args.fillna('')
+    
+    return(df_args)
 
 
 def prepare_and_execute_experiment(args):
