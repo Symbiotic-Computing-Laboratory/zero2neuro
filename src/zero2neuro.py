@@ -39,16 +39,6 @@ def compatibility_checks(args):
     if args.rotation is not None:
         handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
 
-    # reporting relies on logging
-    if args.report_training and not args.log_training_set:
-        handle_error("If report_training=True, then log_training_set must also be True", args.verbose)
-
-    if args.report_validation and not args.log_validation_set:
-        handle_error("If report_validation=True, then log_validation_set must also be True", args.verbose)
-
-    if args.report_testing and not args.log_testing_set:
-        handle_error("If report_testing=True, then log_testing_set must also be True", args.verbose)
-
     # reporting_ins relies on reporting
     if args.report_training_ins and not args.report_training:
         handle_error("If report_training_ins=True, then report_training must also be True", args.verbose)
@@ -325,61 +315,33 @@ def execute_exp(sds, model, args):
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
 
-        
+        # Create a sheet for all arguments. 
+        # TODO: A sheet for only key arguments.
         df_args_list = xlsx_args_list(args)
         df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
 
+        # Create sheet for the loss and metrics.
         df_performance_report = xlsx_performance_report(metrics_list)
         df_performance_report.to_excel(writer, sheet_name='Performance Report', index=False)
 
-        # TODO: Modularize the training, validation, and testing set reports, figure out a way to do it without using the results dictionary if possible.
-        
-        if args.log_training_set and args.report_training :
-            # Find out how many columns for to designate for each key and then append them to a list
-            predict_columns = []
+        # Create a sheet for each training/validation/testing set and their true values vs predictions.
+        if args.report_training:
             
-            for i in range(results['predict_training'].shape[1]):
-                predict_columns.append('Prediction_%i' % i)
-        
-            # Make a dataframe for each metric and designate the correct number of columns. (i.e [5, 6, 9] would need 3 columns)
-            df_tr_ins = pd.DataFrame(results['ins_training'], columns=args.data_inputs)
-            df_tr_outs = pd.DataFrame(results['outs_training'], columns=args.data_outputs)
-            df_tr_predict = pd.DataFrame(results['predict_training'], columns=predict_columns)
+            df_training_report = xlsx_training_report(sds,model, args)
+            
+            df_training_report.to_excel(writer, sheet_name='Training Data', index=False)
     
-            # Combine the dataframes into one.
-            df_combined_training = pd.concat([df_tr_ins, df_tr_outs, df_tr_predict], axis=1)
+        if args.report_validation:
+
+            df_validation_report = xlsx_validation_report(sds,model, args)
+            
+            df_validation_report.to_excel(writer, sheet_name='Validation Data', index=False)
     
-            # Write the dataframe to the appropiate sheet in the excel file (This one is for training)
-            df_combined_training.to_excel(writer, sheet_name='Training Data', index=False)
-    
-        if args.log_validation_set and args.report_validation:
-            predict_columns = []
+        if args.report_testing:
             
-            for i in range(results['predict_validation'].shape[1]):
-                predict_columns.append('Prediction_%i' % i)
-                
-            df_val_ins = pd.DataFrame(results['ins_validation'], columns=args.data_inputs)
-            df_val_outs = pd.DataFrame(results['outs_validation'], columns=args.data_outputs)
-            df_val_predict = pd.DataFrame(results['predict_validation'], columns=predict_columns)
+            df_testing_report = xlsx_testing_report(sds,model, args)
             
-            df_combined_validation = pd.concat([df_val_ins, df_val_outs, df_val_predict], axis=1)
-            
-            df_combined_validation.to_excel(writer, sheet_name='Validation Data', index=False)
-    
-        if args.log_testing_set and args.report_testing:
-            
-            predict_columns = []
-            
-            for i in range(results['predict_testing'].shape[1]):
-                predict_columns.append('Prediction_%i' % i)
-                
-            df_test_ins = pd.DataFrame(results['ins_testing'], columns=args.data_inputs)
-            df_test_outs = pd.DataFrame(results['outs_testing'], columns=args.data_outputs)
-            df_test_predict = pd.DataFrame(results['predict_testing'], columns=predict_columns)
-            
-            df_combined_validation = pd.concat([df_test_ins, df_test_outs, df_test_predict], axis=1)
-            
-            df_combined_validation.to_excel(writer, sheet_name='Testing Data', index=False)
+            df_testing_report.to_excel(writer, sheet_name='Testing Data', index=False)
     
         # Create the excel file and save it.
         writer.close()
@@ -426,7 +388,6 @@ def xlsx_performance_report(merged_metrics):
 
     Returns:
         Pandas DataFrame with one row of data for each column of training/validation/testing metric. 
-
     '''
 
     keys = merged_metrics.keys()
@@ -436,14 +397,73 @@ def xlsx_performance_report(merged_metrics):
 
     return(df_performance_rep)
 
-def xlsx_training_report():
-    pass
+def xlsx_training_report(sds, model, args):
+
+    predict_columns = []
     
-def xlsx_validation_report():
-    pass
+    outs = sds.outs_training
+    predictions = model.predict(sds.ins_training)
+
+    for i in range(predictions.shape[1]):
+        predict_columns.append('Prediction_%i' % i)
+         
+    df_outs = pd.DataFrame(outs, columns=args.data_outputs)
+    df_predict = pd.DataFrame(predictions, columns=predict_columns)
+
+    # Combine the dataframes into one.
+    df_combined = pd.concat([df_outs, df_predict], axis=1)
+
+    if args.report_training_ins:
+        ins = sds.ins_training
+        df_ins = pd.DataFrame(ins, columns=args.data_inputs)
+        df_combined = pd.concat([df_combined, df_ins], axis=1)
+        
+
+    return(df_combined)
     
-def xlsx_testing_report():
-    pass
+def xlsx_validation_report(sds, model, args):
+    predict_columns = []
+    
+    outs = sds.outs_validation
+    predictions = model.predict(sds.ins_validation)
+
+    for i in range(predictions.shape[1]):
+        predict_columns.append('Prediction_%i' % i)
+         
+    df_outs = pd.DataFrame(outs, columns=args.data_outputs)
+    df_predict = pd.DataFrame(predictions, columns=predict_columns)
+
+    # Combine the dataframes into one.
+    df_combined = pd.concat([df_outs, df_predict], axis=1)
+
+    if args.report_validation_ins:
+        ins = sds.ins_validation
+        df_ins = pd.DataFrame(ins, columns=args.data_inputs)
+        df_combined = pd.concat([df_combined, df_ins], axis=1)
+    
+    return(df_combined)
+    
+def xlsx_testing_report(sds, model, args):
+    predict_columns = []
+    
+    outs = sds.outs_testing
+    predictions = model.predict(sds.ins_testing)
+
+    for i in range(predictions.shape[1]):
+        predict_columns.append('Prediction_%i' % i)
+         
+    df_outs = pd.DataFrame(outs, columns=args.data_outputs)
+    df_predict = pd.DataFrame(predictions, columns=predict_columns)
+
+    # Combine the dataframes into one.
+    df_combined = pd.concat([df_outs, df_predict], axis=1)
+
+    if args.report_testing_ins:
+        ins = sds.ins_testing
+        df_ins = pd.DataFrame(ins, columns=args.data_inputs)
+        df_combined = pd.concat([df_combined, df_ins], axis=1)
+
+    return(df_combined)
 
 
 def prepare_and_execute_experiment(args):
