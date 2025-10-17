@@ -216,6 +216,8 @@ def execute_exp(sds, model, args):
     eval_list = [args.loss]
     if args.metrics is not None:
         eval_list = eval_list + args.metrics
+        metrics_list = {}
+    
 
     results = {}
     ######
@@ -233,7 +235,11 @@ def execute_exp(sds, model, args):
                             batch_size=args.batch,
                             )
     d = dict(zip(['training_'+s for s in eval_list], ev))
+    
     results.update(d)
+    
+    if args.report:
+        metrics_list.update(d)
     
     if args.wandb:
         wandb.log(d)
@@ -250,6 +256,7 @@ def execute_exp(sds, model, args):
     ######
     # Validation set
     if (sds.ins_validation is not None) or (sds.validation is not None):
+        print('test')
         if args.data_format == 'tf-dataset':
             ev = model.evaluate(sds.validation)
         else:
@@ -258,9 +265,13 @@ def execute_exp(sds, model, args):
         d = dict(zip(['validation_'+s for s in eval_list], ev))
     
         results.update(d)
-    
+
+        if args.report:
+            metrics_list.update(d)
+        
         if args.wandb:
             wandb.log(d)
+            
 
         if args.log_validation_set and args.data_representation == 'numpy':
             # TODO: only works for not TF Datasets
@@ -279,6 +290,9 @@ def execute_exp(sds, model, args):
         d = dict(zip(['testing_'+s for s in eval_list], ev))
     
         results.update(d)
+
+        if args.report:
+            metrics_list.update(d)
     
         if args.wandb:
             wandb.log(d)
@@ -314,9 +328,16 @@ def execute_exp(sds, model, args):
         
         df_args_list = xlsx_args_list(args)
         df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
+
+        df_performance_report = xlsx_performance_report(metrics_list)
+        df_performance_report.to_excel(writer, sheet_name='Performance Report', index=False)
+
+        # TODO: Modularize the training, validation, and testing set reports, figure out a way to do it without using the results dictionary if possible.
+        
         if args.log_training_set and args.report_training :
             # Find out how many columns for to designate for each key and then append them to a list
             predict_columns = []
+            
             for i in range(results['predict_training'].shape[1]):
                 predict_columns.append('Prediction_%i' % i)
         
@@ -333,22 +354,31 @@ def execute_exp(sds, model, args):
     
         if args.log_validation_set and args.report_validation:
             predict_columns = []
+            
             for i in range(results['predict_validation'].shape[1]):
                 predict_columns.append('Prediction_%i' % i)
+                
             df_val_ins = pd.DataFrame(results['ins_validation'], columns=args.data_inputs)
             df_val_outs = pd.DataFrame(results['outs_validation'], columns=args.data_outputs)
             df_val_predict = pd.DataFrame(results['predict_validation'], columns=predict_columns)
+            
             df_combined_validation = pd.concat([df_val_ins, df_val_outs, df_val_predict], axis=1)
+            
             df_combined_validation.to_excel(writer, sheet_name='Validation Data', index=False)
     
         if args.log_testing_set and args.report_testing:
+            
             predict_columns = []
+            
             for i in range(results['predict_testing'].shape[1]):
                 predict_columns.append('Prediction_%i' % i)
+                
             df_test_ins = pd.DataFrame(results['ins_testing'], columns=args.data_inputs)
             df_test_outs = pd.DataFrame(results['outs_testing'], columns=args.data_outputs)
             df_test_predict = pd.DataFrame(results['predict_testing'], columns=predict_columns)
+            
             df_combined_validation = pd.concat([df_test_ins, df_test_outs, df_test_predict], axis=1)
+            
             df_combined_validation.to_excel(writer, sheet_name='Testing Data', index=False)
     
         # Create the excel file and save it.
@@ -386,6 +416,34 @@ def xlsx_args_list(args):
     df_args = df_args.fillna('')
     
     return(df_args)
+
+def xlsx_performance_report(merged_metrics):
+    '''
+    Function creates a pandas dataframe for performance metrics.
+
+    Args: 
+        merged_metrics(dict): A dictionary with train/val/test metrics merged if applicable.
+
+    Returns:
+        Pandas DataFrame with one row of data for each column of training/validation/testing metric. 
+
+    '''
+
+    keys = merged_metrics.keys()
+    values = merged_metrics.values()
+
+    df_performance_rep = pd.DataFrame([values], columns=keys)
+
+    return(df_performance_rep)
+
+def xlsx_training_report():
+    pass
+    
+def xlsx_validation_report():
+    pass
+    
+def xlsx_testing_report():
+    pass
 
 
 def prepare_and_execute_experiment(args):
