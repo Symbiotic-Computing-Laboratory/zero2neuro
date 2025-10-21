@@ -59,7 +59,10 @@ def compatibility_checks(args):
         
     if not os.path.isdir(args.results_path):
         handle_error("results_path must be a directory", args.verbose)
-        
+
+    # Early stopping checks
+    if (not args.early_stopping) and (args.early_stopping_monitor or args.early_stopping_patience):
+        handle_error("You must use the early_stopping argument if you specify either early_stopping_monitor or early_stopping_patience", args.verbose)
     
 
     
