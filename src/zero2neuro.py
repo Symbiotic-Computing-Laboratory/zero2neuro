@@ -444,14 +444,18 @@ def xlsx_training_report(sds, model, args):
     
     predict_columns = []
     
-    
+    # Get the outs/labels for either the numpy data or tf-dataset data.
     if args.data_representation == 'numpy':
         outs = sds.outs_training
         predictions = model.predict(sds.ins_training)
-    else:
+    elif args.data_format == 'tf-dataset':
+        # Makes a tf dataset with only the labels
         outs = sds.training.map(lambda x, y: y)
+        # Grabs each label and converts it to numpy
         outs = [label.numpy() for label in outs]
         outs = np.concatenate(outs, axis=0)
+
+        # Make a prediction dataset by removing the labels and grab predictions
         training_prediction_set = sds.training.map(lambda x, y: x)
         predictions = model.predict(training_prediction_set)
 
@@ -460,14 +464,23 @@ def xlsx_training_report(sds, model, args):
          
     df_outs = pd.DataFrame(outs, columns=args.data_outputs)
     df_predict = pd.DataFrame(predictions, columns=predict_columns)
-
+    
     # Combine the dataframes into one.
     df_combined = pd.concat([df_outs, df_predict], axis=1)
 
+    # Get the input data for either numpy or tf-dataset.
     if args.report_training_ins:
-        ins = sds.ins_training
+        if args.data_representation == 'numpy':
+            ins = sds.ins_training
+
+        elif args.data_format == 'tf-dataset':
+            ins = sds.training.map(lambda x, y: x)
+            ins = [features.numpy() for features in ins]
+            ins = np.concatenate(ins, axis=0)
+
+        # Make an input dataframe and combine it with the outs and predictions dataframe.
         df_ins = pd.DataFrame(ins, columns=args.data_inputs)
-        df_combined = pd.concat([df_combined, df_ins], axis=1)
+        df_combined = pd.concat([df_ins, df_combined], axis=1)
         
 
     return(df_combined)
@@ -489,23 +502,45 @@ def xlsx_validation_report(sds, model, args):
     
     predict_columns = []
     
-    outs = sds.outs_validation
-    predictions = model.predict(sds.ins_validation)
+    # Get the outs/labels for either the numpy data or tf-dataset data.
+    if args.data_representation == 'numpy':
+        outs = sds.outs_validation
+        predictions = model.predict(sds.ins_validation)
+    elif args.data_format == 'tf-dataset':
+        # Makes a tf dataset with only the labels
+        outs = sds.validation.map(lambda x, y: y)
+        # Grabs each label and converts it to numpy
+        outs = [label.numpy() for label in outs]
+        outs = np.concatenate(outs, axis=0)
+
+        # Make a prediction dataset by removing the labels and grab predictions
+        validation_prediction_set = sds.validation.map(lambda x, y: x)
+        predictions = model.predict(validation_prediction_set)
 
     for i in range(predictions.shape[1]):
         predict_columns.append('Prediction_%i' % i)
          
     df_outs = pd.DataFrame(outs, columns=args.data_outputs)
     df_predict = pd.DataFrame(predictions, columns=predict_columns)
-
+    
     # Combine the dataframes into one.
     df_combined = pd.concat([df_outs, df_predict], axis=1)
 
+    # Get the input data for either numpy or tf-dataset.
     if args.report_validation_ins:
-        ins = sds.ins_validation
+        if args.data_representation == 'numpy':
+            ins = sds.ins_validation
+
+        elif args.data_format == 'tf-dataset':
+            ins = sds.validation.map(lambda x, y: x)
+            ins = [features.numpy() for features in ins]
+            ins = np.concatenate(ins, axis=0)
+
+        # Make an input dataframe and combine it with the outs and predictions dataframe.
         df_ins = pd.DataFrame(ins, columns=args.data_inputs)
-        df_combined = pd.concat([df_combined, df_ins], axis=1)
-    
+        df_combined = pd.concat([df_ins, df_combined], axis=1)
+        
+
     return(df_combined)
     
 def xlsx_testing_report(sds, model, args):
@@ -525,22 +560,43 @@ def xlsx_testing_report(sds, model, args):
     
     predict_columns = []
     
-    outs = sds.outs_testing
-    predictions = model.predict(sds.ins_testing)
+    # Get the outs/labels for either the numpy data or tf-dataset data.
+    if args.data_representation == 'numpy':
+        outs = sds.outs_testing
+        predictions = model.predict(sds.ins_testing)
+    elif args.data_format == 'tf-dataset':
+        # Makes a tf dataset with only the labels
+        outs = sds.testing.map(lambda x, y: y)
+        # Grabs each label and converts it to numpy
+        outs = [label.numpy() for label in outs]
+        outs = np.concatenate(outs, axis=0)
+
+        # Make a prediction dataset by removing the labels and grab predictions
+        testing_prediction_set = sds.testing.map(lambda x, y: x)
+        predictions = model.predict(testing_prediction_set)
 
     for i in range(predictions.shape[1]):
         predict_columns.append('Prediction_%i' % i)
          
     df_outs = pd.DataFrame(outs, columns=args.data_outputs)
     df_predict = pd.DataFrame(predictions, columns=predict_columns)
-
+    
     # Combine the dataframes into one.
     df_combined = pd.concat([df_outs, df_predict], axis=1)
 
+    # Get the input data for either numpy or tf-dataset.
     if args.report_testing_ins:
-        ins = sds.ins_testing
+        if args.data_representation == 'numpy':
+            ins = sds.ins_testing
+
+        elif args.data_format == 'tf-dataset':
+            ins = sds.testing.map(lambda x, y: x)
+            ins = [features.numpy() for features in ins]
+            ins = np.concatenate(ins, axis=0)
+
+        # Make an input dataframe and combine it with the outs and predictions dataframe.
         df_ins = pd.DataFrame(ins, columns=args.data_inputs)
-        df_combined = pd.concat([df_combined, df_ins], axis=1)
+        df_combined = pd.concat([df_ins, df_combined], axis=1)
 
     return(df_combined)
 
