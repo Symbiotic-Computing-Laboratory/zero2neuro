@@ -336,7 +336,7 @@ def execute_exp(sds, model, args):
         df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
         
         # Create a sheet for each training/validation/testing set and their true values vs predictions.
-        if args.report_training and not args.data_format == 'tf-dataset':
+        if args.report_training:
             
             df_training_report = xlsx_training_report(sds,model, args)
             
@@ -440,8 +440,16 @@ def xlsx_training_report(sds, model, args):
     
     predict_columns = []
     
-    outs = sds.outs_training
-    predictions = model.predict(sds.ins_training)
+    
+    if args.data_representation == 'numpy':
+        outs = sds.outs_training
+        predictions = model.predict(sds.ins_training)
+    else:
+        outs = sds.training.map(lambda x, y: y)
+        outs = [label.numpy() for label in outs]
+        outs = np.concatenate(outs, axis=0)
+        training_prediction_set = sds.training.map(lambda x, y: x)
+        predictions = model.predict(training_prediction_set)
 
     for i in range(predictions.shape[1]):
         predict_columns.append('Prediction_%i' % i)
