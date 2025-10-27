@@ -17,6 +17,10 @@ from network_builder import *
 import wandb
 from keras.utils import plot_model
 
+
+VERSION = "0.1"
+GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
+
 def compatibility_checks(args):
     if args.data_output_sparse_categorical:
         handle_error('data_output_sparse_categorical is no longer supported.  Use data_columns_categorical_to_int instead', args.verbose)
@@ -516,6 +520,19 @@ if __name__ == "__main__":
     # Command line arguments
     parser = create_parser()
     args = parser.parse_args()
+
+    n = len(GITHUB)
+    ver = "This is Zero2Neuro Version " + VERSION
+    print("\n"
+          + "*" * n
+          + "\n"
+          + " " * ((n-len(ver))//2)
+          + ver
+          + "\n\n"
+          + GITHUB
+          + "\n"
+          + "*" * n
+          + "\n")
 
     print(args)
 
