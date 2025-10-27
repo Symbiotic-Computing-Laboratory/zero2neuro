@@ -1,7 +1,10 @@
 # Zero2Neuro Change Log
 
 Use inverse order
-  
+
+## 2025-10-24 Luke Sewell  
+* Xlsx reports now have all sheets added (Key args, full args, performance report, train/val/test reports). (Only non-tf-datasets right now)
+
 ## 2025-10-13 Luke Sewell  
 * Added an arguments list sheet to xlsx export.  
 

@@ -318,33 +318,41 @@ def execute_exp(sds, model, args):
     with open("%s_results.pkl"%(fbase), "wb") as fp:
         pickle.dump(results, fp)
 
+    #TODO: Add support for tf-datasets 
     if args.report:
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
 
-        # Create a sheet for all arguments. 
-        # TODO: A sheet for only key arguments.
-        df_args_list = xlsx_args_list(args)
-        df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
+        # Create a sheet for key arguments and all arguments. 
+        df_key_args_list, df_args_list = xlsx_args_list(args)
+
+        # Sheet 1: Key Arguments
+        df_key_args_list.to_excel(writer, sheet_name='Key Arguments List', index=False)
+        
 
         # Create sheet for the loss and metrics.
         df_performance_report = xlsx_performance_report(metrics_list)
+
+        # Sheet 2: Performance Report
         df_performance_report.to_excel(writer, sheet_name='Performance Report', index=False)
 
+        # Sheet 3: All Arguments
+        df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
+        
         # Create a sheet for each training/validation/testing set and their true values vs predictions.
-        if args.report_training:
+        if args.report_training and not args.data_format == 'tf-dataset':
             
             df_training_report = xlsx_training_report(sds,model, args)
             
             df_training_report.to_excel(writer, sheet_name='Training Data', index=False)
     
-        if args.report_validation:
+        if args.report_validation and not args.data_format == 'tf-dataset':
 
             df_validation_report = xlsx_validation_report(sds,model, args)
             
             df_validation_report.to_excel(writer, sheet_name='Validation Data', index=False)
     
-        if args.report_testing:
+        if args.report_testing and not args.data_format == 'tf-dataset':
             
             df_testing_report = xlsx_testing_report(sds,model, args)
             
@@ -358,6 +366,15 @@ def execute_exp(sds, model, args):
         model.save("%s_model.keras"%(fbase))
 
 def xlsx_args_list(args):
+    '''
+    Function that creates two pandas dataframes for the arguments list
+
+    Args:
+        args(argparse.Namespace): The list of arguments the user has defined.
+    Returns:
+        Two dataframes, one with only the key arguments and the other with all the arguments
+        from the parser.
+    '''
     # Turn the args list into a dictionary
     args_dict = args.__dict__
     
@@ -377,6 +394,11 @@ def xlsx_args_list(args):
     
     # Make the dataframe where the column header is the key and the rows contain the values for that key.
     df_args = pd.DataFrame(padded_values, columns=normalized_args_dict.keys())
+
+    # Make a key arguments dataframe off full arguments dataframe
+    df_key_args = df_args[['experiment_name', 'output_file_base', 'dataset_directory',
+                           'data_n_folds','data_rotation', 'data_files', 
+                           'data_groups', 'wandb', 'network_type']]
     
     # If a column is missing values, just remove the column.
     df_args = df_args.dropna(axis=1, how='all')
@@ -384,7 +406,8 @@ def xlsx_args_list(args):
     # Replace the null values with an empty space for readability
     df_args = df_args.fillna('')
     
-    return(df_args)
+    
+    return(df_key_args, df_args)
 
 def xlsx_performance_report(merged_metrics):
     '''
@@ -405,7 +428,20 @@ def xlsx_performance_report(merged_metrics):
     return(df_performance_rep)
 
 def xlsx_training_report(sds, model, args):
+    '''
+    Function creates a pandas dataframe for the training dataset.
 
+    Args:
+        sds(dataset.SuperDataSet'): The object the contains the processed data 
+                                    used for training/evaluating the model.
+        model(keras.src.models.functional.Functional): The trained Keras model.
+        args(argparse.Namespace): The list of arguments the user has defined. 
+
+    Returns:
+        A pandas dataframe that contains the predictions and true values 
+        of the training dataset and the training data if applicable.
+    '''
+    
     predict_columns = []
     
     outs = sds.outs_training
@@ -429,6 +465,20 @@ def xlsx_training_report(sds, model, args):
     return(df_combined)
     
 def xlsx_validation_report(sds, model, args):
+    '''
+    Function creates a pandas dataframe for the validation dataset.
+
+    Args:
+        sds(dataset.SuperDataSet'): The object the contains the processed data 
+                                    used for training/evaluating the model.
+        model(keras.src.models.functional.Functional): The trained Keras model.
+        args(argparse.Namespace): The list of arguments the user has defined. 
+
+    Returns:
+        A pandas dataframe that contains the predictions and true values 
+        of the validation dataset and the validation data if applicable.
+    '''
+    
     predict_columns = []
     
     outs = sds.outs_validation
@@ -451,6 +501,20 @@ def xlsx_validation_report(sds, model, args):
     return(df_combined)
     
 def xlsx_testing_report(sds, model, args):
+    '''
+    Function creates a pandas dataframe for the testing dataset.
+
+    Args:
+        sds(dataset.SuperDataSet'): The object the contains the processed data 
+                                    used for training/evaluating the model.
+        model(keras.src.models.functional.Functional): The trained Keras model.
+        args(argparse.Namespace): The list of arguments the user has defined. 
+
+    Returns:
+        A pandas dataframe that contains the predictions and true values 
+        of the testing dataset and the testing data if applicable.
+    '''
+    
     predict_columns = []
     
     outs = sds.outs_testing
