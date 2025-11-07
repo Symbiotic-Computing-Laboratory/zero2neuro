@@ -18,7 +18,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1"
+VERSION = "0.1.1"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -243,12 +243,28 @@ def execute_exp(sds, model, args):
 
     ######
     # Training set
-    if args.log_training_set and args.data_representation == 'numpy':
+    if args.log_training_set:
         print_debug('Training predict', 4, args.debug)
-        # TODO: only works for not TF Datasets
-        results['ins_training'] = sds.ins_training
-        results['outs_training'] = sds.outs_training
-        results['predict_training'] = model.predict(sds.ins_training)
+        if args.data_representation == 'numpy':
+            results['ins_training'] = sds.ins_training
+            results['outs_training'] = sds.outs_training
+            results['predict_training'] = model.predict(sds.ins_training)
+        elif args.data_format == 'tf-dataset':
+            ins = sds.training.map(lambda x, y: x)
+            ins = [features.numpy() for features in ins]
+            results['ins_training'] = np.concatenate(ins, axis=0)
+            
+            # Makes a tf dataset with only the labels
+            outs = sds.training.map(lambda x, y: y)
+            # Grabs each label and converts it to numpy
+            outs = [label.numpy() for label in outs]
+            results['outs_training'] = np.concatenate(outs, axis=0)
+    
+            # Make a prediction dataset by removing the labels and grab predictions
+            training_prediction_set = sds.training.map(lambda x, y: x)
+            results['predict_training'] = model.predict(training_prediction_set)
+
+
     
     ######
     # Validation set
@@ -270,11 +286,25 @@ def execute_exp(sds, model, args):
             wandb.log(d)
             
 
-        if args.log_validation_set and args.data_representation == 'numpy':
-            # TODO: only works for not TF Datasets
-            results['ins_validation'] = sds.ins_validation
-            results['outs_validation'] = sds.outs_validation
-            results['predict_validation'] = model.predict(sds.ins_validation)
+        if args.log_validation_set:
+            if args.data_representation == 'numpy':
+                results['ins_validation'] = sds.ins_validation
+                results['outs_validation'] = sds.outs_validation
+                results['predict_validation'] = model.predict(sds.ins_validation)
+            elif args.data_format == 'tf-dataset':
+                ins = sds.validation.map(lambda x, y: x)
+                ins = [features.numpy() for features in ins]
+                results['ins_validation'] = np.concatenate(ins, axis=0)
+                
+                # Makes a tf dataset with only the labels
+                outs = sds.validation.map(lambda x, y: y)
+                # Grabs each label and converts it to numpy
+                outs = [label.numpy() for label in outs]
+                results['outs_validation'] = np.concatenate(outs, axis=0)
+        
+                # Make a prediction dataset by removing the labels and grab predictions
+                validation_prediction_set = sds.validation.map(lambda x, y: x)
+                results['predict_validation'] = model.predict(validation_prediction_set)
 
     ######
     # Testing set
@@ -295,10 +325,24 @@ def execute_exp(sds, model, args):
             wandb.log(d)
 
         if args.log_testing_set and args.data_representation == 'numpy':
-            # TODO: only works for not TF Datasets
-            results['ins_testing'] = sds.ins_testing
-            results['outs_testing'] = sds.outs_testing
-            results['predict_testing'] = model.predict(sds.ins_testing)
+            if args.data_representation == 'numpy':
+                results['ins_testing'] = sds.ins_testing
+                results['outs_testing'] = sds.outs_testing
+                results['predict_testing'] = model.predict(sds.ins_testing)
+            elif args.data_format == 'tf-dataset':
+                ins = sds.testing.map(lambda x, y: x)
+                ins = [features.numpy() for features in ins]
+                results['ins_testing'] = np.concatenate(ins, axis=0)
+                
+                # Makes a tf dataset with only the labels
+                outs = sds.testing.map(lambda x, y: y)
+                # Grabs each label and converts it to numpy
+                outs = [label.numpy() for label in outs]
+                results['outs_testing'] = np.concatenate(outs, axis=0)
+        
+                # Make a prediction dataset by removing the labels and grab predictions
+                testing_prediction_set = sds.testing.map(lambda x, y: x)
+                results['predict_testing'] = model.predict(testing_prediction_set)
     
     ######
     # Close WANDB
@@ -318,7 +362,6 @@ def execute_exp(sds, model, args):
     with open("%s_results.pkl"%(fbase), "wb") as fp:
         pickle.dump(results, fp)
 
-    #TODO: Add support for tf-datasets 
     if args.report:
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
@@ -346,13 +389,13 @@ def execute_exp(sds, model, args):
             
             df_training_report.to_excel(writer, sheet_name='Training Data', index=False)
     
-        if args.report_validation and not args.data_format == 'tf-dataset':
+        if args.report_validation:
 
             df_validation_report = xlsx_validation_report(sds,model, args)
             
             df_validation_report.to_excel(writer, sheet_name='Validation Data', index=False)
     
-        if args.report_testing and not args.data_format == 'tf-dataset':
+        if args.report_testing:
             
             df_testing_report = xlsx_testing_report(sds,model, args)
             

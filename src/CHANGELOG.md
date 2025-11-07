@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## 2025-11-07 Luke Sewell  
+* Added support for tf-datasets to use pickle file reporting functionality.  
+
 ## 2025-10-24 Luke Sewell  
 * Xlsx reports now have all sheets added (Key args, full args, performance report, train/val/test reports). (Only non-tf-datasets right now)
 
