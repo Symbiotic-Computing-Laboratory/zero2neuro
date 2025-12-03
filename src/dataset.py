@@ -59,6 +59,8 @@ class SuperDataSet:
         self.nfolds = 0
         self.n_train_folds = None
         self.categorical_translation = None
+        # Categorical input value to float mapping
+        self.categorical_feature_translation = None  
 
         # XLSX files
         self.data_xlsx_sheet_names = None
@@ -117,6 +119,19 @@ class SuperDataSet:
                 self.categorical_translation = tmp
             else:
                 self.categorical_translation = self.categorical_translation + tmp
+                
+        if self.args.data_columns_categorical_to_float_direct is not None:
+            # User assigns strings to float
+            # Allows multiple assignments for the same categorical variable
+            
+            # Each string is a new mapping: translate all of them
+            tmp = [SuperDataSet.parse_value_mapping_float(s) for s in self.args.data_columns_categorical_to_float_direct]
+
+            # Add to the categorial translation
+            if self.categorical_feature_translation is None:
+                self.categorical_feature_translation = tmp
+            else:
+                self.categorical_feature_translation = self.categorical_featuretranslation + tmp
                 
         ####
         
@@ -861,14 +876,17 @@ class SuperDataSet:
             elif col_list is not None:
                 cols = col_list
 
+            # Open the xlsx file
             xlsx = pd.ExcelFile(file_name)
-            if not sheet_name in xlsx.sheet_names:
+            if (sheet_name is not None) and (not sheet_name in xlsx.sheet_names):
+                # Can't find the specified sheet name
                 handle_error("Sheet name %s is not contained in data file %s"%(sheet_name, file_name))
-                
+
+            # Load the specified sheet
             df = pd.read_excel(xlsx,
                                usecols=cols,
                                skiprows=skiprows,
-                               sheet_name=sheet_name or 0)
+                               sheet_name=sheet_name if sheet_name is not None else 0)
             
 
         else:
@@ -999,6 +1017,31 @@ class SuperDataSet:
 
         return key.strip(), mapping
 
+    @staticmethod
+    def parse_value_mapping_float(s):
+        '''
+        Parse a string of the form:
+        VAR:STR0->FLOAT0,STR1->FLOAT1,...
+        into:
+        ('VAR', {'STR0': FLOAT0, 'STR1': FLOAT1, ...})
+
+        We will allow multiple instances of VAR
+        '''
+        # Extract variable name first
+        key, raw_values = s.split(":", 1)
+        # Split individual items
+        items = [item.strip() for item in raw_values.split(",")]
+
+        # Build the mapping
+        mapping = {}
+
+        # Iterate over each string/value pair
+        for item in items:
+            str_part, float_part = item.split("->")
+            mapping[str_part.strip()] = float(float_part.strip())
+
+        return key.strip(), mapping
+
     def load_table_set(self):
         # Right now, can only have one tabular file
         #assert len(self.args.data_files) == 1, "Only support loading single tabular files"
@@ -1018,8 +1061,9 @@ class SuperDataSet:
                                                          self.args.data_outputs,
                                                          self.args.data_weights,
                                                          self.args.data_groups,
-                                                         self.categorical_translation,
-                                                         self.args.verbose,
+                                                         categorical_translation=self.categorical_translation,
+                                                         categorical_feature_translation=self.categorical_feature_translation,
+                                                         verbose_level=self.args.verbose,
                                                          tabular_xlsx_sheet_name=sn,
                                                          tabular_column_range=self.args.tabular_column_range,
                                                          tabular_column_list=self.args.tabular_column_list,
@@ -1039,6 +1083,7 @@ class SuperDataSet:
                    data_weights:str,
                    data_groups:str,
                    categorical_translation:list[tuple[str, dict]]=None,
+                   categorical_feature_translation:list[tuple[str, dict]]=None,
                    verbose_level:int=0,
                    tabular_xlsx_sheet_name:str=None,
                    tabular_column_range=None,
@@ -1100,6 +1145,33 @@ class SuperDataSet:
             # Extract their values
             ins = df[input_columns].values
 
+        # Input feature translation from categorical to float
+        if categorical_feature_translation is not None:
+            vecs = []
+            # Loop over each translation rule
+            for col, d in categorical_feature_translation:
+                print_debug("Categorical feature translation: %s: %s"%(col,str(d)), 4, debug)
+
+                # Check if there are any keys that are missing and raise an error
+                missing = set(df[col].astype(str)) - set(d.keys())
+                if missing:
+                    handle_error(f"data_columns_categorical_to_float_direct: missing key/s ({missing}) from column {col}",
+                                     verbose_level)
+
+                # Translate the values
+                vec = df[col].map(lambda x: d.get(str(x))).values
+                
+                # Save the vector
+                vecs.append(vec)
+
+            # Translate list of vectors into examples x rules matrix
+            mat = np.vstack(vecs).T
+            ins = np.concatenate([ins, mat], axis=1)
+            
+
+
+        #######
+        # Outputs
         if len(output_columns) > 0:
             # Interpret as ints or floats
             print_debug("Table dataframe columns: %s"%(df.columns), 4, debug)

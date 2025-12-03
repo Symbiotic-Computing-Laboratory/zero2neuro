@@ -9,7 +9,6 @@ import os
 import sys
 import socket
 
-
 from parser import *
 from dataset import *
 from network_builder import *
@@ -18,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -686,7 +685,7 @@ def prepare_and_execute_experiment(args):
     ######
     # Execute the experiment
     execute_exp(sds, model, args)
-    
+
 if __name__ == "__main__":
     # Command line arguments
     parser = create_parser()
