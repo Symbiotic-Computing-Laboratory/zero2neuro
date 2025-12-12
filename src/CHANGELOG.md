@@ -1,6 +1,9 @@
 # Zero2Neuro Change Log
 
 Use inverse order
+## 2025-12-12 Luke Sewell Version 0.1.3  
+* Added error handling for xlsx reports (Maximum rows)
+
 ## 2025-12-03 Andrew H. Fagg Version 0.1.2
 * Added support for categorical-to-continuous feature mapping (--data_columns_categorical_to_float_direct)
 
