@@ -1,6 +1,9 @@
 # Zero2Neuro Change Log
 
 Use inverse order
+## 2025-12-19 Luke Sewell Version 0.1.4
+* Added autofitting to the xlsx reports
+
 ## 2025-12-12 Luke Sewell Version 0.1.3  
 * Added error handling for xlsx reports (Maximum rows)
 

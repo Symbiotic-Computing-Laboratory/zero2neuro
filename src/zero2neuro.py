@@ -17,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -415,6 +415,10 @@ def execute_exp(sds, model, args):
                 handle_error(f"Testing Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
             else:
                 df_testing_report.to_excel(writer, sheet_name='Testing Data', index=False)
+
+        # Go through and auto adjust the column widths to fit data for each sheet in the xlsx file.
+        for sheet in writer.sheets:
+            writer.sheets[sheet].autofit()
     
         # Create the excel file and save it.
         writer.close()
