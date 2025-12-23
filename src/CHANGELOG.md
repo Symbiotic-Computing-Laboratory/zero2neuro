@@ -1,6 +1,13 @@
 # Zero2Neuro Change Log
 
 Use inverse order
+
+## 2025-12-23 Andrew H. Fagg 
+* Added support for example-wise splitting of data into groups
+'''
+--data_fold_split=group-by-example
+'''
+
 ## 2025-12-19 Luke Sewell Version 0.1.4
 * Added autofitting to the xlsx reports
 
