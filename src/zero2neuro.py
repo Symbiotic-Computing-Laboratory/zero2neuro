@@ -230,7 +230,13 @@ def execute_exp(sds, model, args):
                             steps=args.steps_per_epoch,
                             batch_size=args.batch,
                             )
-    d = dict(zip(['training_'+s for s in eval_list], ev))
+
+    if isinstance(ev, (tuple,)):
+        # List of loss/metrics
+        d = dict(zip(['training_'+s for s in eval_list], ev))
+    else:
+        # Assume scalar
+        d = {'training_loss': ev}
     
     results.update(d)
     
@@ -267,6 +273,7 @@ def execute_exp(sds, model, args):
     
     ######
     # Validation set
+    print_debug('Validation eval', 4, args.debug)
     if (sds.ins_validation is not None) or (sds.validation is not None):
         print('test')
         if args.data_format == 'tf-dataset':
@@ -274,8 +281,13 @@ def execute_exp(sds, model, args):
         else:
             ev = model.evaluate(sds.ins_validation,
                                 sds.outs_validation)
-        d = dict(zip(['validation_'+s for s in eval_list], ev))
-    
+        if isinstance(ev, (tuple,)):
+            # List of loss/metrics
+            d = dict(zip(['validation_'+s for s in eval_list], ev))
+        else:
+            # Assume scalar
+            d = {'validation_loss': ev}
+
         results.update(d)
 
         if args.report:
@@ -307,13 +319,21 @@ def execute_exp(sds, model, args):
 
     ######
     # Testing set
+    print_debug('Testing eval', 4, args.debug)
+    
     if (sds.ins_testing is not None) or (sds.testing is not None):
         if args.data_format == 'tf-dataset':
             ev = model.evaluate(sds.testing)
         else:
             ev = model.evaluate(sds.ins_testing,
                                 sds.outs_testing)
-        d = dict(zip(['testing_'+s for s in eval_list], ev))
+
+        if isinstance(ev, (tuple,)):
+            # List of loss/metrics
+            d = dict(zip(['testing_'+s for s in eval_list], ev))
+        else:
+            # Assume scalar
+            d = {'testing_loss': ev}
     
         results.update(d)
 

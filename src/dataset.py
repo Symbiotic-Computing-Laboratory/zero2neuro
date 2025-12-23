@@ -314,9 +314,7 @@ class SuperDataSet:
                 
         elif self.args.data_fold_split == 'group-by-example':
             if self.args.data_representation == 'numpy':
-                # TODO: Andy
-                handle_error("data_fold_split group-by-example not yet supported",
-                             self.args.verbose)            
+                self.folds = self.generate_folds_by_example_numpy()
                 
             else:
                 handle_error("data_fold_split group-by-example not supported for tf-dataset",
@@ -397,6 +395,70 @@ class SuperDataSet:
 
             
         return data_out
+
+    def generate_folds_by_example_numpy(self):
+        '''
+        Each example has a column that indicates which fold it belongs to
+
+        '''
+        # Combine all of the data tables together into one
+        #ins, outs, weights, groups = self.combine_all_data_tables()
+        data_all = self.combine_all_data_tables()
+
+        if data_all[3] is None:
+            # No fold data
+            handle_error("No group assignment specified by --data_groups", self.args.verbose)
+            
+        # Number of folds
+        #nfolds = self.args.data_n_folds
+        
+        # Numpy array case
+        data_out = []
+                
+        # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights) vs (ins,outs,weights,groups)
+        # Some of the elements of the tuple can be None - so deal with this case
+        data_size = len(data_all) #sum(d is not None for d in data_all)
+        data_size_extra = 4-data_size
+        
+        # Loop over every fold: 0 ... K-1
+        nfolds = max(data_all[3])+1
+        print_debug("Number of folds: %d"%nfolds, 2, self.args.debug)
+        print_debug("data_size: %d"%data_size, 2, self.args.debug)
+
+        for fold in range(nfolds):
+            # Accumulate all of the elements into a new list (which will become a tuple)
+            data_in_group = []
+            print_debug("\tFold %d"%fold, 3, self.args.debug)
+
+            # Identify the matching rows for this fold
+            rows = np.where(data_all[3] == fold)[0]
+            if rows.shape[0] == 0:
+                # No rows in this fold
+                handle_error("No examples assigned to fold %d"%fold, self.args.verbose)
+                
+            # Loop over every element in each data tuple (ins, outs, weights, groups)
+            for i in range(data_size):
+                print_debug("\t\tData %d"%i, 3, self.args.debug)
+
+                if data_all[i] is None:
+                    # No data of this type
+                    data_in_group.append(None)
+                else:
+                    # extract the rows of this data
+                    if len(data_all[i].shape) > 1:
+                        # 2D
+                        data_in_group.append(data_all[i][rows,:])
+                    else:
+                        # 1D
+                        data_in_group.append(data_all[i][rows])
+
+            # Add this data group to the growing list, with extra None's if necessary
+            fold_tuple = tuple(data_in_group) + (None,) * data_size_extra
+            data_out.append(fold_tuple) 
+
+        print(len(data_out))
+        return data_out
+
 
     @staticmethod
     def shape2str(mat:np.array)->str:

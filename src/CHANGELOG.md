@@ -3,6 +3,7 @@
 Use inverse order
 ## 2025-12-03 Andrew H. Fagg Version 0.1.2
 * Added support for categorical-to-continuous feature mapping (--data_columns_categorical_to_float_direct)
+* Added elup1 non-linearity
 
 ## 2025-11-07 Luke Sewell  
 * Added support for tf-datasets to use pickle file reporting functionality.  
