@@ -17,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1.2"
+VERSION = "0.1.4"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -382,6 +382,7 @@ def execute_exp(sds, model, args):
         pickle.dump(results, fp)
 
     if args.report:
+        MAX_ROWS = 100000
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
 
@@ -389,36 +390,55 @@ def execute_exp(sds, model, args):
         df_key_args_list, df_args_list = xlsx_args_list(args)
 
         # Sheet 1: Key Arguments
-        df_key_args_list.to_excel(writer, sheet_name='Key Arguments List', index=False)
+        if (len(df_key_args_list) > MAX_ROWS):
+            handle_error(f"Key Arguments DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+        else:
+            df_key_args_list.to_excel(writer, sheet_name='Key Arguments List', index=False)
         
 
         # Create sheet for the loss and metrics.
         df_performance_report = xlsx_performance_report(metrics_list)
 
         # Sheet 2: Performance Report
-        df_performance_report.to_excel(writer, sheet_name='Performance Report', index=False)
+        if (len(df_performance_report) > MAX_ROWS):
+            handle_error(f"Performance Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+        else:
+            df_performance_report.to_excel(writer, sheet_name='Performance Report', index=False)
 
         # Sheet 3: All Arguments
-        df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
+        if (len(df_args_list) > MAX_ROWS):
+            handle_error(f"Arguments List DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+        else:
+            df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
         
         # Create a sheet for each training/validation/testing set and their true values vs predictions.
         if args.report_training:
             
             df_training_report = xlsx_training_report(sds,model, args)
-            
-            df_training_report.to_excel(writer, sheet_name='Training Data', index=False)
+            if (len(df_training_report) > MAX_ROWS):
+                handle_error(f"Training Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+            else:
+                df_training_report.to_excel(writer, sheet_name='Training Data', index=False)
     
         if args.report_validation:
 
             df_validation_report = xlsx_validation_report(sds,model, args)
-            
-            df_validation_report.to_excel(writer, sheet_name='Validation Data', index=False)
+            if (len(df_validation_report) > MAX_ROWS):
+                handle_error(f"Validation Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+            else:
+                df_validation_report.to_excel(writer, sheet_name='Validation Data', index=False)
     
         if args.report_testing:
             
             df_testing_report = xlsx_testing_report(sds,model, args)
-            
-            df_testing_report.to_excel(writer, sheet_name='Testing Data', index=False)
+            if (len(df_testing_report) > MAX_ROWS):
+                handle_error(f"Testing Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+            else:
+                df_testing_report.to_excel(writer, sheet_name='Testing Data', index=False)
+
+        # Go through and auto adjust the column widths to fit data for each sheet in the xlsx file.
+        for sheet in writer.sheets:
+            writer.sheets[sheet].autofit()
     
         # Create the excel file and save it.
         writer.close()
