@@ -706,6 +706,12 @@ def prepare_and_execute_experiment(args):
     else:
         print('NO GPU')
 
+    # Limit thread use
+    if args.cpus_per_task is not None:
+        tf.config.threading.set_intra_op_parallelism_threads(int(args.cpus_per_task*args.cpus_per_task_scale//2))
+        tf.config.threading.set_inter_op_parallelism_threads(int(args.cpus_per_task*args.cpus_per_task_scale//2))
+
+
 
     ######
     # Fetch the dataset
