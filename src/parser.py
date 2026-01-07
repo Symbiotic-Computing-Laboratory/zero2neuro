@@ -102,6 +102,7 @@ def create_parser(description='Zero2Neuro'):
     
     # CPU/GPU
     parser.add_argument('--cpus_per_task', type=int, default=None, help="Number of threads to consume")
+    parser.add_argument('--inter_ops', type=int, default=1, help="Number of parallel operations to allow")
     parser.add_argument('--gpu', action='store_true', help='Use a GPU')
     parser.add_argument('--no-gpu', action='store_false', dest='gpu', help='Do not use the GPU')
 
