@@ -209,11 +209,11 @@ def execute_exp(sds, model, args):
     # LOG RESULTS
 
     # List of evaluation measures
-    eval_list = [args.loss]
+    eval_list = ['loss']
+    metrics_list = {}
+    
     if args.metrics is not None:
         eval_list = eval_list + args.metrics
-        metrics_list = {}
-    
 
     results = {}
     ######
@@ -231,7 +231,8 @@ def execute_exp(sds, model, args):
                             batch_size=args.batch,
                             )
 
-    if isinstance(ev, (tuple,)):
+    # Create dictionaries that match name with value from ev
+    if isinstance(ev, (tuple, list)):
         # List of loss/metrics
         d = dict(zip(['training_'+s for s in eval_list], ev))
     else:
@@ -239,10 +240,12 @@ def execute_exp(sds, model, args):
         d = {'training_loss': ev}
     
     results.update(d)
-    
+
+    # Add to report
     if args.report:
         metrics_list.update(d)
 
+    # Send to wandb
     if args.wandb:
         wandb.log(d)
 
@@ -275,13 +278,12 @@ def execute_exp(sds, model, args):
     # Validation set
     print_debug('Validation eval', 4, args.debug)
     if (sds.ins_validation is not None) or (sds.validation is not None):
-        print('test')
         if args.data_format == 'tf-dataset':
             ev = model.evaluate(sds.validation)
         else:
             ev = model.evaluate(sds.ins_validation,
                                 sds.outs_validation)
-        if isinstance(ev, (tuple,)):
+        if isinstance(ev, (tuple, list)):
             # List of loss/metrics
             d = dict(zip(['validation_'+s for s in eval_list], ev))
         else:
@@ -290,9 +292,11 @@ def execute_exp(sds, model, args):
 
         results.update(d)
 
+        # Add to report
         if args.report:
             metrics_list.update(d)
-        
+
+        # Send to wandb
         if args.wandb:
             wandb.log(d)
             
@@ -328,7 +332,7 @@ def execute_exp(sds, model, args):
             ev = model.evaluate(sds.ins_testing,
                                 sds.outs_testing)
 
-        if isinstance(ev, (tuple,)):
+        if isinstance(ev, (tuple, list)):
             # List of loss/metrics
             d = dict(zip(['testing_'+s for s in eval_list], ev))
         else:
@@ -337,9 +341,11 @@ def execute_exp(sds, model, args):
     
         results.update(d)
 
+        # Add to report
         if args.report:
             metrics_list.update(d)
     
+        # Send to wandb
         if args.wandb:
             wandb.log(d)
 
