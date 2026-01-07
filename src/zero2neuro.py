@@ -242,7 +242,7 @@ def execute_exp(sds, model, args):
     
     if args.report:
         metrics_list.update(d)
-    
+
     if args.wandb:
         wandb.log(d)
 
