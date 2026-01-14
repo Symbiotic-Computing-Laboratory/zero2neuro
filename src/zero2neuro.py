@@ -17,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):

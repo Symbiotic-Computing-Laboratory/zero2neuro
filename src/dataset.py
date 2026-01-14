@@ -810,23 +810,27 @@ class SuperDataSet:
 
         # Default: use all available folds
         if n_train_folds is None:
-            n_train_folds = nfolds - 2
+            n_train_folds = nfolds - 1 - self.args.data_n_validation_folds
 
-        self.n_train_fodls = n_train_folds
+        # TODO: for simplicity, we should just use self.args.xxx
+        self.n_train_folds = n_train_folds
             
-        if(n_train_folds > nfolds-2):
-            handle_error("n_training_folds must be <= n_folds-2",
+        if(n_train_folds + self.args.data_n_validation_folds > nfolds-1):
+            handle_error("n_training_folds + n_validation_folds must be <= n_folds-1",
                          self.args.verbose)
 
         rotation = self.args.data_rotation # get the rotation
-        
+
+        print('VF:%d'%self.args.data_n_validation_folds)
         # Call the function to get the fold indexes for each
-        tr_folds, val_fold, test_fold = SuperDataSet.calculate_nfolds(n_train_folds,
-                                                                      nfolds,
-                                                                      rotation,
-                                                                      self.args.data_set_type,
-                                                                      self.args.verbose,
-                                                                      self.args.debug) 
+        tr_folds, val_folds, test_fold = SuperDataSet.calculate_nfolds(n_train_folds,
+                                                                       nfolds,
+                                                                       rotation,
+                                                                       self.args.data_set_type,
+                                                                       self.args.verbose,
+                                                                       self.args.debug,
+                                                                       n_validation_folds=self.args.data_n_validation_folds)
+
         ## Training set
         # Inputs
         self.ins_training = np.concatenate([self.folds[f][0] for f in tr_folds], axis=0)
@@ -840,7 +844,18 @@ class SuperDataSet:
             self.weights_training = np.concatenate([self.folds[f][2] for f in tr_folds], axis=0)
             
         ## Validation
-        self.ins_validation, self.outs_validation, self.weights_validation, _ = self.folds[val_fold]
+        #self.ins_validation, self.outs_validation, self.weights_validation, _ = self.folds[val_fold]
+
+        # Inputs
+        self.ins_validation = np.concatenate([self.folds[f][0] for f in val_folds], axis=0)
+
+        # Outputs
+        if self.folds[val_folds[0]][1] is not None:
+            self.outs_validation = np.concatenate([self.folds[f][1] for f in val_folds], axis=0)
+            
+        # Weights
+        if self.folds[val_folds[0]][2] is not None:
+            self.weights_validation = np.concatenate([self.folds[f][2] for f in val_folds], axis=0)
 
         ## Testing
         self.ins_testing, self.outs_testing, self.weights_testing, _ = self.folds[test_fold]
@@ -1334,16 +1349,18 @@ class SuperDataSet:
 
     # method takes in the amount of training folds, total number of folds, and the rotation
     @staticmethod
-    def calculate_nfolds(n_train_folds:int, nfolds:int, rotation:int, data_split:str, verbose:int=0, debug:int=0):
+    def calculate_nfolds(n_train_folds:int, nfolds:int, rotation:int, data_split:str,
+                         verbose:int=0, debug:int=0, n_validation_folds:int=1)->([int], [int], int):
         '''
         :param n_train_folds: Number of training folds
         :param nfolds: Total number of folds
         :param rotation: Cross-validation rotation
         :param data_split: Type of split (holistic-cross-validation, or hold-out-cross-validation)
         :param debug: Debug level  
-        :param verbose: Verbosity level  
+        :param verbose: Verbosity level
+        :param n_validation_folds: Number of validation folds
 
-        :return: Tuple of [training fold list], validation fold, testing fold
+        :return: Tuple of [training fold list], [validation fold list], testing fold
         
         '''
         if nfolds < 3:
@@ -1353,6 +1370,8 @@ class SuperDataSet:
         # TODO: Look at how rotations are handled (Should be rotations - 1 for this)
         if(data_split == 'hold-out-cross-validation'): 
             # Hold-out cross-validation
+            # Use last fold for testing always
+            # Rotate through folds 0 ... N-1 for training and validation
             
             # Error check for hold out
             if (rotation >= nfolds-1) or (rotation < 0):
@@ -1363,7 +1382,8 @@ class SuperDataSet:
             trainfolds = ((np.arange(n_train_folds) + rotation) % (nfolds - 1))
 
             # Validation rotates
-            valfold = (nfolds - 2 + rotation) % (nfolds - 1)
+            # valfold = (nfolds - 2 + rotation) % (nfolds - 1)
+            valfolds = (np.arange(n_validation_folds) + nfolds - 1 - n_validation_folds +rotation) % (nfolds-1)
 
             # Fixed test
             testfold = nfolds - 1
@@ -1378,13 +1398,14 @@ class SuperDataSet:
                 handle_error(message, verbose)
                 
             trainfolds = (np.arange(n_train_folds)+rotation) % nfolds
-            valfold = (nfolds - 2 + rotation) % nfolds
+            #valfold = (nfolds - 2 + rotation) % nfolds
+            valfolds = (np.arange(n_validation_folds) + nfolds - 1 - n_validation_folds +rotation) % nfolds
             testfold = (nfolds - 1 + rotation) % nfolds
 
         print_debug("TRAINING FOLDS: " + str(trainfolds), 2, debug)
-        print_debug("VALIDATION FOLD: %d"%valfold, 2, debug)
+        print_debug("VALIDATION FOLDS: " + str(valfolds), 2, debug)
         print_debug("TESTING FOLD: %d"%testfold, 2, debug)
-        return trainfolds, valfold, testfold
+        return trainfolds, valfolds, testfold
 
     # method takes in a fold index, number of folds, and total number of variables in data
     @staticmethod
