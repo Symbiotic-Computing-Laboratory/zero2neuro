@@ -150,6 +150,7 @@ def create_parser(description='Zero2Neuro'):
 
     parser.add_argument('--output_activation', type=str, default=None, help='Activation function for output layer')
     parser.add_argument('--batch_normalization', action='store_true', help='Turn on batch normalization')
+    parser.add_argument('--batch_normalization_input', action='store_true', help='Turn on batch normalization for input layers')
 
     # CNN network parameters
     parser.add_argument('--conv_kernel_size', nargs='+', type=int, default=None, help='Convolution filter size per layer (sequence of ints)')

@@ -24,6 +24,7 @@ class NetworkBuilder:
             # Build a new model
             if args.network_type == 'fully_connected':
                 model = FullyConnectedNetwork.create_fully_connected_network(input_shape=args.input_shape0,
+                                                                             batch_normalization_input=args.batch_normalization_input,
                                                                              n_hidden=args.number_hidden_units,
                                                                              output_shape=args.output_shape0,
                                                                              dropout_input=args.dropout_input,
@@ -42,6 +43,7 @@ class NetworkBuilder:
                 
             elif args.network_type == 'cnn':
                 model = ConvolutionalNeuralNetwork.create_cnn_network(input_shape=args.input_shape0,
+                                                                      batch_normalization_input=args.batch_normalization_input,
                                                                       conv_kernel_size=args.conv_kernel_size,
                                                                       conv_padding=args.conv_padding,
                                                                       conv_number_filters=args.conv_number_filters,
