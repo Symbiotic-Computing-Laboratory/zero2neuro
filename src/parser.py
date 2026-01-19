@@ -55,6 +55,7 @@ def create_parser(description='Zero2Neuro'):
     
     parser.add_argument('--data_n_folds', type=int, default=None, help='Number of cross-validation folds')
     parser.add_argument('--data_n_training_folds', type=int, default=None, help='Number of cross-validation folds for training')
+    parser.add_argument('--data_n_validation_folds', type=int, default=1, help='Number of cross-validation folds for validation (default = 1)')
     parser.add_argument('--data_rotation', type=int, default=0, help='Cross-validation rotation')
     
     parser.add_argument('--data_file', type=str, default=None, help='Input data file')
@@ -143,7 +144,7 @@ def create_parser(description='Zero2Neuro'):
 
     parser.add_argument('--input_shape0', '--input_shape', nargs='+', type=int, default=[10], help='Shape of the network input')
     parser.add_argument('--hidden_activation', type=str, default='elu', help='Activation function for hidden fully-connected layers')
-    parser.add_argument('--number_hidden_units', nargs='+', type=int, default=None, help='Number of hidden units per layer (sequence of ints)')
+    parser.add_argument('--number_hidden_units', nargs='*', type=int, default=None, help='Number of hidden units per layer (sequence of ints)')
 
     # TODO: parser.add_argument("--mylist", nargs='+', action='append', type=int)
     parser.add_argument('--output_shape0', '--output_shape', nargs='+', type=int, default=[10], help='Shape of the network output')

@@ -2,6 +2,12 @@
 
 Use inverse order
 
+## V0.1.5 2026-01-09 Andrew H. Fagg
+* Added variable number of validation folds
+'''
+--data_n_validation_folds	
+'''	
+	
 ## 2025-12-23 Andrew H. Fagg 
 * Added support for example-wise splitting of data into groups
 '''
