@@ -22,7 +22,7 @@ The input shape is the dimension of the data and is one of the few things that o
 
 ### Hidden Layers
 The hidden layer is the black box of the model and is responsible for taking the input data and doing linear regression, but it also applies non-linearity via the activation functions. The hidden layer also utilizes weights and will adjust these weights through a process called back-propagation. There are no strict guidelines for what a hidden layer should look like, but it is generally best to start small and build up in complexity. Here is an example of a small two layer network described in the `network_config.txt` file.  
-`--number_hidden_units`   
+`--number_hidden_units`  
 `10`  
 `5`  
 This produces a neural network with ten neurons in the first layer and five in the second. 
@@ -30,14 +30,7 @@ This produces a neural network with ten neurons in the first layer and five in t
 ### Output Shape
 
 non-linearity
-
-## Regularization
-
-- Dropout
-- L1/L2
-
-## Batch Normalization
-
+  
 ___
 
 ## Example Network Configuration
