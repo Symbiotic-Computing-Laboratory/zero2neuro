@@ -27,6 +27,9 @@ from zero2neuro_debug import *
 
 from PIL import Image
 
+import keras
+from charset_normalizer import from_path
+
 class SuperDataSet:
     
     
@@ -73,7 +76,59 @@ class SuperDataSet:
 
         # Translate tables to training/validation/testing
         self.generate_datasets()
+
+        # Preprocess datasets
+        self.preprocess_datasets()
+
+    def preprocess_datasets(self):
+        '''
+        After the training/validation/testing data sets have been created, we may have
+        additional preprocessing that must take place before model training and evaluation
+        '''
+        if self.args.data_representation == 'numpy':
+            self.preprocess_datasets_strings_numpy()
+
+    def preprocess_datasets_strings_numpy(self):
+        '''
+        When a string object in a pandas DF is converted to numpy, its dtype is 'object'.
+        Here, we correct for this:
+        - Numpy arrays are converted to keras tensors of type string.  This will work with model.fit
+        - Correction is done for each of the training, validation, and testing data sets
+        '''
         
+        # Training set
+        if self.ins_training.dtype == 'object':
+            # Training inputs are generic objects (presume string)
+            self.ins_training = keras.ops.convert_to_tensor(self.ins_training.astype(str).tolist(), dtype='string')
+
+        # Validation set
+        if self.ins_validation is not None and (self.ins_validation.dtype == 'object'):
+            # Validation inputs are generic objects (presume string)
+            self.ins_validation = keras.ops.convert_to_tensor(self.ins_validation.astype(str).tolist(), dtype='string')
+            # Re-assemble the tuple
+            if self.outs_validation is not None:
+                if self.weights_validation is not None:
+                    self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
+                else:
+                    self.validation = (self.ins_validation, self.outs_validation)
+            else:
+                self.validation = (self.ins_validation, )
+
+        # Testing set
+        if self.ins_testing is not None and (self.ins_testing.dtype == 'object'):
+            # Testing inputs are generic objects (presume string)
+            self.ins_testing = keras.ops.convert_to_tensor(self.ins_testing.astype(str).tolist(), dtype='string')
+            
+            # Re-assemble the tuple
+            if self.outs_testing is not None:
+                if self.weights_testing is not None:
+                    self.testing = (self.ins_testing, self.outs_testing, self.weights_testing)
+                else:
+                    self.testing = (self.ins_testing, self.outs_testing)
+            else:
+                self.testing = (self.ins_testing, )
+                
+
     @staticmethod
     def is_missing_values(lst):
         '''
@@ -924,7 +979,8 @@ class SuperDataSet:
                           col_range:[int]=None,
                           col_list:[int]=None,
                           skiprows:int=None,
-                          sheet_name:str=None):
+                          sheet_name:str=None,
+                          header_names:[str]=None):
         '''
         Load a CSV or XLSX file
         '''
@@ -932,19 +988,34 @@ class SuperDataSet:
             print("CSV file")
 
             # Figure out which columns to use
+            # Default
             cols = None
             if col_range is not None:
+                # Range is specified
                 cols=range(col_range[0], col_range[1]+1)
             elif col_list is not None:
+                # Explicit list is specified
                 cols = col_list
 
+            # Infer any string type (if it exists)
+            best = from_path(file_name).best()
+            if best is None:
+                encoding = 'utf-8'
+            else:
+                encoding = best.encoding
+                
             # Read the CSV file
             df = pd.read_csv(file_name,
                              usecols=cols,
-                             skiprows=skiprows)
+                             skiprows=skiprows,
+                             header=('infer' if header_names is None else 0),
+                             names=header_names,
+                             encoding=encoding
+                             )
         
         elif file_name[-4:] == 'xlsx':
             print("XLSX file")
+            # TODO: add mechanism for dealing flexibly with different string encodings
 
             # Figure out which columns to use
             cols = None
@@ -953,6 +1024,8 @@ class SuperDataSet:
             elif col_list is not None:
                 cols = col_list
 
+            # TODO: add header_names
+            
             # Open the xlsx file
             xlsx = pd.ExcelFile(file_name)
             if (sheet_name is not None) and (not sheet_name in xlsx.sheet_names):
@@ -1145,6 +1218,7 @@ class SuperDataSet:
                                                          tabular_column_range=self.args.tabular_column_range,
                                                          tabular_column_list=self.args.tabular_column_list,
                                                          tabular_header_row=self.args.tabular_header_row,
+                                                         tabular_header_names=self.args.tabular_header_names,
                                                          debug=self.args.debug)
             data.append((ins, outs, weights, groups))
         
@@ -1166,6 +1240,7 @@ class SuperDataSet:
                    tabular_column_range=None,
                    tabular_column_list=None,
                    tabular_header_row=None,
+                   tabular_header_names=None,
                    debug=0):   
 
         # TODO: assume that file_name is absolute path if it is needed
@@ -1179,6 +1254,7 @@ class SuperDataSet:
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
                                             skiprows=tabular_header_row,
+                                            header_names=tabular_header_names,
                                             sheet_name=tabular_xlsx_sheet_name)
 
         ##
@@ -1304,12 +1380,14 @@ class SuperDataSet:
                                    output_sparse_categorical:bool=False,
                                    tabular_column_range=None,
                                    tabular_column_list=None,
-                                   tabular_header_row=None):
+                                   tabular_header_row=None,
+                                   tabular_header_names=None):
 
         # Load the table
         df = SuperDataSet.load_tabular_file(file_name,
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
+                                            header_names=tabular_header_names,
                                             skiprows=tabular_header_row)
         
         print(df['File'][0])

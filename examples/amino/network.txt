@@ -1,0 +1,15 @@
+--network_type=fully_connected
+--input_shape
+1
+--number_hidden_units
+200
+100
+50
+25
+10
+--hidden_activation=elu
+--output_shape
+1
+--output_activation=elup1
+--dropout=0.25
+--l2=0.001

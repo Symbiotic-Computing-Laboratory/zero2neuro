@@ -2,6 +2,13 @@
 
 Use inverse order
 
+## V0.1.6 2026-01-22 Andrew H. Fagg
+* Added --tabular_header_names to provide a list of column header names for cases where there is no header row in a CSV file
+* Added dataset preprocessing stage after creation of training/validation/testing set
+   * If the inputs are actually strings, numpy says that they are objects.  This is corrected
+* Added support for tokenization and embedding for fully connected and CNN schemas
+* Added 'amino' example
+
 ## V0.1.5 2026-01-09 Andrew H. Fagg
 * Added variable number of validation folds
 '''

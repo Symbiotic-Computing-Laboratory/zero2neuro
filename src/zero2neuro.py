@@ -17,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1.5"
+VERSION = "0.1.6"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -66,7 +66,9 @@ def compatibility_checks(args):
     # Early stopping checks
     if (not args.early_stopping) and (args.early_stopping_monitor or args.early_stopping_patience):
         handle_error("You must use the early_stopping argument if you specify either early_stopping_monitor or early_stopping_patience", args.verbose)
-    
+
+    # Network-specific checks
+    NetworkBuilder.compatibility_checks(args)
 
     
 def args2wandb_name(args)->str:
@@ -726,7 +728,20 @@ def prepare_and_execute_experiment(args):
 
     ######
     # Create the model
-    model = NetworkBuilder.args2model(args)
+    models = NetworkBuilder.args2model(args)
+
+    if isinstance(models, tuple):
+        # TODO: probably need to do modularization here
+        # We created a text vectorization model, too - split these out
+        model, model_text_vectorization = models
+
+        # If not already initialized, then use the training inputs to initialize
+        #  the text vectorization model
+        if args.tokenizer_vocabulary is None:
+            model_text_vectorization.adapt(sds.ins_training)
+        
+    else:
+        model = models
 
     #if args.network_test:
     #print(model.summary())

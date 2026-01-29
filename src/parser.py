@@ -67,8 +67,13 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_groups', '--data_folds', type=str, default=None, help='Column in the table that correspond to the dataset group')
     parser.add_argument('--data_stratify', type=str, default=None, help='Column in the table that correspond to the stratification class')  # TODO: implement
 
+    # Preprocessor: not using right now
+    #parser.add_argument('--data_preprocess_tokenize', action='store_true', help='Enable the tokenizer')
+
+
     # For tabular data, control which row/col the headers are
-    parser.add_argument('--tabular_header_row', type=int, default=None, help='Row that contains the table headers (0/None = first row; the following row is the start of the data)')
+    parser.add_argument('--tabular_header_row', type=int, default=None, help='Row that contains the table headers (0/None = first row; NONE = no header; the following row is the start of the data)')
+    parser.add_argument('--tabular_header_names', nargs='+', type=str, default=None, help='List of column names (replaces a row that contains column names)')
     parser.add_argument('--tabular_column_range', nargs=2, type=int, default=None, help='Column range that contains the headers/data ([10,15] means use columns 10,11,12,13,14,15)')
     parser.add_argument('--tabular_column_list', nargs='+', type=int, default=None, help='List of column range that contain the headers/data')
 
@@ -135,7 +140,22 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--wandb_name', type=str, default='{args.experiment_name}', help='WandB experiment name')
     parser.add_argument('--note', type=str, default=None, help="Just text to give to WandB")
 
+
     # Network specification
+    
+    # Tokenizer
+    parser.add_argument('--tokenizer', action='store_true', help='Enable the tokenizer')
+    parser.add_argument('--tokenizer_max_tokens', type=int, default=None, help ='Tokenizer maximumn number of tokens')
+    parser.add_argument('--tokenizer_standardize', type=str, default='lower_and_strip_punctuation', help ='String standardization before tokenization')
+    parser.add_argument('--tokenizer_split', type=str, default='whitespace', help ='Splitting pattern between tokens')
+    parser.add_argument('--tokenizer_output_sequence_length', type=int, default=None, help='Maximum number of tokens in any given input')
+    parser.add_argument('--tokenizer_vocabulary', nargs='+', type=str, default=None, help='Pre-defined tokens to load into the tokenizer')
+    parser.add_argument('--tokenizer_encoding', type=str, default='utf-8', help='Tokenizer character encoding')
+
+    parser.add_argument('--embedding', action='store_true', help='Enable the embedding layer')
+    parser.add_argument('--embedding_dimensions', type=int, default=None, help='Number of embedding dimensions')
+
+    # Fully-connected networks
     parser.add_argument('--load_trained_model', type=str, default=None, help='Load a trained model instead of creating a new one')
     parser.add_argument('--optimizer', type=str, default=None, help ='Optimizer used for model training (default = Adam).')
     
@@ -152,6 +172,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--output_activation', type=str, default=None, help='Activation function for output layer')
     parser.add_argument('--batch_normalization', action='store_true', help='Turn on batch normalization')
     parser.add_argument('--batch_normalization_input', action='store_true', help='Turn on batch normalization for input layers')
+
 
     # CNN network parameters
     parser.add_argument('--conv_kernel_size', nargs='+', type=int, default=None, help='Convolution filter size per layer (sequence of ints)')
