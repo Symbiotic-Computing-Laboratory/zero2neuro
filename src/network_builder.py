@@ -56,6 +56,7 @@ class NetworkBuilder:
                     
                 else:
                     model = models
+                    model_text_vectorization = None
                     
                 
             elif args.network_type == 'cnn':
@@ -101,6 +102,7 @@ class NetworkBuilder:
                     
                 else:
                     model = models
+                    model_text_vectorization = None
                     
                                                
             else:
