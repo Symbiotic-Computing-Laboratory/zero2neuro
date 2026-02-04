@@ -56,9 +56,9 @@ def compatibility_checks(args):
     if args.tabular_column_range is not None and args.tabular_column_list is not None:
         handle_error("Can only provide at most one of tabular_column_range or tabular_column_list", args.verbose)
 
-    # Check that results path exists
+    # Check that results path exists, if it doesn't make the directory
     if not os.path.exists(args.results_path):
-        handle_error("results_path must exist", args.verbose)
+        os.makedirs(args.results_path)
         
     if not os.path.isdir(args.results_path):
         handle_error("results_path must be a directory", args.verbose)

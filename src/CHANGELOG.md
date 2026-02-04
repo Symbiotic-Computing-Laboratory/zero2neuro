@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## V0.1.7 2026-02-04 Luke Sewell
+* Added ability to make results path if specified one doesn't exist.
+
 ## V0.1.6 2026-01-22 Andrew H. Fagg
 * Added --tabular_header_names to provide a list of column header names for cases where there is no header row in a CSV file
 * Added dataset preprocessing stage after creation of training/validation/testing set
