@@ -12,4 +12,4 @@
 1
 --output_activation=elup1
 --dropout=0.25
---l2=0.001
+--l2=0.0001

@@ -15,6 +15,8 @@ class NetworkBuilder:
     
     @staticmethod
     def args2model(args):
+        model_text_vectorization = None
+        
         if args.load_trained_model is not None:
             # Load an already trained model
             model = load_model(args.load_trained_model)
@@ -50,14 +52,6 @@ class NetworkBuilder:
                                                                              tokenizer_encoding=args.tokenizer_encoding,
                                                                              embedding_dimensions=args.embedding_dimensions,
                                                                               )
-                # Deal with variable number of returns
-                if isinstance(models, tuple):
-                    model, model_text_vectorization = models
-                    
-                else:
-                    model = models
-                    model_text_vectorization = None
-                    
                 
             elif args.network_type == 'cnn':
                 models = ConvolutionalNeuralNetwork.create_cnn_network(input_shape=args.input_shape0,
@@ -96,25 +90,78 @@ class NetworkBuilder:
                                                                       tokenizer_encoding=args.tokenizer_encoding,
                                                                       embedding_dimensions=args.embedding_dimensions,
                                                                       )
-                # Deal with variable number of returns
-                if isinstance(models, tuple):
-                    model, model_text_vectorization = models
-                    
-                else:
-                    model = models
-                    model_text_vectorization = None
-                    
+                
+            elif args.network_type == 'rnn':
+                models = ConvolutionalNeuralNetwork.create_rnn_network(input_shape=args.input_shape0,
+                                                                       rnn_type=args.rnn_type,
+                                                                       rnn_filters=args.rnn_filters,
+                                                                       rnn_filters_last=args.rnn_filters_last,
+                                                                       rnn_activation=args.rnn_activation,
+                                                                       rnn_dropout=args.rnn_dropout,
+                                                                       rnn_L1_regularization=args.rnn_L1_regularization,
+                                                                       rnn_L2_regularization=args.rnn_L2_regularization,
+                                                                       rnn_unroll=args.rnn_unroll,
+                                                                       rnn_pool_average_last=args.rnn_pool_average_last,
+                                                                       rnn_reverse_time=args.rnn_reverse_time,
+                                                                       batch_normalization_input=args.batch_normalization_input,
+                                                                       conv_kernel_size=args.conv_kernel_size,
+                                                                       conv_padding=args.conv_padding,
+                                                                       conv_number_filters=args.conv_number_filters,
+                                                                       conv_activation=args.conv_activation,
+                                                                       conv_pool_average_size=args.conv_pool_average_size,
+                                                                       conv_pool_size=args.conv_pool_size,
+                                                                       conv_strides=args.conv_strides,
+                                                                       spatial_dropout=args.spatial_dropout,
+                                                                       conv_batch_normalization=args.conv_batch_normalization,
+                                                                       n_hidden=args.number_hidden_units,
+                                                                       output_shape=args.output_shape0,
+                                                                       dropout_input=args.dropout_input,
+                                                                       name_base='rnn',
+                                                                       activation=args.hidden_activation,
+                                                                       lambda1=args.L1_regularization,
+                                                                       lambda2=args.L2_regularization,
+                                                                       dropout=args.dropout,
+                                                                       name_last='output',
+                                                                       activation_last=args.output_activation,
+                                                                       batch_normalization=args.batch_normalization,
+                                                                       learning_rate=args.learning_rate,
+                                                                       loss=args.loss,
+                                                                       metrics=args.metrics,
+                                                                       opt=args.optimizer,
+                                                                       tokenizer=args.tokenizer,
+                                                                       embedding=args.embedding,
+                                                                       tokenizer_max_tokens=args.tokenizer_max_tokens,
+                                                                       tokenizer_standardize=args.tokenizer_standardize,
+                                                                       tokenizer_split=args.tokenizer_split,
+                                                                       tokenizer_output_sequence_length=args.tokenizer_output_sequence_length,
+                                                                       tokenizer_vocabulary=args.tokenizer_vocabulary,
+                                                                       tokenizer_encoding=args.tokenizer_encoding,
+                                                                       embedding_dimensions=args.embedding_dimensions,
+                                                                       )
+
+
                                                
             else:
                 handle_error('Unsupported network type (%s)'%args.network_type, args.verbose)
 
+        # Deal with variable number of returns
+        if isinstance(models, tuple):
+            model, model_text_vectorization = models
+                    
+        else:
+            model = models
+                    
+
         if args.debug >= 4:
             NetworkBuilder.recursive_summary(model)
 
-        if model_text_vectorization is not None:
-            return model, model_text_vectorization
-        else:
-            return model
+        # Return both models
+        return models
+
+#         if model_text_vectorization is not None:
+#             return model, model_text_vectorization
+#         else:
+#             return model
 
     @staticmethod
     def recursive_summary(layer, indent=0):

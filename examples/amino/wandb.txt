@@ -1,0 +1,3 @@
+--wandb
+--wandb_project=Amino_Acid
+--wandb_name=amino_{args.network_type}_R{args.data_rotation}

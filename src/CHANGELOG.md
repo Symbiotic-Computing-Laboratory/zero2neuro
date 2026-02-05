@@ -2,6 +2,18 @@
 
 Use inverse order
 
+## V0.2.0 2026-02-05 Andrew H. Fagg
+* Support for Tokenization and Embedding in all network schemas
+* Support for Recurrent Neural Networks
+* Argument parser (for files) now:
+   * Allows comments (everything right of '#' is ignored
+   * Allows empty lines in argument files
+   * Strips trailing whitespace from arguments
+* Added example/amino.  Demonstrates:
+   * tokenizer, embedding 
+   * Solving the same problem with RNNs, CNNs, and fully connected networks
+   * Regression or classification
+
 ## V0.1.7 2026-02-04 Luke Sewell
 * Added ability to make results path if specified one doesn't exist.
 

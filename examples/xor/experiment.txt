@@ -1,15 +1,37 @@
+# Name used for files and wandb
 --experiment_name=xor
+
+# Loss function is what we minimize during training; mse=Mean Squared Error
 --loss=mse
+
+# We might also care about other metrics; mae=Mean Absolute Error
 --metrics
 mae
 mse
+
+# How fast we adjust the parameters
 --learning_rate=0.001
+
+# Maximum number of steps for training
 --epochs=5000
+
+# Stop the training early if no improvement is observed
+# Note: we typically monitor val_loss when we have a validation data set
 --early_stopping
 --early_stopping_monitor=loss
 --early_stopping_patience=2000
+
+# Where to place trained networks, reports, and stored results
 --results_path=./results
+
+# Expanded file name
 --output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+
+# Save the trained model to a file
 --save_model
+
+# Create a picture of the model
 --render_model
+
+# Save the training set results
 --log_training_set

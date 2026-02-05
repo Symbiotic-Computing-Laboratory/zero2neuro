@@ -5,13 +5,87 @@ Author: Andrew H. Fagg (andrewhfagg@gmail.com)
 '''
 
 import argparse
+import shlex
+
+
+class CommentedArgumentParserOld(argparse.ArgumentParser):
+    '''
+    Wrapper around ArgumentParser that deals with:
+    1.  Comments
+    2.  Empty lines
+
+    From ChatGPT
+    '''
+    def convert_arg_line_to_args(self, line):
+        line = line.split("#", 1)[0].strip()
+        if not line:
+            return []
+        return line.split()
+
+
+class CommentedArgumentParserOld2(argparse.ArgumentParser):
+    '''
+    Wrapper around ArgumentParser that deals with:
+    1.  Comments
+    2.  Empty lines
+
+    From ChatGPT
+    '''
+    
+    def convert_arg_line_to_args(self, line):
+        # Remove comments
+        line = line.split("#", 1)[0]
+
+        # Skip blank / whitespace-only lines
+        if not line.strip():
+            return []
+
+        # Let shlex handle quoting & whitespace correctly
+        return shlex.split(line)
+
+
+class CommentedArgumentParser(argparse.ArgumentParser):
+    '''
+    Wrapper around ArgumentParser that deals with:
+    1.  Comments
+    2.  Empty lines
+
+    From ChatGPT
+    '''
+    
+    def convert_arg_line_to_args(self, line):
+        # Remove comments, strip only the RIGHT side (your requirement)
+        line = line.split("#", 1)[0].rstrip()
+
+        # Skip blank / whitespace-only lines
+        if not line.strip():
+            return []
+
+        s = line.lstrip()
+
+        # Option lines
+        if s.startswith("-"):
+            opt = s.strip()
+
+            # Support --opt=value (value may contain spaces)
+            if opt.startswith("--") and "=" in opt:
+                left, right = opt.split("=", 1)
+                # right already has no trailing whitespace because of rstrip() above
+                return [left, right]
+
+            # Normal option line, no splitting
+            return [opt]
+
+        # Value lines: keep internal whitespace, but trailing is already stripped
+        return [line]
 
 def create_parser(description='Zero2Neuro'):
     '''
     Create argument parser
     '''
     # Parse the command-line arguments
-    parser = argparse.ArgumentParser(description=description, fromfile_prefix_chars='@')
+    #parser = argparse.ArgumentParser(description=description, fromfile_prefix_chars='@')
+    parser = CommentedArgumentParser(description=description, fromfile_prefix_chars='@')
 
     # Experiment details
     parser.add_argument('--experiment_name', type=str, default='experiment', help="Prefix for all output files");
@@ -186,6 +260,17 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--conv_batch_normalization', action='store_true', help='Turn on batch normalization for convolutional layers')
     parser.add_argument('--conv_strides', nargs='+', type=int, default=None, help='Strides for each convolutional layer')
 
+    # RNN network parameters
+    parser.add_argument('--rnn_type', type=str, default=None, help='RNN type (simple, gru, lstm)')
+    parser.add_argument('--rnn_filters', nargs='*', type=int, default=None, help='Number of filters at each RNN layer (return_sequence=True)')
+    parser.add_argument('--rnn_filters_last', type=int, default=None, help='Number of filters for an optional last RNN layer (return_sequence=False)')
+    parser.add_argument('--rnn_activation', type=str, default='tanh', help='Activation function for RNN layers')
+    parser.add_argument('--rnn_dropout', type=float, default=None, help='Dropout rate for RNN layers')
+    parser.add_argument('--rnn_L1_regularization', '--rnn_l1', type=float, default=None, help="L1 regularization parameter for RNN layers")
+    parser.add_argument('--rnn_L2_regularization', '--rnn_l2', type=float, default=None, help="L2 regularization parameter for RNN layers")
+    parser.add_argument('--rnn_unroll', action='store_true', help='Unroll the RNN layers across time (more efficient, but requires more memory)')
+    parser.add_argument('--rnn_pool_average_last', type=int, default=None, help='Average pool size before last (return_sequences=False) RNN layer')
+    parser.add_argument('--rnn_reverse_time', action='store_true', help='Reverse the time dimension of the input data.')
 
     # Regularization parameters
     parser.add_argument('--dropout', type=float, default=None, help='Dropout rate')

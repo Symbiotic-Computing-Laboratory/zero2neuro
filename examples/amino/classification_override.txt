@@ -1,0 +1,7 @@
+--data_outputs
+class
+--output_activation
+sigmoid
+--loss=binary_crossentropy
+--metrics
+accuracy

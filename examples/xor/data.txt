@@ -1,8 +1,16 @@
+# Data is from a table
 --data_format=tabular
 --data_file=xor_data.csv
+
+# Our one file becomes our training set
 --data_set_type=fixed
+
+# Two inputs
 --data_inputs
 In 0
 In 1
+
+# One output
 --data_outputs
 Out 0
+

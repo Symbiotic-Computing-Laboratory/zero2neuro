@@ -4,7 +4,7 @@ dataset/train_1501_fold1.csv
 --tokenizer
 --tokenizer_max_tokens=24
 --tokenizer_split=character
---tokenizer_output_sequence_length=50
+--tokenizer_output_sequence_length=30
 --embedding_dimensions=15
 --data_set_type=holistic-cross-validation
 --data_n_folds=10
@@ -12,6 +12,7 @@ dataset/train_1501_fold1.csv
 --tabular_header_names
 string
 binding
+class
 --data_inputs
 string
 --data_outputs

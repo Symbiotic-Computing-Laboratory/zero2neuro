@@ -1,10 +1,17 @@
+# Fully connected network
 --network_type=fully_connected
+
+# Two inputs
 --input_shape
 2
+
+# Two hidden layers
 --number_hidden_units
 20
 10
 --hidden_activation=elu
+
+# One output unit
 --output_shape
 1
 --output_activation=sigmoid

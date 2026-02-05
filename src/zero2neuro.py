@@ -17,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.1.6"
+VERSION = "0.2.0"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -743,15 +743,11 @@ def prepare_and_execute_experiment(args):
     else:
         model = models
 
-    #if args.network_test:
-    #print(model.summary())
-    #    # Don't go any further
-    #    return
-
-    
     ######
     # Execute the experiment
     execute_exp(sds, model, args)
+
+    return models
 
 if __name__ == "__main__":
     # Command line arguments
