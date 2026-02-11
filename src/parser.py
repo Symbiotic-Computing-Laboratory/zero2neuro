@@ -8,42 +8,6 @@ import argparse
 import shlex
 
 
-class CommentedArgumentParserOld(argparse.ArgumentParser):
-    '''
-    Wrapper around ArgumentParser that deals with:
-    1.  Comments
-    2.  Empty lines
-
-    From ChatGPT
-    '''
-    def convert_arg_line_to_args(self, line):
-        line = line.split("#", 1)[0].strip()
-        if not line:
-            return []
-        return line.split()
-
-
-class CommentedArgumentParserOld2(argparse.ArgumentParser):
-    '''
-    Wrapper around ArgumentParser that deals with:
-    1.  Comments
-    2.  Empty lines
-
-    From ChatGPT
-    '''
-    
-    def convert_arg_line_to_args(self, line):
-        # Remove comments
-        line = line.split("#", 1)[0]
-
-        # Skip blank / whitespace-only lines
-        if not line.strip():
-            return []
-
-        # Let shlex handle quoting & whitespace correctly
-        return shlex.split(line)
-
-
 class CommentedArgumentParser(argparse.ArgumentParser):
     '''
     Wrapper around ArgumentParser that deals with:

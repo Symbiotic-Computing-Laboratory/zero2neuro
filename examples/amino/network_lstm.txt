@@ -1,0 +1,42 @@
+# GRU network implementation
+
+--network_type=rnn
+--rnn_type=lstm
+###
+# Input: single string
+--input_shape
+1
+# Reverses the sequence of tokens so that short strings do not have
+#  a big space from "unknown" tokens to the end
+--rnn_reverse_time
+--rnn_filters
+60
+50
+# The last RNN layer returns only its state at the end of the sequence
+--rnn_filters_last
+40
+--rnn_dropout=0.0
+
+###
+# Hidden stack
+--number_hidden_units
+20
+10
+5
+--hidden_activation=elu
+
+###
+# Output: predict only a single value
+--output_shape
+1
+--output_activation=elup1
+
+###
+# Regularization
+--dropout=0.5
+--l2=0.0001
+
+###
+# RNNs need lots of patience
+--early_stopping_patience=1000
+

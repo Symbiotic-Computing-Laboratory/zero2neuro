@@ -14,6 +14,18 @@ from zero2neuro_debug import *
 class NetworkBuilder:
     
     @staticmethod
+    def check_args_rnn(args):
+        rnn_types = ['simple', 'gru', 'lstm']
+        
+        if (args.rnn_type is None) or not (args.rnn_type in rnn_types):
+            handle_error('RNN: --rnn_type must be one of %s'%(str(rnn_types)), args.verbose)
+
+        sh = args.input_shape0
+        if len(sh) > 2:
+            handle_error('RNN: input_shape must be one or two dimensional', args.verbose)
+            
+
+    @staticmethod
     def args2model(args):
         model_text_vectorization = None
         
@@ -92,6 +104,7 @@ class NetworkBuilder:
                                                                       )
                 
             elif args.network_type == 'rnn':
+                NetworkBuilder.check_args_rnn(args)
                 models = ConvolutionalNeuralNetwork.create_rnn_network(input_shape=args.input_shape0,
                                                                        rnn_type=args.rnn_type,
                                                                        rnn_filters=args.rnn_filters,

@@ -2,6 +2,10 @@
 
 Use inverse order
 
+## V0.3.0 2026-02-05 Andrew H. Fagg
+* Added support for LSTM and GRU networks 
+* Added examples in examles/amino
+
 ## V0.2.0 2026-02-05 Andrew H. Fagg
 * Support for Tokenization and Embedding in all network schemas
 * Support for Recurrent Neural Networks
