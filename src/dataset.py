@@ -981,7 +981,8 @@ class SuperDataSet:
                           col_list:[int]=None,
                           skiprows:int=None,
                           sheet_name:str=None,
-                          header_names:[str]=None):
+                          header_names:[str]=None,
+                          encoding:str=None):
         '''
         Load a CSV or XLSX file
         '''
@@ -998,12 +999,15 @@ class SuperDataSet:
                 # Explicit list is specified
                 cols = col_list
 
-            # Infer any string type (if it exists)
-            best = from_path(file_name).best()
-            if best is None:
-                encoding = 'utf-8'
-            else:
-                encoding = best.encoding
+            if encoding is None:
+                # Infer any string type (if it exists)
+                best = from_path(file_name).best()
+                if best is None:
+                    encoding = 'utf-8'
+                else:
+                    encoding = best.encoding
+                print("Inferred CSV type: %s"%encoding)
+
                 
             # Read the CSV file
             df = pd.read_csv(file_name,
@@ -1220,6 +1224,7 @@ class SuperDataSet:
                                                          tabular_column_list=self.args.tabular_column_list,
                                                          tabular_header_row=self.args.tabular_header_row,
                                                          tabular_header_names=self.args.tabular_header_names,
+                                                         tabular_encoding=self.args.tabular_encoding,
                                                          debug=self.args.debug)
             data.append((ins, outs, weights, groups))
         
@@ -1242,6 +1247,7 @@ class SuperDataSet:
                    tabular_column_list=None,
                    tabular_header_row=None,
                    tabular_header_names=None,
+                   tabular_encoding:str=None,
                    debug=0):   
 
         # TODO: assume that file_name is absolute path if it is needed
@@ -1256,7 +1262,8 @@ class SuperDataSet:
                                             col_list=tabular_column_list,
                                             skiprows=tabular_header_row,
                                             header_names=tabular_header_names,
-                                            sheet_name=tabular_xlsx_sheet_name)
+                                            sheet_name=tabular_xlsx_sheet_name,
+                                            encoding=tabular_encoding)
 
         ##
         # Translate dataframe columns for categorical variables
@@ -1368,7 +1375,8 @@ class SuperDataSet:
                                                                     self.args.data_output_sparse_categorical,
                                                                     tabular_column_range=self.args.tabular_column_range,
                                                                     tabular_column_list=self.args.tabular_column_list,
-                                                                    tabular_header_row=self.args.tabular_header_row)
+                                                                    tabular_header_row=self.args.tabular_header_row,
+                                                                    tabular_encoding=self.args.tabular_encoding)
         self.output_mapping = output_mapping
         return [(ins, outs)] # TODO: add sample weights and group
 
@@ -1382,14 +1390,16 @@ class SuperDataSet:
                                    tabular_column_range=None,
                                    tabular_column_list=None,
                                    tabular_header_row=None,
-                                   tabular_header_names=None):
+                                   tabular_header_names=None,
+                                   tabular_encoding:str=None):
 
         # Load the table
         df = SuperDataSet.load_tabular_file(file_name,
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
                                             header_names=tabular_header_names,
-                                            skiprows=tabular_header_row)
+                                            skiprows=tabular_header_row,
+                                            encoding=tabular_encoding)
         
         print(df['File'][0])
 

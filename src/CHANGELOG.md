@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## V0.4.0 2026-02-17 Andrew H. Fagg
+* Added support for Cartesian Product experiments
+
 ## V0.3.0 2026-02-05 Andrew H. Fagg
 * Added support for LSTM and GRU networks 
 * Added examples in examles/amino

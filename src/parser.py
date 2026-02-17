@@ -6,6 +6,13 @@ Author: Andrew H. Fagg (andrewhfagg@gmail.com)
 
 import argparse
 import shlex
+import re
+from collections.abc import Callable
+from typing import Any, Union
+
+import numpy as np
+from itertools import product
+from zero2neuro_debug import *
 
 
 class CommentedArgumentParser(argparse.ArgumentParser):
@@ -43,6 +50,8 @@ class CommentedArgumentParser(argparse.ArgumentParser):
         # Value lines: keep internal whitespace, but trailing is already stripped
         return [line]
 
+    
+#######################
 def create_parser(description='Zero2Neuro'):
     '''
     Create argument parser
@@ -114,6 +123,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--tabular_header_names', nargs='+', type=str, default=None, help='List of column names (replaces a row that contains column names)')
     parser.add_argument('--tabular_column_range', nargs=2, type=int, default=None, help='Column range that contains the headers/data ([10,15] means use columns 10,11,12,13,14,15)')
     parser.add_argument('--tabular_column_list', nargs='+', type=int, default=None, help='List of column range that contain the headers/data')
+    parser.add_argument('--tabular_encoding', type=str, default=None, help='Character encoding of tabular file')
 
     
     parser.add_argument('--data_output_sparse_categorical', action='store_true', help='Translate output column into sparse categorical representation')
@@ -243,13 +253,509 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--L1_regularization', '--l1', type=float, default=None, help="L1 regularization parameter")
     parser.add_argument('--L2_regularization', '--l2', type=float, default=None, help="L2 regularization parameter")
 
+    # Many experiments
+    parser.add_argument('--cartesian_arguments', nargs='+', type=str, default=None, help='Define a range of values for arguments')
+    parser.add_argument('--cartesian_selection_index', type=int, default=None, help='Determine which argument set to select')
 
-    #####################
-    #  WORK ON?
-    #
 
-    # Specific experiment configuration
-    #parser.add_argument('--exp_index', type=int, default=None, help='Experiment index')
 
     return parser
+
+
+
+#####################
+class CartesianExperimentControl():
+    '''
+    CartesianExperimentControl
+    
+    Author: Andrew H. Fagg
+    Modified by: Alan Lee
+    
+    Translate a dictionary containing parameter/list pairs (key/value) into a Cartesian product
+    of all combinations of possible parameter values.
+    
+    Internally, the Cartesian product is stored as a list of dictionaries (parameter/value pairs).  
+    This class allows for indexed access to this list.  In addition the values of a particular element
+    of the list can be added to the property list of an existing object.
+    
+    Example:
+    # Dictionary of possible parameter values
+    p = {'rotation': range(20),
+         'Ntraining': [1,2,3,5,10,18],
+         'dropout': [None, .1, .2, .5]}
+    
+    # Create job iterator
+    ap = CartesianExperimentControl(p)
+    
+    # Select the ith element of the Cartesian product list.
+    # Add properties to object obj; the names of these  properties
+    #  are the keys from p and the values are the specific combination
+    #  of values in the ith element
+    ap.set_attributes_by_index(i, obj)
+    
+    '''
+    def __init__(self, parser:CommentedArgumentParser, params:list[str]|dict[str, []], verbose=0):
+        '''
+        Constructor
+
+        :param parser: the argument parser that the args came from
+        :param params: Dictionary of key/list pairs OR a string that specifies these
+        :param verbose: Verbosity level
+        
+        '''
+        self.parser = parser
+        
+        if isinstance(params, list):
+            # Input is a list of strings: translate to a dict
+            try:
+                params = CartesianExperimentParser.parse_var_list(params)
+            except ValueError as e:
+                handle_error(f'--cartesian_arguments: {e}', verbose)
+
+        # Store this dict
+        self.params = params
+
+        self.args_dict = params
+        
+        # List of all combinations of parameter values
+        self.product = list(dict(zip(params,x))for x in product(*params.values()) )
+        
+        # Iterator over the combinations 
+        self.iter = (dict(zip(params,x))for x in product(*params.values()))
+
+    def _get_action(self, name:str)->argparse.Action:
+        '''
+        Extract the details about the specified parser argument
+
+        :param name: String name of the argument in question
+        :return: Argparse Argument action details
+        '''
+
+        # Find the argument in the list that matches the name
+        actions = [action for action in self.parser._actions if action.dest == name]
+        
+        if len(actions) > 0:
+            # Found the argument (there will only be one item in the list)
+            return actions[0]
+        else:
+            # Did not find the argument
+            return None
+        
+    def get_index(self, i):
+        '''
+        Return the ith combination of parameters
+        
+        :param i: Index into the Cartesian product list
+        :return: The ith combination of parameters
+        '''
+        
+        return self.product[i]
+
+    def get_njobs(self):
+        '''
+        :return: The total number of combinations of arguments
+        '''
+        
+        return len(self.product)
+
+    def get_index_iterator(self):
+        '''
+        Return an iterator over the valid indices
+
+        :return: A new index iterator
+        '''
+        return range(self.get_njobs())
+    
+    def set_attributes_by_index(self, i, obj):
+        '''
+        For an arbitrary object (typical is 'args'), set the attributes
+        to match the ith job parameters
+        
+        :param i: Index into the Cartesian product list
+        :param obj: Argument Namespace object (to be modified)
+        :return: A string representing the combinations of parameters
+        '''
+        
+        # Fetch the ith combination of parameter values
+        d = self.get_index(i)
+        
+        # Iterate over the arguments and their new values
+        for k,v in d.items():
+            # Does this argument exist in the namespace?
+            if not hasattr(obj, k):
+                handle_error(f'--cartesian_arguments: argument **{k}** is not valid.', obj.verbose)
+                
+            # Check that the new value type matches the type of the argument
+            action = self._get_action(k)
+            if (v is None) or isinstance(v, action.type):
+                # Set the new argument value
+                setattr(obj, k, v)
+            else:
+                # Error messages for typing mismatch
+                if isinstance(v, str):
+                    handle_error(f'--cartesian_arguments: argument **{k}** type mismatch for value {v}; expecting {action.type}, but received {type(v)}\n\t(Hint: some argument value in the list is a string and not numeric).', obj.verbose)
+                else:
+                    handle_error(f'--cartesian_arguments: argument **{k}** type mismatch for value {v}; expecting {action.type}, but received {type(v)}\n\t(Hint: check that all argument values are expected type).', obj.verbose)
+            
+        return self.get_param_str(i)
+    
+    def get_param_str(self, i):
+        '''
+        Return the string that describes the ith job parameters.
+        Useful for generating file names
+        
+        @param i Index into the Cartesian product list
+        '''
+        
+        out = 'JI_'
+        # Fetch the ith combination of parameter values
+        d = self.get_index(i)
+        # Iterate over the parameters
+        for k,v in d.items():
+            out = out + "%s_%s_"%(k,v)
+
+        # Return all but the last character
+        return out[:-1]
+
+
+            
+#######################
+class CartesianExperimentParser():
+    '''
+    Safely translate a list of strings into a dict.  The strings are one of the following forms:
+    ARG:VAL0, VAL1, VAL2,..., VALk-1
+       where VALi is None, an int, or a float
+
+    START, END, SKIP are ints:
+    ARG:range(END)                          -> 0,1,2,3,..., END-1
+    ARG:range(START,END)                    -> START, START+1, START+2, ...., END-1
+    ARG:range(START,END,SKIP)               -> START, START+SKIP, START+2*SKIP, ..., END-1
+
+    START, END, SKIP are floats:
+    ARG:arange(START, END, SKIP)            -> START, START+SKIP, START+2*SKIP, ..., END-epsilon
+    
+    START, END are floats, NUM, BASE are ints:
+    ARG:logspace(START, END, NUM[, BASE=10])   -> NUM items in the range START^BASE ... END^BASE arranged exponentially
+    ARG:exp_range(START, END, NUM, BASE=10])   -> NUM items in the range START ... BASE arranged exponentially
+
+
+    Examples:
+    range(20)                 -> [0, 1, 2, 3, ..., 19]
+    range(0,20,2)             -> [0, 2, 4, 6, ..., 18]
+    arange(0, .5, .1)         -> [0, .1, .2, .3, .4]
+    arange(0, .51, .1)        -> [0, .1, .2, .3, .4, .5]
+    logspace(-5, 0, 6)        -> [.00001, .0001, .001, .01, .1, 1.0]
+    exp_range(1, 100000, 6)   -> [1, 10, 100, 1000, 10000, 100000]
+    exp_range(.00001, 1.0, 6) -> [.00001, .0001, .001, .01, .1, 1.0]
+    '''
+
+    # Type hint for the return values: lists of single types or None
+    VALUE_LIST = Union[list[int|None], list[float|None], list[str|None]]
+
+    @staticmethod
+    def parse_var_list(strings: list[str]) -> dict[str, VALUE_LIST]:
+        """
+        Parse a list of lines.
+        
+        
+        Parses a list of strings like:
+        [
+            "a:1,2,3",
+            "b:range(4)",
+            "c:np.arange(0,1,0.25)"
+        ]
+
+        Returns:
+        {
+            "a": [1,2,3],
+            "b": [0,1,2,3],
+            "c": [0.0,0.25,0.5,0.75]
+        }
+        """
+        result: dict[str, VALUE_LIST] = {}
+
+        # Loop over lines
+        for s in strings:
+            # Parse a single line
+            var, values = CartesianExperimentParser.parse_var_values(s)
+
+            if var in result:
+                raise ValueError(f"Duplicate variable name: {var!r}")
+
+            # Add it to the return dict
+            result[var] = values
+
+        # Complete
+        return result
+
+    # String matching function calls
+    _CALL_RE = re.compile(r"^\s*(?P<name>[A-Za-z_][A-Za-z0-9_\.]*)\s*\(\s*(?P<args>.*)\s*\)\s*$")
+
+    # String matching list of numeric values
+    _NUM_RE = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$")
+
+    @staticmethod
+    def _split_args(arg_str: str) -> list[str]:
+        '''
+        Split out a list of values from a string, removing surrounding whitespace
+
+        :param str: String list of values separated by commas
+        :return: List of cleaned-up values
+        
+        '''
+        # Simple arg splitter: supports numbers like -1, 0.5, 1e-3
+        # (Not a full parser for nested calls; intentional for safety.)
+
+        # Catch the null case
+        if arg_str.strip() == "":
+            return []
+
+        # Split out and clean up all of the values
+        return [a.strip() for a in arg_str.split(",")]
+
+
+
+    @staticmethod
+    def _parse_numbers(tokens: list[str]) -> Union[list[int|None], list[float|None], list[str|None], None]:
+        '''
+        Convert the list of tokens into a set of values.
+
+        Return is either an int list or a float list (and individual values can be None)
+        '''
+
+        # No tokens
+        if not tokens:
+            return []
+
+        # Accumulated list of parsed values
+        parsed = []
+        # Track if we have seen a float value
+        saw_float = False
+
+        # Loop over the tokens
+        for t in tokens:
+            if t == "None":
+                # Found None value: this is allowed
+                parsed.append(None)
+                continue
+
+            if not CartesianExperimentParser._NUM_RE.match(t):
+                # Not a numeric value - return error
+                return None 
+
+            if re.fullmatch(r"[+-]?\d+", t):
+                # Integer
+                parsed.append(int(t))
+                
+            else:
+                # Float
+                parsed.append(float(t))
+                saw_float = True
+
+        # If any float present, promote ints to float (except None)
+        if saw_float:
+            parsed = [
+                float(x) if isinstance(x, int) else x
+                for x in parsed
+                ]
+
+        # Return the list of values
+        return parsed
+
+    @staticmethod
+    def _parse_raw_list(expr: str) -> VALUE_LIST:
+        '''
+        Split out a list of values from a string
+
+        :param str: String containing values that are comma separated
+        :return: List of values (ints, floats, or strings).  Each can include None value
+        '''
+        
+        # Split out the individual values
+        items = [x.strip() for x in expr.split(",") if x.strip() != ""]
+
+        # Translate into numeric values
+        nums = CartesianExperimentParser._parse_numbers(items)
+
+        # Check for error
+        if nums is not None:
+            # List of ints, or list of floats
+            return nums
+
+        # Some non-numeric values: keep as strings
+        return items 
+
+    @staticmethod
+    def _exp_range(start: float, stop: float, num: int, base: float = 10.0) -> np.ndarray:
+        '''
+        Exponential spacing between VALUES `start` and `stop` (inclusive), using given base.
+        
+        Equivalent to:
+        base ** linspace(log_base(start), log_base(stop), num)
+
+        :param start: Starting point of values
+        :param stop: Stopping point of values (inclusive
+        :param int: Number of values in the sequence
+        :param base: Exponential base
+        '''
+
+        # Check for valid values
+        if start <= 0 or stop <= 0:
+            raise ValueError("exp_range requires start>0 and stop>0 (log domain).")
+
+        # Default: return empty list
+        if num <= 0:
+            return np.array([], dtype=float)
+
+        # Compute the list
+        lo = np.log(start) / np.log(base)
+        hi = np.log(stop) / np.log(base)
+        
+        return base ** np.linspace(lo, hi, int(num))
+
+
+    @staticmethod
+    def _eval_whitelisted_call(expr: str) -> list[Any]:
+        '''
+        Evaluate a function call.  We only allow specific calls for safety
+
+        Form is ARG:FUNC(VAL0, VAL1, ... VALk-1)
+
+        :param str: Function call of the form ARG:FUNC(VAL0, VAL1, ... VALk-1)
+        :return: List of values generated by the function call
+        '''
+        
+        # Compare string to template
+        m = CartesianExperimentParser._CALL_RE.match(expr)
+        if not m:
+            raise ValueError(f"Looks like a call but couldn't parse: {expr!r}")
+
+        # Argument name
+        name = m.group("name")
+
+        # List of values
+        args_s = m.group("args")
+
+        # Split the list of values and parse them
+        arg_tokens = CartesianExperimentParser._split_args(args_s)
+        nums = CartesianExperimentParser._parse_numbers(arg_tokens)
+
+        # Invalid values discovered
+        if nums is None:
+            raise ValueError(f"Only numeric arguments are allowed in calls: {expr!r}")
+
+        # whitelist of callable names
+        whitelist: dict[str, Callable[..., Any]] = {
+            "range": range,
+            "arange": np.arange,
+            "np.arange": np.arange,
+
+            # exponential grids
+            "logspace": np.logspace,
+            "np.logspace": np.logspace,
+            "exp_range": CartesianExperimentParser._exp_range,
+            }
+
+        # Did not find the specified function
+        if name not in whitelist:
+            raise ValueError(f"Function not allowed: {name!r}")
+
+        # Extract the specific func
+        fn = whitelist[name]
+
+        # range requires ints
+        if name == "range":
+            if not all(isinstance(x, int) for x in nums):
+                raise ValueError("range() arguments must be integers")
+
+            # Call the function and return the values
+            return list(fn(*nums))  # type: ignore[arg-type]
+
+        # Enforce exp_range third arg is int-ish
+        if name == "exp_range":
+            # Must have 3 or 4 values
+            if len(nums) not in (3, 4):
+                raise ValueError("exp_range(start, stop, num[, base]) expects 3 or 4 args.")
+
+            # Parse out the values
+            start = float(nums[0])
+            stop = float(nums[1])
+            num = nums[2]
+
+            # Check type of num
+            if not isinstance(num, int):
+                # allow "4.0" style floats from parsing
+                if float(num).is_integer():
+                    num = int(num)
+                else:
+                    raise ValueError("exp_range 'num' must be an integer.")
+
+            # Base
+            base = float(nums[3]) if len(nums) == 4 else 10.0
+
+            # Call the function and return the values
+            return list(fn(start, stop, num, base))
+
+        # For np.logspace: require num as int-ish (numpy will coerce, but we validate)
+        if name in ("logspace", "np.logspace"):
+            # Must have 3 or 4 values
+            if len(nums) not in (3, 4):
+                raise ValueError("logspace(start_exp, stop_exp, num[, base]) expects 3 or 4 args.")
+
+            # Num must be an int
+            if not isinstance(nums[2], int) and not float(nums[2]).is_integer():
+                raise ValueError("logspace 'num' must be an integer.")
+            
+            nums2 = list(nums)
+
+            # Force num to be an int
+            nums2[2] = int(nums2[2])  # num
+
+            # Call the funciton and return the list
+            return list(fn(*nums2))
+
+        # For np.arange: require num as int-ish (numpy will coerce, but we validate)
+        if name in ("arange", "np.arange"):
+            # Must have 3 values
+            if len(nums) not in (3,):
+                raise ValueError("arange(start_exp, stop_exp, num) expects 3 args.")
+
+            # Call the funciton and return the list
+            return list(fn(*nums))
+
+
+        # Default: others.  Should not get here
+        return list(fn(*nums))
+
+    @staticmethod
+    def parse_var_values(s: str) -> tuple[str, VALUE_LIST]:
+        '''
+        Parse a single line of one of the forms:
+
+        ARG: VAL0, VAL1, VAL2, ..., VALk-1
+        ARG: FUNC(VAL0, VAL1, ... VALk-1)
+        
+        :param s: String line
+        :return: Tuple of string ARG and list of values
+        '''
+
+        # Bad format
+        if ":" not in s:
+            raise ValueError(f"Expected 'var:expr' format, got: {s!r}")
+
+        # Separate argument from RHS
+        var, expr = s.split(":", 1)
+        var = var.strip()
+        expr = expr.strip()
+
+        # Check ARG name
+        if not var:
+            raise ValueError(f"Missing variable name in: {s!r}")
+
+        # Detect function that must be evaluated by presence of (...) at the top level
+        if "(" in expr and expr.rstrip().endswith(")"):
+            return var, CartesianExperimentParser._eval_whitelisted_call(expr)
+
+        # Just a list of values
+        return var, CartesianExperimentParser._parse_raw_list(expr)
 
