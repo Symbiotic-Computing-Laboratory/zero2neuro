@@ -3,7 +3,11 @@
 Use inverse order
 
 ## V0.4.1 2026-02-20 Luke Sewell  
-* Updated network builder documentation  
+* Updated network builder documentation
+* Increased xlsx results max rows
+
+## V0.4.0 2026-02-17 Andrew H. Fagg
+* Added support for Cartesian Product experiments
 
 ## V0.3.0 2026-02-05 Andrew H. Fagg
 * Added support for LSTM and GRU networks 

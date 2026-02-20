@@ -17,6 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
+
 VERSION = "0.4.1"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
@@ -739,6 +740,8 @@ def prepare_and_execute_experiment(args):
         #  the text vectorization model
         if args.tokenizer_vocabulary is None:
             model_text_vectorization.adapt(sds.ins_training)
+            vocab = model_text_vectorization.get_vocabulary()
+            print_debug('Vocabulary (%d):%s'%(len(vocab), str(vocab)), 2, args.debug)
         
     else:
         model = models
@@ -749,11 +752,72 @@ def prepare_and_execute_experiment(args):
 
     return models
 
+def cartesian_override_args(parser, args):
+    '''
+    When a Cartesian product of experiments is specified, parse the
+    specification of the experiments and select the one experiment
+    that has been requested.
+    
+    args.cartesian_arguments: list of lines; each line is in one of the following forms:
+    ARG:VAL0,VAL1,VAL2,...VALK-1
+    where VALi is None, a float or an int
+
+    ARG:range(END)                  0, 1, 2, ... END-1
+    ARG:range(START,END)            START, START+1, START+2 .... END-1
+    ARG:range(START,END,SKIP)       START, START+SKIP, START+2*SKIP... END-1
+
+    ARG is one of the parser arguments
+
+    
+    The lists for the set for the ARGs define a Cartesian Product of possible experiments.
+    args.cartesian_selection_index defines the one that we select for this run
+    
+    (see class CartesianExperimentParser for details)
+
+    :param args: Arguments Namespace from the argument parser
+
+    Changes: the specified ARGs are altered to match the selected element in the
+    Cartesian product
+    
+    '''
+    
+    # Cartesian product experiments
+    if args.cartesian_arguments:
+        # Translate the Cartesian product parameters into a set of possible experiments
+        cec = CartesianExperimentControl(parser=parser,
+                                         params=args.cartesian_arguments,
+                                         verbose=args.verbose)
+        print("@@@@@@@@@@@@@@")
+        print(f'Cartesian product experiments: {cec.get_njobs()}')
+
+        # Print the argument/value list
+        for k,v in cec.args_dict.items():
+            print(f'\t{k}:{v}')
+
+        if args.debug > 2:
+            for i in cec.get_index_iterator():
+                print(f'{i}:\t{cec.get_index(i)}')
+            
+        if args.cartesian_selection_index is not None:
+            # One of the experiments has been specified
+            if args.cartesian_selection_index < 0 or args.cartesian_selection_index >= cec.get_njobs():
+                # Index is out of range
+                handle_error(f'--cartesian_selection_index must be greater than or equal to 0 and less than {cec.get_njobs()}.',
+                             args.verbose)
+
+            # Override the arguments: destructively changes args
+            print(f'\nOverriding arguments: {cec.get_index(args.cartesian_selection_index)}')
+            cec.set_attributes_by_index(args.cartesian_selection_index, args)
+        print("@@@@@@@@@@@@@@")
+
 if __name__ == "__main__":
     # Command line arguments
     parser = create_parser()
     args = parser.parse_args()
+    cartesian_override_args(parser, args)
 
+
+    # Print header
     n = len(GITHUB)
     ver = "This is Zero2Neuro Version " + VERSION
     print("\n"
