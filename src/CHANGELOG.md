@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## V0.4.1 2026-02-20 Luke Sewell  
+* Updated network builder documentation  
+
 ## V0.3.0 2026-02-05 Andrew H. Fagg
 * Added support for LSTM and GRU networks 
 * Added examples in examles/amino

@@ -17,7 +17,7 @@ import wandb
 from keras.utils import plot_model
 
 
-VERSION = "0.3.0"
+VERSION = "0.4.1"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
@@ -390,7 +390,7 @@ def execute_exp(sds, model, args):
         pickle.dump(results, fp)
 
     if args.report:
-        MAX_ROWS = 100000
+        MAX_ROWS = 1048576
         # Creates a writer for excel files.
         writer = pd.ExcelWriter("%s_report.xlsx"%(fbase), engine='xlsxwriter')
 
@@ -399,7 +399,7 @@ def execute_exp(sds, model, args):
 
         # Sheet 1: Key Arguments
         if (len(df_key_args_list) > MAX_ROWS):
-            handle_error(f"Key Arguments DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+            handle_error(f"Key Arguments DataFrame has {len(df)} rows which is more than the allowed 1,048,576.", args.verbose)
         else:
             df_key_args_list.to_excel(writer, sheet_name='Key Arguments List', index=False)
         
@@ -409,13 +409,13 @@ def execute_exp(sds, model, args):
 
         # Sheet 2: Performance Report
         if (len(df_performance_report) > MAX_ROWS):
-            handle_error(f"Performance Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+            handle_error(f"Performance Report DataFrame has {len(df)} rows which is more than the allowed 1,048,576.", args.verbose)
         else:
             df_performance_report.to_excel(writer, sheet_name='Performance Report', index=False)
 
         # Sheet 3: All Arguments
         if (len(df_args_list) > MAX_ROWS):
-            handle_error(f"Arguments List DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+            handle_error(f"Arguments List DataFrame has {len(df)} rows which is more than the allowed 1,048,576.", args.verbose)
         else:
             df_args_list.to_excel(writer, sheet_name='Arguments List', index=False)
         
@@ -424,7 +424,7 @@ def execute_exp(sds, model, args):
             
             df_training_report = xlsx_training_report(sds,model, args)
             if (len(df_training_report) > MAX_ROWS):
-                handle_error(f"Training Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+                handle_error(f"Training Report DataFrame has {len(df)} rows which is more than the allowed 1,048,576.", args.verbose)
             else:
                 df_training_report.to_excel(writer, sheet_name='Training Data', index=False)
     
@@ -432,7 +432,7 @@ def execute_exp(sds, model, args):
 
             df_validation_report = xlsx_validation_report(sds,model, args)
             if (len(df_validation_report) > MAX_ROWS):
-                handle_error(f"Validation Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+                handle_error(f"Validation Report DataFrame has {len(df)} rows which is more than the allowed 1,048,576.", args.verbose)
             else:
                 df_validation_report.to_excel(writer, sheet_name='Validation Data', index=False)
     
@@ -440,7 +440,7 @@ def execute_exp(sds, model, args):
             
             df_testing_report = xlsx_testing_report(sds,model, args)
             if (len(df_testing_report) > MAX_ROWS):
-                handle_error(f"Testing Report DataFrame has {len(df)} rows which is more than the allowed 100,000.", args.verbose)
+                handle_error(f"Testing Report DataFrame has {len(df)} rows which is more than the allowed 1,048,576.", args.verbose)
             else:
                 df_testing_report.to_excel(writer, sheet_name='Testing Data', index=False)
 
