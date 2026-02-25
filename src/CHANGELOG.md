@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.5.1 2026-02-24 Andrew H. Fagg
+* Added new management docs
+
 ## V0.5.0 2026-02-24 Andrew H. Fagg
 * Added support for saving data from various input formats to TF Dataset format
 * Updated support for cross-validation with one TF Dataset per fold
