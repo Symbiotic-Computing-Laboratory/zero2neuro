@@ -18,7 +18,7 @@ from keras.utils import plot_model
 
 
 
-VERSION = "0.4.1"
+VERSION = "0.5.0"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):

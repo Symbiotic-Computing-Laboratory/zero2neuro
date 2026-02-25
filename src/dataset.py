@@ -33,9 +33,14 @@ from functools import reduce
 
 
 class SuperDataSet:
+    # Valid file formats, as specified by --data_format
     FORMATS = ['tabular', 'tabular-indirect', 'pickle', 'tf-dataset']
-    
+
     def __init__(self, args):
+        '''
+        Constructor
+        
+        '''
         self.dataset_type = None
         self.ins_training = None
         self.outs_training = None
@@ -69,6 +74,8 @@ class SuperDataSet:
         # XLSX files
         self.data_xlsx_sheet_names = None
 
+        #####################
+        # Staged processing of the data
         # Load data
         self.load_data()
         
@@ -84,6 +91,7 @@ class SuperDataSet:
 
         # Preprocess datasets
         self.preprocess_datasets()
+        #####################
 
     @staticmethod
     def _describe_object(name, v):

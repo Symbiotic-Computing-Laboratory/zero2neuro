@@ -2,6 +2,11 @@
 
 Use inverse order
 
+## V0.5.0 2026-02-24 Andrew H. Fagg
+* Added support for saving data from various input formats to TF Dataset format
+* Updated support for cross-validation with one TF Dataset per fold
+* Updated Amino Acid example with TF Dataset saving + created README
+
 ## V0.4.1 2026-02-20 Luke Sewell  
 * Updated network builder documentation
 * Increased xlsx results max rows
@@ -17,7 +22,7 @@ Use inverse order
 * Support for Tokenization and Embedding in all network schemas
 * Support for Recurrent Neural Networks
 * Argument parser (for files) now:
-   * Allows comments (everything right of '#' is ignored
+   * Allows comments (everything right of '#' is ignored)
    * Allows empty lines in argument files
    * Strips trailing whitespace from arguments
 * Added example/amino.  Demonstrates:
