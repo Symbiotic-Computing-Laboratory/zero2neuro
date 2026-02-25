@@ -1,3 +1,5 @@
+# Simple Recurrent Neural Network
+
 --network_type=rnn
 --rnn_type=simple
 ###
@@ -26,6 +28,8 @@
 # Output: predict only a single value
 --output_shape
 1
+
+# elp1 = elu+1 (output is non-negative)
 --output_activation=elup1
 
 ###

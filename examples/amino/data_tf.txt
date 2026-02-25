@@ -1,0 +1,38 @@
+# Alternative data configuration that demonstrates the use
+#  of TF Dataset files instead of tabular data
+# The files can be created by executing the following:
+#  python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt --data_save_folds ds/amino --nogo 
+
+# Must explicitly define tf-dataset as the incoming data format and
+#  the internal representation
+--data_format=tf-dataset
+--data_representation=tf-dataset
+
+# We are still doing holistic cross-validation
+--data_set_type=holistic-cross-validation
+
+# Specify each of the folds separately.  A single TF-Dataset cannot be
+#  partitioned further to create other folds
+--data_files
+ds/amino_fold_00.ds
+ds/amino_fold_01.ds
+ds/amino_fold_02.ds
+ds/amino_fold_03.ds
+ds/amino_fold_04.ds
+ds/amino_fold_05.ds
+ds/amino_fold_06.ds
+ds/amino_fold_07.ds
+ds/amino_fold_08.ds
+ds/amino_fold_09.ds
+
+# Preprocessing
+# We are using a tokenizer to translate the strings into lists of
+#  integer tokens
+--tokenizer
+--tokenizer_max_tokens=24
+--tokenizer_split=character
+--tokenizer_output_sequence_length=30
+
+# Transform the integer tokens into 15-dimensional vectors
+#  (this is a learned transformation)
+--embedding_dimensions=15

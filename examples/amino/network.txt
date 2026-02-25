@@ -1,4 +1,7 @@
+# Fully Connected Network
+
 --network_type=fully_connected
+# String input: accept only a single string for an example
 --input_shape
 1
 --number_hidden_units
@@ -8,8 +11,12 @@
 25
 10
 --hidden_activation=elu
+
 --output_shape
 1
+
+# elp1 = elu+1 (output is non-negative)
 --output_activation=elup1
+
 --dropout=0.25
 --l2=0.0001

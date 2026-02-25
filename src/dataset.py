@@ -29,11 +29,12 @@ from PIL import Image
 
 import keras
 from charset_normalizer import from_path
+from functools import reduce
+
 
 class SuperDataSet:
+    FORMATS = ['tabular', 'tabular-indirect', 'pickle', 'tf-dataset']
     
-    
-        
     def __init__(self, args):
         self.dataset_type = None
         self.ins_training = None
@@ -74,13 +75,82 @@ class SuperDataSet:
         # Combine some tables together
         self.generate_folds()
 
+        # Optionally save datasets to TF Dataset files
+        if self.args.data_save_folds:
+            self.save_folds()
+
         # Translate tables to training/validation/testing
         self.generate_datasets()
 
         # Preprocess datasets
         self.preprocess_datasets()
 
+    @staticmethod
+    def _describe_object(name, v):
+        '''
+        Method for debugging tensor types
+        '''
+        
+        print(f"\n{name}: type={type(v)}")
+        if tf.is_tensor(v):
+            print(f"  tf.Tensor dtype={v.dtype} shape={v.shape}")
+        elif isinstance(v, np.ndarray):
+            print(f"  np.ndarray dtype={v.dtype} shape={v.shape} kind={v.dtype.kind}")
+            print(f"  first element type={type(v.flat[0])}")
+        else:
+            # list/tuple/scalar/etc
+            try:
+                print(f"  len={len(v)} first element type={type(v[0])}")
+            except Exception:
+                print(f"  value={v!r}")
 
+    def save_folds(self):
+        '''
+        For numpy arrays, format the folds as TF Datasets and save to files
+        
+        '''
+        if self.args.data_representation == 'numpy':
+            
+            for i, f in enumerate(self.folds):
+                print_debug('Writing fold %d'%i, 1, self.args.debug)
+
+                # Construct file name
+                fname = '%s_fold_%02d.ds'%(self.args.data_save_folds, i)
+                
+                # Strip out Nones
+                f2 = [d for d in f if d is not None]
+
+                # Deal with case where we have strings (and dtype is 'object'):
+                for j in range(len(f2)):
+                    print('OBJ %d'%j)
+                    if f2[j].dtype == 'object':
+                        # Convert to a tensor with a dtype 'str'
+                        print('converting...')
+                        f2[j] = keras.ops.convert_to_tensor(f2[j].astype('U').tolist(), dtype='string')
+
+                    
+                    print(f2[j][:10])
+                    print(f2[j].dtype)
+
+                    SuperDataSet._describe_object('Object %d'%j, f2[j])
+
+                    
+                
+                
+                # Convert from numpy to TF Dataset
+                ds = tf.data.Dataset.from_tensor_slices(tuple(f2))
+                #handle_error('DONE', self.args.verbose)
+
+                # Write to disk
+                ds.save(fname)
+                
+
+        else:
+            handle_error('--data_save_folds only valid for numpy-based data', self.args.verbose)
+            
+            
+
+        
     def preprocess_datasets(self):
         '''
         After the training/validation/testing data sets have been created, we may have
@@ -95,6 +165,8 @@ class SuperDataSet:
         Here, we correct for this:
         - Numpy arrays are converted to keras tensors of type string.  This will work with model.fit
         - Correction is done for each of the training, validation, and testing data sets
+
+        This conversion is only done for inputs
         '''
         
         # Training set
@@ -205,13 +277,16 @@ class SuperDataSet:
         #####
         # Error checks
 
-        # Must at least be a set of features for inputs
-        if self.args.data_inputs is None:
-            handle_error('Must specify data_inputs', self.args.verbose)
+        if not self.args.data_format == 'tf-dataset':
+            # TF-Datasets already have well defined ins/outs/weights
+            
+            # Must at least be a set of features for inputs
+            if self.args.data_inputs is None:
+                handle_error('Must specify data_inputs', self.args.verbose)
 
-        # If there are weights, then there must also be outputs
-        if (self.args.data_outputs is None) and (self.args.data_weights is not None):
-            handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
+            # If there are weights, then there must also be outputs
+            if (self.args.data_outputs is None) and (self.args.data_weights is not None):
+                handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
 
         ####
         # Individual file strings could have: just file_name or file_name, data_group
@@ -635,10 +710,8 @@ class SuperDataSet:
             if self.args.data_set_type == "fixed":
                 self.tf_split_fixed()
             elif self.args.data_set_type == "holistic-cross-validation":
-                # TODO: LUKE
                 self.tf_split_cross_validation()
             elif self.args.data_set_type == "hold-out-cross-validation":
-                # TODO: LUKE
                 self.tf_split_cross_validation()
             elif self.args.data_set_type == "orthogonalized-cross-validation":
                 # TODO
@@ -755,8 +828,36 @@ class SuperDataSet:
             self.testing = self.folds[2]
 
     def tf_split_cross_validation(self):
-        pass
-            
+        '''
+        self.folds -> training/validation/testing datasets
+        
+        For TF Datasets
+        
+        '''
+        # Assign fold indices to data sets
+        # TODO: add seed?
+        nfolds, n_train_folds, rotation, tr_folds, val_folds, test_fold = self._compute_fold_indices()
+
+        # Translate from fold indices to lists of TF Dataset folds
+        tr_ds = [self.folds[i] for i in tr_folds]
+        val_ds = [self.folds[i] for i in val_folds]
+        
+        #SuperDataSet._describe_object('FOLDS', tr_folds)
+        # Training and validation potentially have more than one fold
+        if len(tr_ds) > 1:
+            #self.training = tf.data.Dataset.sample_from_datasets(tr_ds)
+            self.training = reduce(lambda a, b: a.concatenate(b), tr_ds)
+        else:
+            self.training = tr_ds[0]
+
+        if len(val_ds) > 1:
+            #self.validation = tf.data.Dataset.sample_from_datasets(val_ds)
+            self.validation = reduce(lambda a, b: a.concatenate(b), val_ds)
+        else:
+            self.validation = val_ds[0]
+        
+        # Test set only has one fold
+        self.testing = self.folds[test_fold]
 
     def combine_all_data_tables(self):
         '''
@@ -846,16 +947,13 @@ class SuperDataSet:
         # Create a list of tuples, one for each fold
         self.folds = list(zip(ins_folds, outs_folds, weights_folds, groups_folds))
 
-    def split_cross_validation(self):
+    def _compute_fold_indices(self):
         '''
-        self.folds -> training/validation/testing datasets
-        
-        For numpy arrays
-        
+        Compute the fold details for the training/validation/teest data sets
         '''
         if self.args.data_n_folds is not None:
             if not (self.args.data_n_folds == len(self.folds)):
-                handle_error("n_folds must match the number of loaded data folds",
+                handle_error("--n_folds must match the number of loaded data folds",
                              self.args.verbose)
             nfolds = self.args.data_n_folds
         else:
@@ -877,15 +975,25 @@ class SuperDataSet:
 
         rotation = self.args.data_rotation # get the rotation
 
-        print('VF:%d'%self.args.data_n_validation_folds)
         # Call the function to get the fold indexes for each
-        tr_folds, val_folds, test_fold = SuperDataSet.calculate_nfolds(n_train_folds,
+        tr_folds, val_folds, test_fold = SuperDataSet._calculate_fold_indices_for_rotation(n_train_folds,
                                                                        nfolds,
                                                                        rotation,
                                                                        self.args.data_set_type,
                                                                        self.args.verbose,
                                                                        self.args.debug,
                                                                        n_validation_folds=self.args.data_n_validation_folds)
+
+        return nfolds, n_train_folds, rotation, tr_folds, val_folds, test_fold
+        
+    def split_cross_validation(self):
+        '''
+        self.folds -> training/validation/testing datasets
+        
+        For numpy arrays
+        
+        '''
+        nfolds, n_train_folds, rotation, tr_folds, val_folds, test_fold = self._compute_fold_indices()
 
         ## Training set
         # Inputs
@@ -915,58 +1023,6 @@ class SuperDataSet:
 
         ## Testing
         self.ins_testing, self.outs_testing, self.weights_testing, _ = self.folds[test_fold]
-
-
-    def split_holistic_cross_validation_expired(self):
-        # TODO: need to combine the incoming datasets first
-
-        # TODO add sample weights and groups (?)
-        ins, outs, weights, groups = self.data[0]
-        
-        nfolds = self.args.n_folds 
-        n = len(ins) # The length of data
-        n_train_folds = self.args.n_training_folds # How many folds training should have
-
-        # Default: use all available folds
-        if n_train_folds is None:
-            n_train_folds = nfolds - 2
-            
-        if(n_train_folds > nfolds-2):
-            handle_error("n_training_folds must be <= n_folds-2",
-                         args.verbose)
-        
-        rotation = self.args.rotation # get the rotation
-        tr_folds, val_folds, tes_folds = SuperDataSet.calculate_nfolds(n_train_folds, nfolds, rotation,
-                                                                       self.args.data_split,
-                                                                       self.args.verbose,
-                                                                       self.args.debug) # Call the function to get the fold indexes for each
-        
-        # Get an array of the data being read i.e [0,1,2,3,4,5,6,7,8,....80,81]
-        val_indices = SuperDataSet.calculate_indices(val_folds, nfolds, n)
-        test_indices = SuperDataSet.calculate_indices(tes_folds, nfolds, n)
-
-        # Since training indices uses 8 folds while the others use 1 fold we have to use a loop.
-        train_indices = [SuperDataSet.calculate_indices(fold_i, nfolds, n) for fold_i in tr_folds]
-        train_indices = np.concatenate(train_indices, axis=0, dtype=int)
-
-        # Shuffle the data
-        arr = np.arange(len(ins))
-        
-        # TODO: Revisit when working with seed arguments. 
-        np.random.seed(self.args.data_seed)
-        np.random.shuffle(arr)
-
-        ins = ins[arr]
-        outs = outs[arr]
-
-        self.ins_training = ins[train_indices]
-        self.outs_training = outs[train_indices]
-        self.ins_validation = ins[val_indices]
-        self.outs_validation = outs[val_indices]
-        self.validation = (ins[val_indices], outs[val_indices])
-        self.ins_testing =ins[test_indices]
-        self.outs_testing =outs[test_indices]
-        self.dataset_type = 'numpy'
 
     def describe(self):
         return {'dataset_type': self.dataset_type,
@@ -1436,11 +1492,13 @@ class SuperDataSet:
         
         return tf_datasets
 
-    # method takes in the amount of training folds, total number of folds, and the rotation
     @staticmethod
-    def calculate_nfolds(n_train_folds:int, nfolds:int, rotation:int, data_split:str,
+    def _calculate_fold_indices_for_rotation(n_train_folds:int, nfolds:int, rotation:int, data_split:str,
                          verbose:int=0, debug:int=0, n_validation_folds:int=1)->([int], [int], int):
         '''
+        Given numbers of training, validation, and total folds; and rotation and splitting method,
+        compute the list of folds for the training, validation, and testing data sets
+        
         :param n_train_folds: Number of training folds
         :param nfolds: Total number of folds
         :param rotation: Cross-validation rotation

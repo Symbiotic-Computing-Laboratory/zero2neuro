@@ -1,3 +1,5 @@
+# Deep Simple Recurrent Neural Network
+
 --network_type=rnn
 --rnn_type=simple
 --input_shape
@@ -5,8 +7,13 @@
 --rnn_reverse_time
 --rnn_filters
 60
+
+# This step compresses space by a factor of two after
+#  the 60 unit RNN layer
 --rnn_pool_average_last
 2
+
+# The spatial dimension is now half of the original token list
 --rnn_filters_last
 40
 --rnn_dropout=0.0
@@ -17,6 +24,8 @@
 --hidden_activation=elu
 --output_shape
 1
+
+# elp1 = elu+1 (output is non-negative)
 --output_activation=elup1
 --dropout=0.5
 --l2=0.0001

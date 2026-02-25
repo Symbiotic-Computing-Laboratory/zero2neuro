@@ -1,19 +1,39 @@
+# CSV file is tabular
 --data_format=tabular
+# numpy is the default (so this argument is unnecessary here)
+--data_representation=numpy
+
+# Single file
 --data_files
 dataset/train_1501_fold1.csv
---tokenizer
---tokenizer_max_tokens=24
---tokenizer_split=character
---tokenizer_output_sequence_length=30
---embedding_dimensions=15
---data_set_type=holistic-cross-validation
---data_n_folds=10
---data_fold_split=random
+# The CSV file does not include a header.  Here, we define the column names
 --tabular_header_names
 string
 binding
 class
+
+# Split the data randomly into 10 folds
+--data_n_folds=10
+--data_fold_split=random
+
+# Cross-validation for training and evaluation
+--data_set_type=holistic-cross-validation
+
+# Inputs: string column
 --data_inputs
 string
+# Outputs: binding affinity column
 --data_outputs
 binding
+
+# Preprocessing
+# We are using a tokenizer to translate the strings into lists of
+#  integer tokens
+--tokenizer
+--tokenizer_max_tokens=24
+--tokenizer_split=character
+--tokenizer_output_sequence_length=30
+
+# Transform the integer tokens into 15-dimensional vectors
+#  (this is a learned transformation)
+--embedding_dimensions=15

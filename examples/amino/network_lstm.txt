@@ -1,4 +1,4 @@
-# GRU network implementation
+# LSTM network implementation
 
 --network_type=rnn
 --rnn_type=lstm
@@ -29,6 +29,8 @@
 # Output: predict only a single value
 --output_shape
 1
+
+# elp1 = elu+1 (output is non-negative)
 --output_activation=elup1
 
 ###

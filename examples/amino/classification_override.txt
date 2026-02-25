@@ -1,7 +1,15 @@
+# Use this configuration file to turn the default regression problem
+#  into a classification one
+
+# Select a different output column
 --data_outputs
 class
+
+# Change the output activation function
 --output_activation
 sigmoid
+
+# Change the loss and metrics
 --loss=binary_crossentropy
 --metrics
 accuracy

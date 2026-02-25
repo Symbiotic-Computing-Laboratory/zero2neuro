@@ -40,6 +40,15 @@ def compatibility_checks(args):
     if not args.data_representation in ['numpy', 'tf-dataset']:
         handle_error("data_representation must be either numpy or tf-dataset", args.verbose)
 
+    if not args.data_format in SuperDataSet.FORMATS:
+        handle_error("--data_format must be one of %s"%(str(SuperDataSet.FORMATS)), args.verbose)
+
+    if args.data_representation == 'numpy' and args.data_format == 'tf-dataset':
+        handle_error("When --data_format='tf-dataset', --data_representation must be 'tf-dataset'", args.verbose)
+
+    if args.data_representation == 'tf-dataset' and (not args.data_format == 'tf-dataset'):
+        handle_error("When --data_format='tf-dataset', --data_representation must be 'tf-dataset'", args.verbose)
+
     if args.rotation is not None:
         handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
 
@@ -65,8 +74,9 @@ def compatibility_checks(args):
         handle_error("results_path must be a directory", args.verbose)
 
     # Early stopping checks
-    if (not args.early_stopping) and (args.early_stopping_monitor or args.early_stopping_patience):
-        handle_error("You must use the early_stopping argument if you specify either early_stopping_monitor or early_stopping_patience", args.verbose)
+    # NOTE: not supported by current default values for these arguments
+    #if (not args.early_stopping) and (args.early_stopping_monitor or args.early_stopping_patience):
+    #handle_error("You must use the early_stopping argument if you specify either early_stopping_monitor or early_stopping_patience", args.verbose)
 
     # Network-specific checks
     NetworkBuilder.compatibility_checks(args)
@@ -739,9 +749,22 @@ def prepare_and_execute_experiment(args):
         # If not already initialized, then use the training inputs to initialize
         #  the text vectorization model
         if args.tokenizer_vocabulary is None:
-            model_text_vectorization.adapt(sds.ins_training)
-            vocab = model_text_vectorization.get_vocabulary()
-            print_debug('Vocabulary (%d):%s'%(len(vocab), str(vocab)), 2, args.debug)
+            if args.data_representation == 'numpy':
+                # Numpy array
+                model_text_vectorization.adapt(sds.ins_training)
+            else:
+                # TF dataset
+                # Frst strip out ins from the DS (first element of the tuple)
+                ds = sds.training.map(lambda x, *rest: x)
+                # Then adapt
+                model_text_vectorization.adapt(ds)
+                
+        else:
+            # Fixed vocabulary already used
+            pass
+            
+        vocab = model_text_vectorization.get_vocabulary()
+        print_debug('Vocabulary (%d):%s'%(len(vocab), str(vocab)), 2, args.debug)
         
     else:
         model = models

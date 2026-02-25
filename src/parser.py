@@ -253,10 +253,12 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--L1_regularization', '--l1', type=float, default=None, help="L1 regularization parameter")
     parser.add_argument('--L2_regularization', '--l2', type=float, default=None, help="L2 regularization parameter")
 
-    # Many experiments
+    # Managing many experiments
     parser.add_argument('--cartesian_arguments', nargs='+', type=str, default=None, help='Define a range of values for arguments')
     parser.add_argument('--cartesian_selection_index', type=int, default=None, help='Determine which argument set to select')
 
+    # Data processing only
+    parser.add_argument('--data_save_folds', type=str, default=None, help='Define the directory/base name for saving the folds to TF Datasets')
 
 
     return parser
