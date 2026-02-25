@@ -110,7 +110,10 @@ git tag -a vX.Y.Z -m "Release vX.Y.Z"
 git push origin vX.Y.Z
 ```
 
-5. Update release in GitHub: Releases → Draft new release → choose tag vX.Y.Z → Publish
+5. Update release in GitHub: 
+```
+gh release create vX.Y.Z --title "vX.Y.Z" --notes "Release vX.Y.Z"
+```
 
 6. Update the default version:
 ```
@@ -120,8 +123,9 @@ git switch -C release
 git push -f origin release
 ```
 
-7. Switch back to main:
+7. Switch back to main and update:
 ```
 git switch main
+git pull
 ```
 ___

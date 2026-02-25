@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.5.2 2026-02-24 Andrew H. Fagg
+* Fixed management docs
+
 ## v0.5.1 2026-02-24 Andrew H. Fagg
 * Added new management docs
 
