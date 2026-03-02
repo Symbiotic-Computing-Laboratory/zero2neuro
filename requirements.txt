@@ -1,0 +1,11 @@
+charset_normalizer==3.4.2
+keras==3.10.0
+matplotlib==3.10.3
+pandas==2.2.3
+Pillow==11.2.1
+scikit_learn==1.6.1
+scipy==1.15.2
+seaborn==0.13.2
+tensorflow==2.18.0
+wandb==0.19.11
+pydot==4.0.0
