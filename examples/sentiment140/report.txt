@@ -1,0 +1,7 @@
+--report
+--report_training
+--report_training_ins
+--report_validation
+--report_validation_ins
+--report_testing
+--report_testing_ins

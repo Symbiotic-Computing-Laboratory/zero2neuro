@@ -43,6 +43,14 @@ categorical cross-entropy
    - TF Datasets
       - Example of translating CSV file to TF Dataset folds
       - Use of TF Dataset folds instead of CSV file
+- [Sentiment140 Natural Language Processing](sentiment140/README.md)
+    - Data file type: csv
+    - One input feature: social media post
+    - One output: whether the sentiment was positive (1) or negative (0)
+    - Loss functions: binary cross-entropy
+    - Metrics: binary accuracy
+    - N-fold cross validation
+    - Tokenization by whitespace (each token is a unique word)
 
 - [Core 50 Image Recognition](core50/README.md): Object classification
 problem from images

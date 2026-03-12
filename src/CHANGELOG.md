@@ -2,10 +2,13 @@
 
 Use inverse order
 
-## v0.5.3 2026-03- Andrew H. Fagg (devel)
-Now not creating new releases for every push.  Add notes here as to what has changed so far
-
-* 
+## v0.5.3 2026-03-4 Andrew H. Fagg (devel)
+Now not creating new releases for every push.  Add notes here as to what has changed so far  
+  
+2026-03-12 Luke Sewell 
+* Added new example, Sentiment140
+* Demonstrates natural language processing and splitting by word
+* Has GRU and Simple RNN configuration files 
 
 ## v0.5.2 2026-02-24 Andrew H. Fagg
 * Fixed management docs
