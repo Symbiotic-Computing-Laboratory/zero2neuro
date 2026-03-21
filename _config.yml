@@ -1,6 +1,6 @@
 title: Zero2Neuro
 description: A no-code solution to performing deep learning experiments
-theme: just-the-docs
+remote_theme: just-the-docs/just-the-docs
 
 url: "Symbiotic-Computing-Laboratory.github.io"
 baseurl: "/zero2neuro"
