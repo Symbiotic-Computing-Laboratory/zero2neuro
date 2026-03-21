@@ -1,7 +1,7 @@
-___
+---
 Title: Zero2Neuro Documentation
 nav_order:1
-___
+---
 
 # Zero2Neuro
 <img SRC="../images/zero2neuro2.png" height="250" alt="Zero2Neuro Icon">

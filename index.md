@@ -1,7 +1,7 @@
-___
+---
 title: Zero2Neuro
 nav_order: 1
-___
+---
 
 # Zero2Neuro
 <img SRC="images/zero2neuro2.png" height="100" style="margin-right: 100px;" alt="Zero2Neuro Icon">
@@ -9,7 +9,6 @@ ___
 Zero2Neuro is a no-code solution for constructing, training and
 evaluating Deep Neural Network (DNN) models for a wide range of modeling
 problems.
-
 
 
 ## Authors
