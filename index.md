@@ -4,9 +4,9 @@ nav_order: 1
 ---
 
 # __Zero2Neuro__
-<img SRC="images/zero2neuro2.png" height="100" style="width: 250px; margin-right: 100px;" alt="Zero2Neuro Icon">
+<img SRC="images/zero2neuro2.png" height="100" style="margin-right: 100px;" alt="Zero2Neuro Icon">
 
-Zero2Neuro is a no-code solution for constructing, training and
+Zero2Neuro is a no-code toolbox for constructing, training and
 evaluating Deep Neural Network (DNN) models for a wide range of modeling
 problems.
 
