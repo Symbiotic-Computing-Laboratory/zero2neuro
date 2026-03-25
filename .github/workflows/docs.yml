@@ -3,16 +3,15 @@ name: Deploy Docs
 on:
   push:
     branches:
-      - main        # deploys to /dev
+      - main
     tags:
-      - 'v*'        # deploys to /stable on version tags like v1.0.0
+      - 'v*'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,5 +46,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
           destination_dir: ${{ steps.folder.outputs.folder }}
-          keep_files: true   # important %G—%@ preserves stable when deploying dev and vice versa
-
+          keep_files: true
