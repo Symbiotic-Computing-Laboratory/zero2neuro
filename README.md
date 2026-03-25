@@ -26,7 +26,8 @@ supercomputers and other remote machines
 2. Jupyter notebook
 3. Within your own Python code
 
-
-[Zero2Neuro Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/)
+## Documentation
+- [Stable Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/stable)
+- [Development Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/dev)
 
 ___
