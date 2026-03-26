@@ -23,8 +23,8 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
-      - name: Install Jekyll
-	run: bundle install
+      - name: Install dependencies
+        run: bundle install
 
       - name: Set deploy folder and baseurl
         id: folder
@@ -38,8 +38,7 @@ jobs:
           fi
 
       - name: Build Jekyll site
-        run: |
-          bundle exec jekyll build --destination ./_site --baseurl "${{ steps.folder.outputs.baseurl }}"
+        run: bundle exec jekyll build --destination ./_site --baseurl "${{ steps.folder.outputs.baseurl }}"
         env:
           JEKYLL_ENV: production
 
@@ -50,3 +49,4 @@ jobs:
           publish_dir: ./_site
           destination_dir: ${{ steps.folder.outputs.folder }}
           keep_files: true
+
