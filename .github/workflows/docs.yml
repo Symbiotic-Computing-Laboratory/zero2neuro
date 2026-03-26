@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,18 +26,20 @@ jobs:
       - name: Install Jekyll
         run: gem install jekyll just-the-docs
 
-      - name: Set deploy folder
+      - name: Set deploy folder and baseurl
         id: folder
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "folder=stable" >> $GITHUB_OUTPUT
+            echo "baseurl=/zero2neuro/stable" >> $GITHUB_OUTPUT
           else
             echo "folder=dev" >> $GITHUB_OUTPUT
+            echo "baseurl=/zero2neuro/dev" >> $GITHUB_OUTPUT
           fi
 
       - name: Build Jekyll site
         run: |
-          jekyll build --destination ./_site
+          jekyll build --destination ./_site --baseurl "${{ steps.folder.outputs.baseurl }}"
         env:
           JEKYLL_ENV: production
 
