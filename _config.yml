@@ -21,3 +21,5 @@ just_the_docs:
   collections:
     docs:
       name: Documentation
+
+index: docs/index.md
