@@ -1,4 +1,8 @@
-[Base Index](../index.md)   
+---
+title: Modules Index
+nav_order: 3
+parent: Zero2Neuro Documentation
+---
 
 # Zero2Neuro Modules
 
