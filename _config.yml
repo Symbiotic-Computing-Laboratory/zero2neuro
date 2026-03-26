@@ -9,8 +9,6 @@ search_enabled: true
 heading_anchors: true
 color_scheme: light
 
-collections_dir: docs
-
 
 collections:
   docs:
