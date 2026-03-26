@@ -108,4 +108,4 @@ vector of values into another vector of values
 - [Convolutional Neural Network](cnn.md): Translate 1D (timeseries),
 2D (images), or 3D (volumetric) data into a vector of values
 
-- Recurrent Neural Network: Process sequences by taking in information from previous steps
+- [Recurrent Neural Network](rnn.md): Process sequences by taking in information from previous steps
