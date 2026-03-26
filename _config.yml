@@ -23,3 +23,6 @@ just_the_docs:
       name: Documentation
 
 index: docs/index.md
+
+plugins:
+  - jekyll-remote-theme

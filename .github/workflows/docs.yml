@@ -24,7 +24,7 @@ jobs:
           bundler-cache: true
 
       - name: Install Jekyll
-        run: gem install jekyll just-the-docs
+        run: gem install jekyll just-the-docs jekyll-remote-theme
 
       - name: Set deploy folder and baseurl
         id: folder
