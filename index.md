@@ -4,7 +4,7 @@ nav_order: 1
 has_children: true
 layout: home
 ---
-# Zero2Neuro Introduction
+# Zero2Neuro 
 <img SRC="images/zero2neuro2.png" height="300" alt="Zero2Neuro Icon" style="height:300px;">
 
 Zero2Neuro is a no-code toolbox for constructing, training and
@@ -62,9 +62,10 @@ including one-hot encoding
 Zero2Neuro is implemented in Python and built on top of Keras3
 
 ## Documentation Links
-- [Getting Started](./getting_started/)
+- [Full Example](./full_example.md)
+- [Getting Started](./getting_started/index.md)
 - [Examples](./examples/index.md)
-- [Module Documentation](./modules/)
+- [Module Documentation](./modules/index.md)
 - [API](api/index.html)
 
 ## References
