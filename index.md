@@ -5,7 +5,7 @@ has_children: true
 layout: home
 ---
 # Zero2Neuro Introduction
-<img SRC="images/zero2neuro2.png" height="250" alt="Zero2Neuro Icon" style="height:200px;">
+<img SRC="images/zero2neuro2.png" height="300" alt="Zero2Neuro Icon" style="height:300px;">
 
 Zero2Neuro is a no-code toolbox for constructing, training and
 evaluating Deep Neural Network (DNN) models for a wide range of modeling
@@ -58,12 +58,20 @@ including one-hot encoding
 	- Early-stopping parameters
 	- How experiment results are reported
 
+## Dependencies
+Zero2Neuro is implemented in Python and built on top of Keras3
+
+## Documentation Links
+- [Getting Started](getting_started/index.md)
+- [Examples](examples/index.md)
+- [Module Documentation](modules/index.md)
+- [API](api/index.html)
+
+## References
+- [Zero2Neuro Repository](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
+- [Zero2Neuro Presentation](https://docs.google.com/presentation/d/12ZBsMVq-6mW498PQZfDNP1_Mfu_3sIMWwnczJN84O5I/edit?usp=sharing)
 
 
-
-## Requirements
-
-- Python environment with Keras3 and Tensorflow 2.xx
 
 
 ## Quick Start
@@ -106,5 +114,3 @@ python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.tx
 
 ## Documentation
 
-- [Zero2Neuro Documentation](docs/index.md)
-- [Zero2Neuro Presentation](https://docs.google.com/presentation/d/12ZBsMVq-6mW498PQZfDNP1_Mfu_3sIMWwnczJN84O5I/edit?usp=sharing)
