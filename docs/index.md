@@ -3,6 +3,7 @@ title: Zero2Neuro Documentation
 nav_order: 1
 has_children: true
 parent: Zero2Neuro
+layout: default
 ---
 
 # Zero2Neuro

@@ -2,6 +2,7 @@
 title: Getting Started
 nav_order: 2
 parent: Zero2Neuro Documentation
+layout: default
 ---
 
 # Getting Started
