@@ -27,7 +27,7 @@ supercomputers and other remote machines
 3. Within your own Python code
 
 ## Documentation
-- [Stable Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/stable)
-- [Development Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/dev)
+- [Stable Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/stable/docs)
+- [Development Documentation](https://symbiotic-computing-laboratory.github.io/zero2neuro/dev/docs)
 
 ___
