@@ -11,9 +11,7 @@ collections:
     permalink: "/:collection/:path/"
     output: true
 just_the_docs:
-  collections:
-    docs:
-      name: Documentation
+
 plugins:
   - jekyll-remote-theme
 
