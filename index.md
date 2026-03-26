@@ -1,5 +1,5 @@
 ---
-title: Zero2Neuro Documentation
+title: Zero2Neuro
 nav_order: 1
 has_children: true
 ---

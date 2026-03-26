@@ -1,8 +1,8 @@
 ---
-title: Zero2Neuro Documentation2
+title: Zero2Neuro Documentation
 nav_order: 1
 has_children: true
-parent: Zero2Neuro Documentation
+parent: Zero2Neuro
 ---
 
 # Zero2Neuro
