@@ -62,11 +62,11 @@ including one-hot encoding
 Zero2Neuro is implemented in Python and built on top of Keras3
 
 ## Documentation Links
-- [Full Example](./full_example.md)
-- [Getting Started](./getting_started/index.md)
+- [Full Example](./full_example.html)
+- [Getting Started](./getting_started/)
 - [Examples](./examples/index.md)
-- [Module Documentation](./modules/index.md)
-- [API](api/index.html)
+- [Modules](./modules/index.md)
+- [API](./api/index.html)
 
 ## References
 - [Zero2Neuro Repository](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
