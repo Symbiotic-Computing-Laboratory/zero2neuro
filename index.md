@@ -5,7 +5,7 @@ has_children: true
 layout: home
 ---
 # Zero2Neuro Introduction
-<img SRC="../images/zero2neuro2.png" height="250" alt="Zero2Neuro Icon" style="height:200px;">
+<img SRC="images/zero2neuro2.png" height="250" alt="Zero2Neuro Icon" style="height:200px;">
 
 Zero2Neuro is a no-code toolbox for constructing, training and
 evaluating Deep Neural Network (DNN) models for a wide range of modeling
