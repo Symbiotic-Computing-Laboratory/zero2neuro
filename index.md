@@ -1,6 +1,7 @@
 ---
-title: Zero2Neuro
+title: Zero2Neuro Documentation
 nav_order: 1
+has_children: true
 ---
 
 # __Zero2Neuro__
