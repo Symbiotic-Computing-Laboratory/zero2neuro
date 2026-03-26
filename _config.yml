@@ -10,3 +10,14 @@ heading_anchors: true
 color_scheme: light
 
 collections_dir: docs
+
+
+collections:
+  docs:
+    permalink: "/:collection/:path/"
+    output: true
+
+just_the_docs:
+  collections:
+    docs:
+      name: Documentation
