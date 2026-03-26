@@ -24,7 +24,8 @@ jobs:
           bundler-cache: true
 
       - name: Install Jekyll
-        run: gem install jekyll just-the-docs jekyll-remote-theme
+	run: bundle install
+        #run: gem install jekyll just-the-docs jekyll-remote-theme
 
       - name: Set deploy folder and baseurl
         id: folder
@@ -39,7 +40,8 @@ jobs:
 
       - name: Build Jekyll site
         run: |
-          jekyll build --destination ./_site --baseurl "${{ steps.folder.outputs.baseurl }}"
+	# jekyll build --destination ./_site --baseurl "${{ steps.folder.outputs.baseurl }}"
+          bundle exec jekyll build --destination ./_site --baseurl "${{ steps.folder.outputs.baseurl }}"
         env:
           JEKYLL_ENV: production
 
