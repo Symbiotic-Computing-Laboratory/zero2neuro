@@ -1,26 +1,19 @@
 title: Zero2Neuro
 description: A no-code toolkit for performing deep learning experiments
 remote_theme: just-the-docs/just-the-docs
-
 url: "https://Symbiotic-Computing-Laboratory.github.io"
 baseurl: ""
-
 search_enabled: true
 heading_anchors: true
 color_scheme: light
-
-
 collections:
   docs:
     permalink: "/:collection/:path/"
     output: true
-
 just_the_docs:
   collections:
     docs:
       name: Documentation
-
-index: docs/index.md
-
 plugins:
   - jekyll-remote-theme
+
