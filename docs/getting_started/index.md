@@ -8,7 +8,7 @@ parent: Zero2Neuro
 
 ## Python environment
 
-- [Stable Python Enviornment Requirements](../../requirements.txt)
+- [Stable Python Enviornment Requirements](../../requirements.txt) [text specification]
 - [OU Supercomputer](environment_ou_supercomputer.md)
 - Jupyter Lab
 - Setting up your own

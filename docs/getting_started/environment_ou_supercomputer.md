@@ -7,6 +7,8 @@ parent: Getting Started
 
 # Python Environment on the OU Supercomputer
 
+foo
+
 The [OU Supercomputer](https://www.ou.edu/oscer) is a resource open to
 researchers and students in Oklahoma.  For access to this system, see
 [OSCER Getting Started](https://www.ou.edu/oscer/getting-started).
