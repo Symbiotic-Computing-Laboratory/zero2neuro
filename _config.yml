@@ -14,9 +14,14 @@ just_the_docs:
 
 plugins:
   - jekyll-remote-theme
+  - jekyll-relative-links
 
 defaults:
   - scope:
       path: ""
     values:
       layout: default
+
+relative_links:
+  enabled: true
+  collections: true
