@@ -1,4 +1,10 @@
-[Base Index](../index.md)  
+---
+title: Examples
+nav_order: 5
+has_children: true
+parent: Zero2Neuro
+---
+
 ### Xor Documentation - zero2neuro/examples/xor/README.md
 [XOR](../../examples/xor/README.md)
 ### Iris Documentation - zero2neuro/examples/iris/README.md

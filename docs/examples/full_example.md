@@ -1,7 +1,7 @@
 ---
 title: Full Example
 nav_order: 1
-parent: Zero2Neuro
+parent: Examples
 ---
 # Full Zero2NeuroExample
 
