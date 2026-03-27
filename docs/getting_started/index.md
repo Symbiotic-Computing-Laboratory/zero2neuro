@@ -6,30 +6,26 @@ parent: Zero2Neuro
 ---
 # Getting Started with Zero2Neuro
 
-## Python environment
+## Existing Python/Zero2Neuro Environments (easy)
 
-- [Stable Python Enviornment Requirements](../../requirements.txt) [text specification]
-- [OU Supercomputer](./environment_ou_supercomputer.md)
-- Jupyter Lab
-- Setting up your own
+We have multiple options for accessing pre-existing Python and
+Zero2Neuro environments
+
+- Oklahoma researchers and students: [OU Supercomputer](./environment_ou_supercomputer.md)
+- (many) US University researchers and students: [Jupyter
+Lab](./environment_jupyter.md) 
+
+___
+
+## Setting up Your Own Environment (advanced)
+
+Python:
+- General instructions: [Setting up a Python Virtual
+Environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/);
+see _Using a requirements file_
+- [Requirements File for Zero2Neuro](../../requirements.txt) 
+
+Zero2Neuro:
+- [Download and Configure Zero2Neuro](./zero2neuro_config.md)
 
 
-## Clone the repositories
-
-### 1. Clone the Repositories
-
-Place the repository clones inside of a common directory:
-- [Zero2Neuro](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
-- [Keras 3 Tools](https://github.com/Symbiotic-Computing-Laboratory/keras3_tools)
-
-### 2. Declare Path
-Execute:
-
-```
-export NEURO_REPOSITORY_PATH=/path/to/common/directory
-```
-
-
-## Using
-- Command line
-- Jupyter Lab
