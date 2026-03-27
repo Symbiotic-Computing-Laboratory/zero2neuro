@@ -1,0 +1,15 @@
+--experiment_name=parity
+--data_rotation=0
+--loss=mse
+--metrics
+mae
+mse
+--learning_rate=0.001
+--epochs=1000
+--early_stopping
+--early_stopping_monitor=val_loss
+--early_stopping_patience=2000
+--results_path=./results
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+--save_model
+--render_model

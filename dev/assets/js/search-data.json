@@ -1,0 +1,177 @@
+{"0": {
+    "doc": "Contributors",
+    "title": "Zero2Neuro Contributors",
+    "content": ". | Andrew H. Fagg (andrewhfagg@gmail.com) | Luke Sewell | Mel Wilson Reyes | . ",
+    "url": "/zero2neuro/dev/docs/contributors.html#zero2neuro-contributors",
+    
+    "relUrl": "/docs/contributors.html#zero2neuro-contributors"
+  },"1": {
+    "doc": "Contributors",
+    "title": "Contributors",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/contributors.html",
+    
+    "relUrl": "/docs/contributors.html"
+  },"2": {
+    "doc": "Python Environment on the OU Supercomputer",
+    "title": "Python Environment on the OU Supercomputer",
+    "content": "The OU Supercomputer is a resource open to researchers and students in Oklahoma. For access to this system, see OSCER Getting Started. While you are free to set up your own Python environment and copy of Zero2Neuro, you may use existing copies of both. ",
+    "url": "/zero2neuro/dev/docs/getting_started/environment_ou_supercomputer.html",
+    
+    "relUrl": "/docs/getting_started/environment_ou_supercomputer.html"
+  },"3": {
+    "doc": "Python Environment on the OU Supercomputer",
+    "title": "Python Environment",
+    "content": "We maintain an up-to-date version of Python, Keras3, and Tensorflow. To access this environment, type the following: . /home/fagg/tf_setup.sh conda activate dnn . ",
+    "url": "/zero2neuro/dev/docs/getting_started/environment_ou_supercomputer.html#python-environment",
+    
+    "relUrl": "/docs/getting_started/environment_ou_supercomputer.html#python-environment"
+  },"4": {
+    "doc": "Python Environment on the OU Supercomputer",
+    "title": "Zero2Neuro Configuration",
+    "content": "For the release version of the repositories, type in your bash shell: . export NEURO_REPOSITORY_PATH=/home/fagg/zero2neuro . Alternatively, if you would like to use the development version of the repositories, type the following: . export NEURO_REPOSITORY_PATH=/home/fagg/zero2neuro_devel . You may also add these lines to your own .bashrc file. ",
+    "url": "/zero2neuro/dev/docs/getting_started/environment_ou_supercomputer.html#zero2neuro-configuration",
+    
+    "relUrl": "/docs/getting_started/environment_ou_supercomputer.html#zero2neuro-configuration"
+  },"5": {
+    "doc": "Python Environment on the OU Supercomputer",
+    "title": "Batch Files",
+    "content": "Most work on the OU supercomputer is conducted using the SLURM job control system, with your batch.sh file containing the details of your computational experiment. The above bash commands may be included in your batch.sh file. ",
+    "url": "/zero2neuro/dev/docs/getting_started/environment_ou_supercomputer.html#batch-files",
+    
+    "relUrl": "/docs/getting_started/environment_ou_supercomputer.html#batch-files"
+  },"6": {
+    "doc": "Full Example",
+    "title": "Full Zero2Neuro Example",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#full-zero2neuro-example",
+    
+    "relUrl": "/docs/examples/full_example.html#full-zero2neuro-example"
+  },"7": {
+    "doc": "Full Example",
+    "title": "Full Example",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html",
+    
+    "relUrl": "/docs/examples/full_example.html"
+  },"8": {
+    "doc": "Modules Index",
+    "title": "Zero2Neuro Modules",
+    "content": ". Zero2Neuro is made up of three main modules and instructed by a corresponding configuration file for each. The three main modules are SuperDataSet, in charge of preparing data for an experiment, Network Builder, in charge of making the untrained model, and the Zero2Neuro engine, which performs the experiment itself. These three modules are what make Zero2Neuro a zero-code solution as they take care of the python code by taking in user-defined .txt configuration files. ",
+    "url": "/zero2neuro/dev/docs/modules/#zero2neuro-modules",
+    
+    "relUrl": "/docs/modules/#zero2neuro-modules"
+  },"9": {
+    "doc": "Modules Index",
+    "title": "Modules",
+    "content": ". | SuperDataSet | Network Builder | Zero2Neuro Engine | . ",
+    "url": "/zero2neuro/dev/docs/modules/#modules",
+    
+    "relUrl": "/docs/modules/#modules"
+  },"10": {
+    "doc": "Modules Index",
+    "title": "Modules Index",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/modules/",
+    
+    "relUrl": "/docs/modules/"
+  },"11": {
+    "doc": "Getting Started",
+    "title": "Getting Started with Zero2Neuro",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/getting_started/#getting-started-with-zero2neuro",
+    
+    "relUrl": "/docs/getting_started/#getting-started-with-zero2neuro"
+  },"12": {
+    "doc": "Getting Started",
+    "title": "Python environment",
+    "content": ". | Stable Python Enviornment Requirements [text specification] | OU Supercomputer | Jupyter Lab | Setting up your own | . ",
+    "url": "/zero2neuro/dev/docs/getting_started/#python-environment",
+    
+    "relUrl": "/docs/getting_started/#python-environment"
+  },"13": {
+    "doc": "Getting Started",
+    "title": "Clone the repositories",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/getting_started/#clone-the-repositories",
+    
+    "relUrl": "/docs/getting_started/#clone-the-repositories"
+  },"14": {
+    "doc": "Getting Started",
+    "title": "Using",
+    "content": ". | Command line | Jupyter Lab | . ",
+    "url": "/zero2neuro/dev/docs/getting_started/#using",
+    
+    "relUrl": "/docs/getting_started/#using"
+  },"15": {
+    "doc": "Getting Started",
+    "title": "Getting Started",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/getting_started/",
+    
+    "relUrl": "/docs/getting_started/"
+  },"16": {
+    "doc": "Examples",
+    "title": "Examples",
+    "content": "Xor Documentation - zero2neuro/examples/xor/README.md . XOR . Iris Documentation - zero2neuro/examples/iris/README.md . Iris . Breast Cancer Documentation - zero2neuro/examples/breast_cancer/README.md . Breast Cancer . Core50 Documentation - zero2neuro/examples/core50/README.md . Core50 . Mesonet Documentation - zero2neuro/examples/mesonet/README.md . ",
+    "url": "/zero2neuro/dev/docs/examples/",
+    
+    "relUrl": "/docs/examples/"
+  },"17": {
+    "doc": "Zero2Neuro",
+    "title": "Zero2Neuro",
+    "content": ". Zero2Neuro is a no-code toolbox for constructing, training and evaluating Deep Neural Network (DNN) models for a wide range of modeling problems. This package provides easy-to-use solutions for: . | Loading data stored in a variety of formats (including the common Comma Separated Values format), and configuring the data for use in DNN training and evaluation. | Creation of Deep Neural Network models from several flexible DNN model schemata, including fully-connected networks (FCNs), convolutional neural networks (CNNs), and U-Nets. The user specifies the structural details of their specific model. | A standard DNN training and evaluation engine. This engine supports the production of result reports in various formats, including hooks for Weights and Biases. | . ",
+    "url": "/zero2neuro/dev/",
+    
+    "relUrl": "/"
+  },"18": {
+    "doc": "Zero2Neuro",
+    "title": "Supported Environments",
+    "content": "You can execute Zero2Neuro in several different environments, depending on your needs: . | Bash shell command line | Supercomputer using SLURM | Jupyter Notebooks | . ",
+    "url": "/zero2neuro/dev/#supported-environments",
+    
+    "relUrl": "/#supported-environments"
+  },"19": {
+    "doc": "Zero2Neuro",
+    "title": "Flexible Configuration",
+    "content": "The user specifies the details behind their specific DNN experiment using a set of simple configuration files: . | Data configuration includes: . | Location of data files and their type | Individual data features to be extracted from the files that capture the model inputs and desired outputs | Translation of data types for categorical variables, including one-hot encoding | Creation of training, validation, and testing data sets | . | Model configuration includes: . | Model schema | Form of the model inputs | Number and sizes of model layers | Non-linearities for hidden and output layers | . | Training/evaluation engine configuration includes: . | Learning parameters | Loss functions and metrics | Early-stopping parameters | How experiment results are reported | . | . ",
+    "url": "/zero2neuro/dev/#flexible-configuration",
+    
+    "relUrl": "/#flexible-configuration"
+  },"20": {
+    "doc": "Zero2Neuro",
+    "title": "Dependencies",
+    "content": "Zero2Neuro is implemented in Python and built on top of Keras3 . ",
+    "url": "/zero2neuro/dev/#dependencies",
+    
+    "relUrl": "/#dependencies"
+  },"21": {
+    "doc": "Zero2Neuro",
+    "title": "Documentation Links",
+    "content": ". | Full Example | Getting Started | Examples | Modules | API | . ",
+    "url": "/zero2neuro/dev/#documentation-links",
+    
+    "relUrl": "/#documentation-links"
+  },"22": {
+    "doc": "Zero2Neuro",
+    "title": "References",
+    "content": ". | Zero2Neuro Repository | Zero2Neuro Presentation | . ",
+    "url": "/zero2neuro/dev/#references",
+    
+    "relUrl": "/#references"
+  },"23": {
+    "doc": "Zero2Neuro",
+    "title": "Quick Start",
+    "content": "1. Clone the Repositories . Place the repository clones inside of a common directory: . | Zero2Neuro | Keras 3 Tools | . 2. Declare Path . Execute: . export NEURO_REPOSITORY_PATH=/path/to/common/directory . 3. Activate Python Environment . Activate Keras 3 / Tensorflow xx environment . Example: conda activate tf . 4. Example: XOR . Change your directory: . cd examples/xor . Execute: . python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv . | Full XOR Description | . ",
+    "url": "/zero2neuro/dev/#quick-start",
+    
+    "relUrl": "/#quick-start"
+  },"24": {
+    "doc": "Zero2Neuro",
+    "title": "Documentation",
+    "content": " ",
+    "url": "/zero2neuro/dev/#documentation",
+    
+    "relUrl": "/#documentation"
+  }
+}
