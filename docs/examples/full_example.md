@@ -197,14 +197,15 @@ export NEURO_REPOSITORY_PATH=/home/fagg/zero2neuro
 
 3. Change your current working directory to the location of the
 example.  If you are using the XOR example:
+
 ```
 cd examples/xor
 ```
 
 4. Execute Your Experiment
+
 ```
 python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
-
 ```
 
 - @network.txt: load the arguments from the network.txt file
@@ -217,7 +218,7 @@ output](full_example_output.txt)
 
 ___
 ## Training Outputs
-The outputs are placed in the _results/_ subdirectory:
+The outputs are placed in the __results/__ subdirectory:
 - xor_R00_model.keras: reloadable model
 - xor_R00_model_plot.png: image that describes the model
 - xor_R00_report.xlsx: report file in excel format
