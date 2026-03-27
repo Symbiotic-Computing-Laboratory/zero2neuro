@@ -216,39 +216,46 @@
     
     "relUrl": "/#references"
   },"31": {
-    "doc": "Configuring Zero2Neuro",
-    "title": "Configuring Zero2Neuro",
+    "doc": "Installing and Configuring Zero2Neuro",
+    "title": "Installing Configuring Zero2Neuro",
     "content": " ",
-    "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html",
+    "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
-    "relUrl": "/docs/getting_started/zero2neuro_config.html"
+    "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
   },"32": {
-    "doc": "Configuring Zero2Neuro",
+    "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
   },"33": {
-    "doc": "Configuring Zero2Neuro",
+    "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
   },"34": {
-    "doc": "Configuring Zero2Neuro",
+    "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
   },"35": {
-    "doc": "Configuring Zero2Neuro",
+    "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
+  },"36": {
+    "doc": "Installing and Configuring Zero2Neuro",
+    "title": "Installing and Configuring Zero2Neuro",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html",
+    
+    "relUrl": "/docs/getting_started/zero2neuro_config.html"
   }
 }
