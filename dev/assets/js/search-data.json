@@ -55,61 +55,61 @@
     
     "relUrl": "/docs/examples/full_example.html"
   },"8": {
-    "doc": "Modules Index",
-    "title": "Zero2Neuro Modules",
-    "content": ". Zero2Neuro is made up of three main modules and instructed by a corresponding configuration file for each. The three main modules are SuperDataSet, in charge of preparing data for an experiment, Network Builder, in charge of making the untrained model, and the Zero2Neuro engine, which performs the experiment itself. These three modules are what make Zero2Neuro a zero-code solution as they take care of the python code by taking in user-defined .txt configuration files. ",
-    "url": "/zero2neuro/dev/docs/modules/#zero2neuro-modules",
-    
-    "relUrl": "/docs/modules/#zero2neuro-modules"
-  },"9": {
-    "doc": "Modules Index",
-    "title": "Modules",
-    "content": ". | SuperDataSet | Network Builder | Zero2Neuro Engine | . ",
-    "url": "/zero2neuro/dev/docs/modules/#modules",
-    
-    "relUrl": "/docs/modules/#modules"
-  },"10": {
-    "doc": "Modules Index",
-    "title": "Modules Index",
-    "content": " ",
-    "url": "/zero2neuro/dev/docs/modules/",
-    
-    "relUrl": "/docs/modules/"
-  },"11": {
     "doc": "Getting Started",
     "title": "Getting Started with Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/#getting-started-with-zero2neuro",
     
     "relUrl": "/docs/getting_started/#getting-started-with-zero2neuro"
-  },"12": {
+  },"9": {
     "doc": "Getting Started",
     "title": "Python environment",
     "content": ". | Stable Python Enviornment Requirements [text specification] | OU Supercomputer | Jupyter Lab | Setting up your own | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#python-environment",
     
     "relUrl": "/docs/getting_started/#python-environment"
-  },"13": {
+  },"10": {
     "doc": "Getting Started",
     "title": "Clone the repositories",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/#clone-the-repositories",
     
     "relUrl": "/docs/getting_started/#clone-the-repositories"
-  },"14": {
+  },"11": {
     "doc": "Getting Started",
     "title": "Using",
     "content": ". | Command line | Jupyter Lab | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#using",
     
     "relUrl": "/docs/getting_started/#using"
-  },"15": {
+  },"12": {
     "doc": "Getting Started",
     "title": "Getting Started",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/",
     
     "relUrl": "/docs/getting_started/"
+  },"13": {
+    "doc": "Modules Index",
+    "title": "Zero2Neuro Modules",
+    "content": ". Zero2Neuro is made up of three main modules and instructed by a corresponding configuration file for each. The three main modules are SuperDataSet, in charge of preparing data for an experiment, Network Builder, in charge of making the untrained model, and the Zero2Neuro engine, which performs the experiment itself. These three modules are what make Zero2Neuro a zero-code solution as they take care of the python code by taking in user-defined .txt configuration files. ",
+    "url": "/zero2neuro/dev/docs/modules/#zero2neuro-modules",
+    
+    "relUrl": "/docs/modules/#zero2neuro-modules"
+  },"14": {
+    "doc": "Modules Index",
+    "title": "Modules",
+    "content": ". | SuperDataSet | Network Builder | Zero2Neuro Engine | . ",
+    "url": "/zero2neuro/dev/docs/modules/#modules",
+    
+    "relUrl": "/docs/modules/#modules"
+  },"15": {
+    "doc": "Modules Index",
+    "title": "Modules Index",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/modules/",
+    
+    "relUrl": "/docs/modules/"
   },"16": {
     "doc": "Examples",
     "title": "Examples",
