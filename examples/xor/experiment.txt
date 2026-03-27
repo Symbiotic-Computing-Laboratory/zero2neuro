@@ -35,3 +35,8 @@ mse
 
 # Save the training set results
 --log_training_set
+
+# Report the results to a XLSX file
+--report
+--report_training
+--report_training_ins

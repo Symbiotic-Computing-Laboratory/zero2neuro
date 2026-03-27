@@ -58,60 +58,19 @@ including one-hot encoding
 	- Early-stopping parameters
 	- How experiment results are reported
 
+## Detailed Example
+The [Full Example](./docs/examples/full_example.md) demonstrates the configuration and execution process for solving a simple logic problem.
+
 ## Dependencies
 Zero2Neuro is implemented in Python and built on top of Keras3
 
 ## Documentation Links
-- [Full Example](./docs/examples/full_example.md)
-- [Getting Started](./docs/getting_started/index.html)
-- [Examples](./docs/examples/)
-- [Modules](./docs/modules/index.md)
-- [API](./api/index.html)
+- [Getting Started](./docs/getting_started/)
+- [Examples](./examples/)
+- [Modules](./docs/modules/)
+- [API](./docs/api/)
 
 ## References
 - [Zero2Neuro Repository](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
 - [Zero2Neuro Presentation](https://docs.google.com/presentation/d/12ZBsMVq-6mW498PQZfDNP1_Mfu_3sIMWwnczJN84O5I/edit?usp=sharing)
-
-
-
-
-## Quick Start
-
-### 1. Clone the Repositories
-
-Place the repository clones inside of a common directory:
-- [Zero2Neuro](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
-- [Keras 3 Tools](https://github.com/Symbiotic-Computing-Laboratory/keras3_tools)
-
-### 2. Declare Path
-Execute:
-
-```
-export NEURO_REPOSITORY_PATH=/path/to/common/directory
-```
-
-### 3. Activate Python Environment
-
-Activate Keras 3 / Tensorflow xx environment
-
-Example:  
-`conda activate tf`
-
-### 4. Example: XOR
-
-Change your directory:
-```
-cd examples/xor
-```
-
-Execute:  
-```
-python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
-
-```
-
-- [Full XOR Description](examples/xor/README.md)
-
-
-## Documentation
 

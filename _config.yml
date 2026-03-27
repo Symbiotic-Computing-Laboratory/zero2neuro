@@ -28,7 +28,6 @@ relative_links:
 
 exclude:
   - tests/
-  - examples/
   - src/
   - README.md
   - Gemfile

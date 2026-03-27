@@ -16,6 +16,20 @@ parent: Zero2Neuro
 
 ## Clone the repositories
 
+### 1. Clone the Repositories
+
+Place the repository clones inside of a common directory:
+- [Zero2Neuro](https://github.com/Symbiotic-Computing-Laboratory/zero2neuro)
+- [Keras 3 Tools](https://github.com/Symbiotic-Computing-Laboratory/keras3_tools)
+
+### 2. Declare Path
+Execute:
+
+```
+export NEURO_REPOSITORY_PATH=/path/to/common/directory
+```
+
+
 ## Using
 - Command line
 - Jupyter Lab

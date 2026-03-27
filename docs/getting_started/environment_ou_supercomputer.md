@@ -46,5 +46,3 @@ control system, with your _batch.sh_ file containing the details of
 your computational experiment.  The above bash commands may be
 included in your _batch.sh_ file.
 
-___
-
