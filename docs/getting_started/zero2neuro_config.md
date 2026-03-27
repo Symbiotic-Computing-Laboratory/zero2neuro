@@ -1,11 +1,11 @@
 ---
-title: Configuring Zero2Neuro
+title: Installing and Configuring Zero2Neuro
 nav_order: 30
 has_children: true
 parent: Getting Started
 ---
 
-# Configuring Zero2Neuro
+# Installing Configuring Zero2Neuro
 
 ## 1. Create a directory (folder) that will hold copies of the needed
 repositories
