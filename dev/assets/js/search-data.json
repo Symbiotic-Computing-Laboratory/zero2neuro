@@ -42,136 +42,171 @@
     "relUrl": "/docs/getting_started/environment_ou_supercomputer.html#batch-files"
   },"6": {
     "doc": "Full Example",
-    "title": "Full Zero2Neuro Example",
-    "content": " ",
-    "url": "/zero2neuro/dev/docs/examples/full_example.html#full-zero2neuro-example",
+    "title": "Full Zero2Neuro Example: Exclusive OR",
+    "content": "For this example, we will create a fully-connected network to learn a simple binary function – the Exclusive OR (XOR) function. This function has 4 possible cases (one on each row): . | In 0 | In 1 | Out 0 | . | 0 | 0 | 0 | . | 1 | 0 | 1 | . | 0 | 1 | 1 | . | 1 | 1 | 0 | . In 0 and In 1 are the two inputs into the network, and the Out 0 column shows the correct value that the network should produce for each of the cases. ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#full-zero2neuro-example-exclusive-or",
     
-    "relUrl": "/docs/examples/full_example.html#full-zero2neuro-example"
+    "relUrl": "/docs/examples/full_example.html#full-zero2neuro-example-exclusive-or"
   },"7": {
+    "doc": "Full Example",
+    "title": "Data Configuration",
+    "content": "We specify the data with two different files: . | The XOR data itself is specified using a CSV file format: xor_data.csv | The data configuration file states how the CSV file will be interpreted: data.txt | . data.txt looks like this: . # Data is from a table --data_format=tabular --data_file=xor_data.csv # Our one file becomes our training set --data_set_type=fixed # Two inputs --data_inputs In 0 In 1 # One output --data_outputs Out 0 . Notes: . | In any of the configuration files, characters following the # symbol are ignored. Typically, we use this feature to add textual explanations about the following lines. | Given that there is a single input file and –data_set_type=fixed, all of the examples in the file will be used for training. We do not have a validation or test data set in this example. | . ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#data-configuration",
+    
+    "relUrl": "/docs/examples/full_example.html#data-configuration"
+  },"8": {
+    "doc": "Full Example",
+    "title": "Network Configuration",
+    "content": "In this example we are implementing a fully connected network with two hidden (intermediate) layers of neurons before the network produces its output. For XOR, at least one hidden layer is required to solve the problem. The network.txt configuration file looks like this: . # Fully connected network --network_type=fully_connected # Two inputs --input_shape 2 # Two hidden layers --number_hidden_units 20 10 --hidden_activation=elu # One output unit --output_shape 1 --output_activation=sigmoid . Here, we declare the full structure of the network: . | –input_shape: each example has two inputs; these form a vector (or 1-dimensional tensor) | –number_hidden_units: a list of integers (20 and 10 in this case) that declare how many hidden units there are in each of the two hidden layers. All input units connect to all units in the first hidden layer; all units in the first hidden layer connect to all units in the second hidden layer | –hidden_activation: declares which non-linear function is used for each of the hidden units | –output_shape: the output in this example is a single value (this must match the number of –data_outputs) | –output_activation: declares the non-linear function for the output unit. Here, we choose sigmoid because we want our output values to fall within the 0…1 range. | . ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#network-configuration",
+    
+    "relUrl": "/docs/examples/full_example.html#network-configuration"
+  },"9": {
+    "doc": "Full Example",
+    "title": "Experiment Configuration",
+    "content": "The final configuration file describes the details of the training and reporting process. The experiment.txt configuration file looks like this: . # Name used for files and wandb --experiment_name=xor # Loss function is what we minimize during training; mse=Mean Squared Error --loss=mse # We might also care about other metrics; mae=Mean Absolute Error --metrics mae mse # How fast we adjust the parameters --learning_rate=0.001 # Maximum number of steps for training --epochs=5000 # Stop the training early if no improvement is observed # Note: we typically monitor val_loss when we have a validation data set --early_stopping --early_stopping_monitor=loss --early_stopping_patience=2000 # Where to place trained networks, reports, and stored results --results_path=./results # Expanded file name --output_file_base={args.experiment_name}_R{args.data_rotation:02d} # Save the trained model to a file --save_model # Create a picture of the model --render_model # Save the training set results --log_training_set # Report the results to a XLSX file --report --report_training --report_training_ins . Key arguments: . | –loss: this defines the function that will be minimized during training | –metrics: a list of functions that measure model performance | –learning_rate: defines how quickly the training process will proceed (but too high can be devastating) | –epochs: the maximum number of training steps (subject to early stopping) | –save_model: write the final Keras3 model to a file. This can be loaded at a later time | –render_model: create a picture of your model and write it to a file | log_training_set: write the details of training set inputs and corresponding network outputs to a pickle file for later analysis | report: generate a report in XLSX file format of the performance of the trained model | report_training: include in the report a sheet that contains the true and model output for each example | report_training_ins: include on the above sheet the example inputs | . ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#experiment-configuration",
+    
+    "relUrl": "/docs/examples/full_example.html#experiment-configuration"
+  },"10": {
+    "doc": "Full Example",
+    "title": "Execution in the Bash Shell",
+    "content": ". | Activate Python Environment. The details will vary depending on your system. On the OU Supercomputer, this is done as follows: | . /home/fagg/tf_setup.sh conda activate dnn . | Configure your NEURO_REPOSITORY_PATH. The location will depend your local configuration. On the OU Supercomputer: | . export NEURO_REPOSITORY_PATH=/home/fagg/zero2neuro . | Change your current working directory to the location of the example. If you are using the XOR example: cd examples/xor . | Execute Your Experiment ``` python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv | . ``` . | @network.txt: load the arguments from the network.txt file | @data.txt: load the arguments from data.txt | @experiment.txt: load experiment.txt | -vvv: be very verbose about reporting the state of the experiment | . For this experiment, the Zero2Neuro engine will generate text output . ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#execution-in-the-bash-shell",
+    
+    "relUrl": "/docs/examples/full_example.html#execution-in-the-bash-shell"
+  },"11": {
+    "doc": "Full Example",
+    "title": "Training Outputs",
+    "content": "The outputs are placed in the results/ subdirectory: . | xor_R00_model.keras: reloadable model | xor_R00_model_plot.png: image that describes the model | xor_R00_report.xlsx: report file in excel format | xor_R00_results.pkl: pickle file that contains the model training information and predictions for the training set examples. This file can be read using a Python program | . ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#training-outputs",
+    
+    "relUrl": "/docs/examples/full_example.html#training-outputs"
+  },"12": {
+    "doc": "Full Example",
+    "title": "References",
+    "content": ". | Full XOR Description | . ",
+    "url": "/zero2neuro/dev/docs/examples/full_example.html#references",
+    
+    "relUrl": "/docs/examples/full_example.html#references"
+  },"13": {
     "doc": "Full Example",
     "title": "Full Example",
     "content": " ",
     "url": "/zero2neuro/dev/docs/examples/full_example.html",
     
     "relUrl": "/docs/examples/full_example.html"
-  },"8": {
+  },"14": {
     "doc": "Getting Started",
     "title": "Getting Started with Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/#getting-started-with-zero2neuro",
     
     "relUrl": "/docs/getting_started/#getting-started-with-zero2neuro"
-  },"9": {
+  },"15": {
     "doc": "Getting Started",
     "title": "Python environment",
     "content": ". | Stable Python Enviornment Requirements [text specification] | OU Supercomputer | Jupyter Lab | Setting up your own | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#python-environment",
     
     "relUrl": "/docs/getting_started/#python-environment"
-  },"10": {
+  },"16": {
     "doc": "Getting Started",
     "title": "Clone the repositories",
-    "content": " ",
+    "content": "1. Clone the Repositories . Place the repository clones inside of a common directory: . | Zero2Neuro | Keras 3 Tools | . 2. Declare Path . Execute: . export NEURO_REPOSITORY_PATH=/path/to/common/directory . ",
     "url": "/zero2neuro/dev/docs/getting_started/#clone-the-repositories",
     
     "relUrl": "/docs/getting_started/#clone-the-repositories"
-  },"11": {
+  },"17": {
     "doc": "Getting Started",
     "title": "Using",
     "content": ". | Command line | Jupyter Lab | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#using",
     
     "relUrl": "/docs/getting_started/#using"
-  },"12": {
+  },"18": {
     "doc": "Getting Started",
     "title": "Getting Started",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/",
     
     "relUrl": "/docs/getting_started/"
-  },"13": {
+  },"19": {
     "doc": "Modules Index",
     "title": "Zero2Neuro Modules",
     "content": ". Zero2Neuro is made up of three main modules and instructed by a corresponding configuration file for each. The three main modules are SuperDataSet, in charge of preparing data for an experiment, Network Builder, in charge of making the untrained model, and the Zero2Neuro engine, which performs the experiment itself. These three modules are what make Zero2Neuro a zero-code solution as they take care of the python code by taking in user-defined .txt configuration files. ",
     "url": "/zero2neuro/dev/docs/modules/#zero2neuro-modules",
     
     "relUrl": "/docs/modules/#zero2neuro-modules"
-  },"14": {
+  },"20": {
     "doc": "Modules Index",
     "title": "Modules",
     "content": ". | SuperDataSet | Network Builder | Zero2Neuro Engine | . ",
     "url": "/zero2neuro/dev/docs/modules/#modules",
     
     "relUrl": "/docs/modules/#modules"
-  },"15": {
+  },"21": {
     "doc": "Modules Index",
     "title": "Modules Index",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/",
     
     "relUrl": "/docs/modules/"
-  },"16": {
+  },"22": {
     "doc": "Examples",
     "title": "Examples",
     "content": "Xor Documentation - zero2neuro/examples/xor/README.md . XOR . Iris Documentation - zero2neuro/examples/iris/README.md . Iris . Breast Cancer Documentation - zero2neuro/examples/breast_cancer/README.md . Breast Cancer . Core50 Documentation - zero2neuro/examples/core50/README.md . Core50 . Mesonet Documentation - zero2neuro/examples/mesonet/README.md . ",
     "url": "/zero2neuro/dev/docs/examples/",
     
     "relUrl": "/docs/examples/"
-  },"17": {
+  },"23": {
     "doc": "Zero2Neuro",
     "title": "Zero2Neuro",
     "content": ". Zero2Neuro is a no-code toolbox for constructing, training and evaluating Deep Neural Network (DNN) models for a wide range of modeling problems. This package provides easy-to-use solutions for: . | Loading data stored in a variety of formats (including the common Comma Separated Values format), and configuring the data for use in DNN training and evaluation. | Creation of Deep Neural Network models from several flexible DNN model schemata, including fully-connected networks (FCNs), convolutional neural networks (CNNs), and U-Nets. The user specifies the structural details of their specific model. | A standard DNN training and evaluation engine. This engine supports the production of result reports in various formats, including hooks for Weights and Biases. | . ",
     "url": "/zero2neuro/dev/",
     
     "relUrl": "/"
-  },"18": {
+  },"24": {
     "doc": "Zero2Neuro",
     "title": "Supported Environments",
     "content": "You can execute Zero2Neuro in several different environments, depending on your needs: . | Bash shell command line | Supercomputer using SLURM | Jupyter Notebooks | . ",
     "url": "/zero2neuro/dev/#supported-environments",
     
     "relUrl": "/#supported-environments"
-  },"19": {
+  },"25": {
     "doc": "Zero2Neuro",
     "title": "Flexible Configuration",
     "content": "The user specifies the details behind their specific DNN experiment using a set of simple configuration files: . | Data configuration includes: . | Location of data files and their type | Individual data features to be extracted from the files that capture the model inputs and desired outputs | Translation of data types for categorical variables, including one-hot encoding | Creation of training, validation, and testing data sets | . | Model configuration includes: . | Model schema | Form of the model inputs | Number and sizes of model layers | Non-linearities for hidden and output layers | . | Training/evaluation engine configuration includes: . | Learning parameters | Loss functions and metrics | Early-stopping parameters | How experiment results are reported | . | . ",
     "url": "/zero2neuro/dev/#flexible-configuration",
     
     "relUrl": "/#flexible-configuration"
-  },"20": {
+  },"26": {
+    "doc": "Zero2Neuro",
+    "title": "Detailed Example",
+    "content": "The Full Example demonstrates the configuration and execution process for solving a simple logic problem. ",
+    "url": "/zero2neuro/dev/#detailed-example",
+    
+    "relUrl": "/#detailed-example"
+  },"27": {
     "doc": "Zero2Neuro",
     "title": "Dependencies",
     "content": "Zero2Neuro is implemented in Python and built on top of Keras3 . ",
     "url": "/zero2neuro/dev/#dependencies",
     
     "relUrl": "/#dependencies"
-  },"21": {
+  },"28": {
     "doc": "Zero2Neuro",
     "title": "Documentation Links",
-    "content": ". | Full Example | Getting Started | Examples | Modules | API | . ",
+    "content": ". | Getting Started | Examples | Modules | API | . ",
     "url": "/zero2neuro/dev/#documentation-links",
     
     "relUrl": "/#documentation-links"
-  },"22": {
+  },"29": {
     "doc": "Zero2Neuro",
     "title": "References",
     "content": ". | Zero2Neuro Repository | Zero2Neuro Presentation | . ",
     "url": "/zero2neuro/dev/#references",
     
     "relUrl": "/#references"
-  },"23": {
-    "doc": "Zero2Neuro",
-    "title": "Quick Start",
-    "content": "1. Clone the Repositories . Place the repository clones inside of a common directory: . | Zero2Neuro | Keras 3 Tools | . 2. Declare Path . Execute: . export NEURO_REPOSITORY_PATH=/path/to/common/directory . 3. Activate Python Environment . Activate Keras 3 / Tensorflow xx environment . Example: conda activate tf . 4. Example: XOR . Change your directory: . cd examples/xor . Execute: . python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv . | Full XOR Description | . ",
-    "url": "/zero2neuro/dev/#quick-start",
-    
-    "relUrl": "/#quick-start"
-  },"24": {
-    "doc": "Zero2Neuro",
-    "title": "Documentation",
-    "content": " ",
-    "url": "/zero2neuro/dev/#documentation",
-    
-    "relUrl": "/#documentation"
   }
 }
