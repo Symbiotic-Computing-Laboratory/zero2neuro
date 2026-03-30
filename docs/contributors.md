@@ -1,12 +1,12 @@
 ---
 title: Contributors
-nav_order: 10
+nav_order: 70
 parent: Zero2Neuro
 ---
 
 # Zero2Neuro Contributors
 
-- Andrew H. Fagg (andrewhfagg@gmail.com)  
+- (Andrew H. Fagg)[https://symbiotic-computing.org/fagg_html/] (andrewhfagg@gmail.com)[mailto:andrewhfagg@gmail.com]
 - Luke Sewell  
 - Mel Wilson Reyes  
 

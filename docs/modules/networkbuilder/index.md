@@ -1,5 +1,10 @@
-[Base Index](../../index.md)  
-[Previous Index](../index.md)  
+---
+title: Network Builder
+nav_order: 20
+parent: Zero2Neuro Modules
+has_children: true
+---
+
 # Network Builder
 
 TODO: intro material

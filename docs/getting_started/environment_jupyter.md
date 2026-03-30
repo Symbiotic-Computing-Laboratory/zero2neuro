@@ -1,7 +1,6 @@
 ---
-title: Jupyter Environment
+title: Jupyter Environments
 nav_order: 20
-has_children: true
 parent: Getting Started
 ---
 

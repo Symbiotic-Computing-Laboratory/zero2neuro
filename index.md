@@ -62,7 +62,7 @@ including one-hot encoding
 The [Full Example](./docs/examples/full_example.md) demonstrates the configuration and execution process for solving a simple logic problem.
 
 ## Dependencies
-Zero2Neuro is implemented in Python and built on top of Keras3
+Zero2Neuro is implemented in Python and built on top of Keras3.  A full set of machine-readable dependencies is [available for download](requirements.txt)
 
 ## Documentation Links
 - [Getting Started](./docs/getting_started/)
