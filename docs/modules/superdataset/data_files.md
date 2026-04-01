@@ -1,16 +1,94 @@
-[Base Index](../../index.md)  
-[Previous Index](index.md)  
-
+---
+title: Data File Formats
+nav_order: 10
+parent: SuperDataSet
+---
 # Data File Formats
-  
-## Tabular  
-Tabular data format refers to a spreadsheet formatting of the data with rows and columns. Two popular types of tabular data files are .csv files and .xlsx files. When using tabular data you take the columns as the data's features and the rows as a specific point in the data. The individual cells inside of a row and column contain the data that is used by the model during experiments.
-  
-## Tabular-Indirect
-Tabular indirect is the same as tabular data, with .csv and .xlsx but instead of having to specify specific values in the cells it can instead specify file paths. This is useful for datasets with large individual data point sizes like with images, as it allows referring to a location rather than the data itself. It also helps contain multiple datasets in one file limiting the amount of clutter in configuration files.  
 
-## Pickle  
-Pickle files are files containing serialized python objects that can later be deserialized. A common practice is storing dictionaries in pickle files in which there is a key and value(s) behind that key. This is very similair to the columns in a tabular file and can be used the same way for providing data to the model.  
+Zero2Neuro supports the import of a range of different data formats. 
+One typically specifies the format within the data configuration text
+file using the argument:
+
+```
+--data_format=XXX
+```
+where XXX is one of the following:
+  
+## Tabular (Introductory)
+```
+--data_format=tabular
+```
+
+The tabular data format "spreadsheet" style formatting of the data
+into rows and columns.  Zero2Neuro supports the import of both .csv
+and .xlsx files, which can be produced by a range of application
+programs (including Excel, Google Sheets, and Libreoffice). 
+
+Within the tabular file, individual data examples are rows.  Columns
+contain different input features, desired outputs, and other
+example-specific information.  By default, the first row of the data
+table is the __header__, which contains the names of each of the
+columns.  These names are used to specify which columns will be used
+as input features, and which will be used as desired outputs.
+
+## Tabular-Indirect (Introductory)
+```
+--data_format=tabular-indirect
+```
+
+The tabular indirect data format is the same as tabular format, with
+the exception that one column can be used to specify the path to a
+unique file (one for each example) that contains a 2D image.  Zero2Neuro
+supports a range of image formats.
+
+
+## Pickle (Intermediate)
+```
+--data_format=pickle
+```
+
+Pickle files contain serialized Python objects that can
+later be unpacked into data examples.  For the Zero2Neuro pickle data
+format, the file contains a single dictionary object:
+- The dictionary keys are named data fields 
+   - these named fields play the same role as the column names in the
+tabular files.   
+- Each value associated with a key is a numpy
+array of shape (N, d0, ...):
+   - N is the number of examples (same for all values in the
+dictionary),
+   - d0, ..., dk-1 is some k dimensions that make up a single example
+for that field
+- Examples:
+   - For color images, the shape will be (N, R, C, 3) (image rows,
+columns, and color)
+   - For individual examples that are vectors, the shape will be (N,
+d0)
+   - For timeseries data, the shape will be (N, T, d), where T is the
+number of time steps, and d is the vector for each time step.
+
+Generating pickle-formatted files requires a degree of Python
+programming.
+
+
+## TF-Dataset (Advanced)
+```
+--data_format=tf-dataset
+```
+
+TF-Datasets are a way to handle data sets that are too large to be
+stored in memory and/or that require a lot of effort to fetch
+from disk (e.g., very large images).  TF-Datasets allow the model to
+be trained on a subset of the data (a batch) while the next batch 
+fetched from disk.  TF-Datasets also support caching fetched data to
+high-speed local storage (RAM or high-speed disk) the first time that
+it is loaded; the next 
+time the data batch is needed for training, it is automatically pulled
+from the high-speed storage instead of having to wait for the disk to
+load it again.
+
+Generating TF-dataset-formatted files requires a high degree of Python
+programming.
 
 ## Pickle-array
 (future)
@@ -18,5 +96,3 @@ Pickle files are files containing serialized python objects that can later be de
 ## NetCDF
 (future)
   
-## TF-Dataset  
-TF-Datasets are a way to process data that is too large to be stored in memory. It allows things such as prefetching, which allows a preparation of data during the experiment minimizing time between training and grabbing data. It supports several data formats like csv files and numpy arrays and has a lot of customizability for how data is managed. It also allows caching which stored preprocessed data in a file or in ram.  

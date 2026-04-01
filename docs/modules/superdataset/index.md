@@ -63,80 +63,19 @@ way from only using a training set for a quick, informal exaperiment,
 to assembling multiple training, validation, and testing data sets to
 be used for formal evalution, including _Cross-Validation_.
 
+
 ___
-## Examples
-How the data are loaded into memory and organized into training,
-validation, and testing sets is defined by a _data configuration
-file_.  Below are several example use cases for these configuration
-files. 
+## SuperDataSet Topics
+- [Supported File Types](./data_files.md)
+- [Introduction: Loading Data Sets](./examples_simple.md)
+- [Intermediate: Splitting Data into Folds](./data_folds.md)
+- [Advanced: Internal Data Representation](./data_representation.md)
+- [Advanced: N-Fold Cross-Validation](./cross_validation.md)
 
-### Data Set Files
+___
+# STILL WORKING ON BELOW
 
-Data sets can be represented using a variety of file formats.  One
-common tabular format is the Comma Separated Values (CSV) file.  
-In any tabular format, rows are individual examples and different columns
-can contain either input features or desired output values.
-
-For the [Exclusive OR Problem](../../../examples/xor/README.md), we have a
-total of four different input/output examples.
-
-Example file: [xor_data.csv](../../../examples/xor/xor_data.csv)
-
-File content: <BR>
-<img src="../../../images/xor_data.png" height=150>
-
-This particular file represents two different inputs, called "In 0"
-and "In 1" (the internal spaces are okay to use), and one desired
-output: "Out 0".  Note that in general, tabular files may represent
-any number of input features and desired outputs.
-
-### Training Data Set Only
-The following data set specification file for the XOR problem
-specifies:
-- The file format is tabular
-- The name of the input data file (xor_data.csv)
-- That the one input file should used as just as a training data set
-- The list of columns to be used as input features
-- The list of columns to be used as corresponding desired outputs
-
-```
---data_format=tabular
---data_file=xor_data.csv
---data_set_type=fixed
---data_inputs
-In 0
-In 1
---data_outputs
-Out 0
-```
-
-Notes:
-- The specified input and output names must match those in the CSV
-file.
-- Do not include extra spaces in the configuration file.
-
-### Training, Validation, and Testing Data Sets from Multiple Files
-Multiple input files may be used.  When there are three files and
-_data_set_type_ is _fixed_, then data_A is used as training data,
-data_B is used as validation data, and data_C is used as testing data.
-
-```
---data_format=tabular
---data_files
-data_A.csv
-data_B.csv
-data_C.csv
---data_set_type=fixed
---data_inputs
-In0
-In1
---data_outputs
-Out0
-Out2
-Out3
-```
-
-### Data File Grouping
+### Data File Grouping: orphaned
 
 Files can be grouped together for the purposes of assigning training,
 validation, and testing data sets.  In this case, the examples from
@@ -214,74 +153,6 @@ Out2
 Out3
 --rotation=3
 ```
-
-___
-
-## From Data Files to Data Sets
-
-The translation from a set of files to the training/validation/testing
-data sets is handled as a multi-step process, with two intermediate
-representations: _data tables_ and _data folds_.  Both intermedidate
-representations include all of the input/desired output examples, but
-serve different purposes in the model training process.  
-
-<img src="../../../images/superdataset_detail.png" height=350>
-
-The translation process is as follows:
-
-1. __File Loader__: Each data file is loaded into a single _data
-table_.  Each table consists of multiple input/desired output
-examples.
-
-   a. Optional: each data table may be tagged as belong to a specific
-fold.
-
-   b. Optional: each example within a table may be tagged as belonging
-to a specific fold.
-
-2. __Fold Generator__: the examples contained within the data tables
-are sorted into one or more _data folds_.
-
-   a. By default, one data table is assigned to one fold.
-
-   b. The examples may also be sorted by how they are tagged.
-
-3. __Dataset Generator__: Assembles training/validation/testing data
-sets by combining discrete data folds.  Specifically:
-
-   a. The training set is one or more folds
-
-   b. The validation set is zero or one fold
-
-   c. The testing set is zero or one fold
-
-   d. The exact assignment is determined by several different data set
-options.
-
-
-### Internal Representation
-
-Internally, data tables, data folds, and training/validation/testing
-data sets are represented internally in one of two ways:
-
-1. __Numpy Arrays__ (default) are appropriate for small data sets that can be
-contained entirely within the available RAM.  This representation
-offers the most flexibility in how data are handled.
-
-```
---data_representation=numpy
-```
-
-2. __Tensorflow Datasets__ represent data sets as data processing
-pipelines.  These are most appropriate for large data sets, especially
-those that are expensive to load from disk.  This option allows for
-training of models to begin before all data are loaded from disk, and
-allow caching of data to high-speed storage.
-
-```
---data_representation=tf-dataset
-```
-
 
 
 ___
