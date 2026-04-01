@@ -2,9 +2,10 @@
 title: Data Folds
 nav_order: 30
 parent: SuperDataSet
+has_children: true
 ---
 
-## From Data Files to Data Sets
+# Splitting Data into Folds
 
 The translation from a set of files to the training/validation/testing
 data sets is handled as a multi-step process, with two intermediate
@@ -44,3 +45,7 @@ sets by combining discrete data folds.  Specifically:
 
    d. The exact assignment is determined by several different data set
 options.
+
+## Constructing Folds
+
+## Constructing Data

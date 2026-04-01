@@ -1,10 +1,10 @@
 ---
-title: Data Loading Examples 1
+title: Loading Data Files Examples
 nav_order: 20
 parent: SuperDataSet
 ---
 
-# Data Loading Examples, Part 1
+# Introduction: Loading Loading Data Files Examples
 
 ## Examples
 How the data are loaded into memory and organized into training,

@@ -67,10 +67,11 @@ be used for formal evalution, including _Cross-Validation_.
 ___
 ## SuperDataSet Topics
 - [Supported File Types](./data_files.md)
-- [Introduction: Loading Data Sets](./examples_simple.md)
+- [Introduction: Loading Data Files](./examples_simple.md)
 - [Intermediate: Splitting Data into Folds](./data_folds.md)
-- [Advanced: Internal Data Representation](./data_representation.md)
+- [Intermediate: Mapping Folds to Training/Validation/Testing Data Sets](./datasets.md)
 - [Advanced: N-Fold Cross-Validation](./cross_validation.md)
+- [Advanced: Internal Data Representation](./data_representation.md)
 
 ___
 # STILL WORKING ON BELOW
