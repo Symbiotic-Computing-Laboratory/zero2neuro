@@ -5,47 +5,72 @@ parent: Data Files to Data Sets
 ---
 # File Loader
 
-## Key arguments
-
-### Data Format
-The data format specifies the (type of the data
-files)[./data_files.md] to load.  
+## Data Format 
+Data can be loaded from a set of different files.  However, all files
+in the set must be of the same [Data File Format](data_files.md).
+The format is specified using the following argument:
 
 ```
 --data_format=XXX
 ```
 
-- Can be one of tabular (csv or xlsx), tabular-indirect, (csv or
+where XXX is one of tabular (csv or xlsx), tabular-indirect, (csv or
 xlsx), pickle, tf-dataset
 
 
-### Data File List
-There must be at least one data file; there are two possible ways to
-specify the list:
+## Data File location
+
+Location of the set of data files:
+```
+--data_set_directory=PATH
+```
+where PATH is a relative or absolute path to the set of data files
+(default is the local directory).
+
+## Data Files
+
+File name(s) can be specified in one of two ways:
+
+### Single File
+```
+--data_file=YYY
+```
+where YYY is the name of a file relative to the data_set_directory
+
+### Multiple Files
 
 ```
 --data_files
-file0.format
-file1.format
-  :
-
+YYY0
+YYY1
+YYY2
+ :
 ```
-where fileX.format is the name of the file to load
+where YYY0, YYY1, ... is a list of file names.
 
-or
+### Multiple Files with Fold Assignment
 
 ```
 --data_files
-file0.format,F0
-file1.format,F1
-  :
-
+YYY0,F0
+YYY1,F1
+YYY2,F2
+ :
 ```
-where FX is a natural number (0, 1, ...) that potentially specifies
-the fold to assign the file to.
+where YYY0, YYY1, ... is a list of file names, and F0, F1, ... are the
+integer fold numbers (0, 1, ...) that the contents of each file may
+be assigned to (see [Data Set Generator](data_folds_to_sets.md) for
+more detail).
+
+## Selecting Fields from Files
+
+For tabular, tabular-indirect, and pickle formatted files, one must
+specify which of the fields within the file to use for different
+purposes.  For tabular files, the fields are different columns.
 
 ### Data Inputs
-The list of fields from the file to include as example inputs
+
+The list of fields from the file to include as inputs to the model
 ```
 --data_inputs
 in0
@@ -60,6 +85,8 @@ include
 
 ### Data Outputs
 The list of fields from the file to include as the desired outputs
+values from the model
+
 ```
 --data_outputs
 out0
@@ -72,22 +99,28 @@ Notes:
 - pickle: keys from the dictionary to include
 
 ### Data Weights (Advanced; optional)
-The field to be used as the individual example weights.  These
-weights are typically in the range: 0 < w <= 1, and specify how
-important the example is in the training process
-
-
+Each example in a dataset can be weighted for the purposes of
+computing the loss function.  In unbalanced data 
+sets, the common cases can dominate the loss, resulting in a model
+that essentially ignores the rare cases.  When using weights, the rare
+cases  should be assigned a weight of 1, and the common cases should be
+assigned a low weight (e.g., the ratio of rare to common).  All
+weights should fall within the range 0...1.
 ```
---data_weights=field
+--data_weights=FIELD
 ```
+where FIELD is the string name of the field that contains the weights.
+
 
 ### Data Groups (Advanced; optional)
-The field to be used to possibly determine the fold that the example
+The field to be used to possibly determine the fold that each example
 belongs to.
 
 ```
---data_weights=field
+--data_weights=FIELD
 ```
+The values in FIELD are natural numbers (integers: 0, 1, ....).  See
+[Data Set Generator](data_folds_to_sets.md) for more detail. 
 
 ___
 
@@ -117,7 +150,7 @@ where COLX is the string name for column X.
 ### Tabular Columns
 In some cases, one must ignore a subset of the tabular columns.  The
 next two arguments can be used to specify the set of columns to
-include.
+use for the full set of fields.
 
 ```
 --tabular_column_range
@@ -126,6 +159,8 @@ END
 ```
 where START and END are integers specifying the column indices to
 include (columns START ... END, including END).
+
+TODO: check inclusive of END
 
 ```
 --tabular_column_list

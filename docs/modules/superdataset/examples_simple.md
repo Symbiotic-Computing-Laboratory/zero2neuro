@@ -1,12 +1,11 @@
 ---
-title: Loading Data Files Examples
-nav_order: 20
+title: Example: Loading Data Files
+nav_order: 5
 parent: SuperDataSet
 ---
 
-# Introduction: Loading Loading Data Files Examples
+# Example: Loading Data Files
 
-## Examples
 How the data are loaded into memory and organized into training,
 validation, and testing sets is defined by a _data configuration
 file_.  Below are several example use cases for these configuration
@@ -30,7 +29,7 @@ and "In 1" (the internal spaces are okay to use), and one desired
 output: "Out 0".  Note that in general, tabular files may represent
 any number of input features and desired outputs.
 
-### Training Data Set Only
+## Training Data Set Only
 The following data set specification file for the XOR problem
 specifies:
 - The file format is tabular
@@ -53,9 +52,8 @@ Out 0
 Notes:
 - The specified input and output names must match those in the CSV
 file.
-- Do not include extra spaces in the configuration file.
 
-### Training, Validation, and Testing Data Sets from Multiple Files
+## Training, Validation, and Testing Data Sets from Multiple Files
 Multiple input files may be used.  When there are three files and
 _data_set_type_ is _fixed_, then data_A is used as training data,
 data_B is used as validation data, and data_C is used as testing data.

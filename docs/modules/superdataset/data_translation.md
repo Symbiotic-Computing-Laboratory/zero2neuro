@@ -2,6 +2,19 @@
 [Previous Index](index.md)  
 # Data Translation
 
+## Data Translation
+
+Data Translation allows for the automatic translation of input/output
+columns into a ML-ready representation.  These 
+translation methods are only supported for __tabular files__.  
+
+We currently support two forms of [Data Translation](data_translation.md):
+- Enumerated data types: automatic translation from a string value to
+a a natural number (non-negative integer value)
+- One-hot encoding: translation of an integer value into a binary
+vector containing all zeros except for one '1')
+
+
 ## Categorical Variables
 
 A categorical variable typically takes on a value of one of several

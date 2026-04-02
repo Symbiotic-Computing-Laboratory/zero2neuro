@@ -1,5 +1,5 @@
 ---
-title: Intenral Data Representation
+title: Internal Data Representation
 nav_order: 40
 parent: SuperDataSet
 ---
