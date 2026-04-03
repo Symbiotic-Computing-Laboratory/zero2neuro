@@ -87,18 +87,18 @@ looks like this:
 ```
 
 Here, we declare the full structure of the network:
-- __--input_shape__: each example has two inputs; these form a vector (or
+- __input_shape__: each example has two inputs; these form a vector (or
 1-dimensional tensor)
-- __--number_hidden_units__: a list of integers (20 and 10 in this
+- __number_hidden_units__: a list of integers (20 and 10 in this
 case) that declare how many hidden units there are in each of the two
 hidden layers.  All input units connect to all units in the first
 hidden layer; all units in the first hidden layer connect to all units
 in the second hidden layer
-- __--hidden_activation__: declares which non-linear function is
+- __hidden_activation__: declares which non-linear function is
 used for each of the hidden units
-- __--output_shape__: the output in this example is a single value
+- __output_shape__: the output in this example is a single value
 (this must match the number of __--data_outputs__)
-- __--output_activation__: declares the non-linear function for the
+- __output_activation__: declares the non-linear function for the
 output unit.  Here, we choose sigmoid because we want our output
 values to fall within the 0...1 range.
 
@@ -157,16 +157,16 @@ mse
 ```
 
 Key arguments:
-- __--loss__: this defines the function that will be minimized during
+- __loss__: this defines the function that will be minimized during
 training
-- __--metrics__: a list of functions that measure model performance
-- __--learning_rate__: defines how quickly the training process will
+- __metrics__: a list of functions that measure model performance
+- __learning_rate__: defines how quickly the training process will
 proceed (but too high can be devastating)
-- __--epochs__: the maximum number of training steps (subject to early
+- __epochs__: the maximum number of training steps (subject to early
 stopping)
-- __--save_model__: write the final Keras3 model to a file.  This can
+- __save_model__: write the final Keras3 model to a file.  This can
 be loaded at a later time
-- __--render_model__: create a picture of your model and write it to a
+- __render_model__: create a picture of your model and write it to a
 file
 - __log_training_set__: write the details of training set inputs and
 corresponding network outputs to a pickle file for later analysis
