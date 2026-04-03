@@ -1,6 +1,6 @@
 ---
 title: Why Zero2Neuro?
-nav_order: 5
+nav_order: 0
 parent: Zero2Neuro
 ---
 
