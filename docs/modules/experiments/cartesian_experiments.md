@@ -1,4 +1,10 @@
-# Performing Many Experiments
+---
+title: Cartesian Experiments
+nav_order: 10
+parent: Advanced Experiments
+---
+
+# Performing Many Experiments (Advanced)
 
 There are many situations where we want to perform not a single ML
 experiment, but a series of experments.  For example:

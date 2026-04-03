@@ -51,14 +51,14 @@ data_A and data_B are merged into fold 0.  The examples from data_C
 are assigned to fold 1.
 
 
-### Random Split
+## Random Split
 When there is no explicit relationship between data files and the
 examples that contain them, it is common to randomly split the
 examples into folds.
 
 ```
 --data_split=random
---n_folds=3
+--data_n_folds=3
 --data_files
 data_A.csv
 data_B.csv
@@ -72,12 +72,16 @@ Notes:
 - It is not appropriate to use this method if there is substantial
 autocorrelation between data examples within individual files (e.g.,
 if one file contains all of the data examples derived from a single
-experimental subject).
+experimental subject).  In this situation, it is more apprioriate to
+use _identity_ or _group-by-file_.
 - If one is performing a classification task and there is an imbalance
 between the number of examples between the classes, then it is
 appropriate to use the random-stratify split method.
 
-## Random Split
+## Random-Stratify Split
+
+Not yet supported.
+
 
 ## Group-by-Example
 
@@ -93,57 +97,4 @@ each of the tabular files; this column must be declared using the
 where FIELD is the column name.
 
 
-- **FUTURE** **Group-by-Example**: the user explicitly assigns individual
-examples to specific folds using _--data_folds_
-
-- **Random**: the examples from all data tables are randomly assigned
-to the folds.  
-```
-	--data_fold_split=random
-	--n_folds=NNN
-```
-where NNN is the total number of folds.
-
-- **FUTURE** **Random-Stratify**: the examples from all data tables
-are randomly assigned to the folds.  This random assignment respects
-the distribution of the __stratification field__
-```
-	--data_fold_split=random
-	--n_folds=NNN
-	--data_stratify=FIELD
-```
-where NNN is the total number of folds and FIELD is the field that
-specifies the stratification class.
-
-___
-
-```
---data_fold_split=XXX
-```
-
-## Identity (default)
-
-```
---data_fold_split=identity
-```
-
-## Group-by-File
-```
---data_fold_split=group-by-file
-```
-
-## Group-by-Example
-```
---data_fold_split=group-by-example
-```
-
-## Random
-```
---data_fold_split=random
-```
-
-## Random with Stratification
-```
---data_fold_split=random-stratify
-```
 

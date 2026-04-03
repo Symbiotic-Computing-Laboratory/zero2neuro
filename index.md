@@ -65,11 +65,12 @@ The [Full Example](./docs/examples/full_example.md) demonstrates the configurati
 Zero2Neuro is implemented in Python and built on top of Keras3.  A full set of machine-readable dependencies is [available for download](requirements.txt)
 
 ## Documentation Links
+- [Why Zero2Neuro](./docs/why_zero2neuro.md)
 - [Getting Started](./docs/getting_started/)
 - [Examples](./examples/)
 - [Modules](./docs/modules/)
 - [API](./docs/api/)
-- [Road Map](./docs/roadmap.md
+- [Road Map](./docs/roadmap.md)
 - [Contributors](./docs/contributors.md)
 
 ## References

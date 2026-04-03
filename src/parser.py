@@ -97,7 +97,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_fold_split', type=str, default='identity', help='Split of data tables into folds (identity, group-by-file, group-by-example, random, random-stratify)')
     parser.add_argument('--data_set_type', type=str, default=None, help='Split of data into training/validation/testing sets (fixed, holistic-cross-validation, hold-out-cross-validation, orthogonalized-cross-validation)')
     
-    parser.add_argument('--n_folds', type=int, default=None, help='EXPIRED.  Use data_n_folds')
+    parser.add_argument('--n_folds', type=int, default=None, help='DEPRECATED.  Use data_n_folds')
     parser.add_argument('--n_training_folds', type=int, default=None, help='EXPIRED Use data_n_training_folds')
     
     parser.add_argument('--data_n_folds', type=int, default=None, help='Number of cross-validation folds')

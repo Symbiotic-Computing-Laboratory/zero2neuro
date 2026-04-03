@@ -14,7 +14,7 @@ file using the argument:
 ```
 where XXX is one of the following:
   
-## Tabular (Introductory)
+## Tabular (Beginner)
 ```
 --data_format=tabular
 ```
@@ -31,7 +31,7 @@ table is the __header__, which contains the names of each of the
 columns.  These names are used to specify which columns will be used
 as input features, and which will be used as desired outputs.
 
-## Tabular-Indirect (Introductory)
+## Tabular-Indirect (Beginner)
 ```
 --data_format=tabular-indirect
 ```
