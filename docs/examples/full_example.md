@@ -1,6 +1,6 @@
 ---
 title: Full Example
-nav_order: 1
+nav_order: 5
 parent: Zero2Neuro
 ---
 # Full Zero2Neuro Example: Exclusive OR
