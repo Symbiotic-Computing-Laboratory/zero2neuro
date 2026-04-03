@@ -491,7 +491,7 @@
   },"70": {
     "doc": "Examples",
     "title": "Examples",
-    "content": "Xor Documentation - zero2neuro/examples/xor/README.md . XOR . Iris Documentation - zero2neuro/examples/iris/README.md . Iris . Breast Cancer Documentation - zero2neuro/examples/breast_cancer/README.md . Breast Cancer . Core50 Documentation - zero2neuro/examples/core50/README.md . Core50 . Mesonet Documentation - zero2neuro/examples/mesonet/README.md . ",
+    "content": "TODO: replace this . Xor Documentation - zero2neuro/examples/xor/README.md . XOR . Iris Documentation - zero2neuro/examples/iris/README.md . Iris . Breast Cancer Documentation - zero2neuro/examples/breast_cancer/README.md . Breast Cancer . Core50 Documentation - zero2neuro/examples/core50/README.md . Core50 . Mesonet Documentation - zero2neuro/examples/mesonet/README.md . ",
     "url": "/zero2neuro/dev/docs/examples/",
     
     "relUrl": "/docs/examples/"
