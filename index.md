@@ -70,6 +70,7 @@ Zero2Neuro is implemented in Python and built on top of Keras3.  A full set of m
 - [Examples](./examples/)
 - [Modules](./docs/modules/)
 - [API](./docs/api/)
+- [Frequently Asked Questions](./docs/faq/)
 - [Road Map](./docs/roadmap.md)
 - [Contributors](./docs/contributors.md)
 

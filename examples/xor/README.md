@@ -1,10 +1,15 @@
+---
+title: Exclusive-Or
+nav_order: 10
+parent: Zero2Neuro Examples
+---
 # Example: Implementing the Exclusive OR (XOR) Function
 
 ## Data
 - XOR Data: [xor_data.csv](xor_data.csv)
 - Data configuration: [data.txt](data.txt)
 
-## Network
+## Network Details
 - Two binary inputs
 - Two hidden layers: 20 and 10 hidden units
 - One binary output

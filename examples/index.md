@@ -1,10 +1,21 @@
+---
+title: Zero2Neuro Examples
+nav_order: 30
+has_children: true
+parent: Zero2Neuro
+---
+
 # Zero2Neuro Examples
+
+The following examples explore the essential features of Zero2Neuro,
+inluding different data formats and network architectures.
+
 
 - [Exclusive-Or](xor/README.md): simple 2-input, 1-output logic problem.  
    - Data file type: csv
    - Loss function: mean squared error
 
-- [Iris](iris/README.md): iris flower classification problem
+- [Iris](iris/README.md): UCI iris flower classification problem
    - Data file type: csv
    - 4 input features
    - 3 classes specified using strings for categorical variable values

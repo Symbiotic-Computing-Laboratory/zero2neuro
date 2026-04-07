@@ -1,17 +1,25 @@
-# Example: Predicting The Type of Iris Flower
+---
+title: Iris Classification
+nav_order: 20
+parent: Zero2Neuro Examples
+---
+# Example: Predicting Iris Flower Class
 
 ## Data
 - File: [iris_data.csv](iris_data.csv)
 - Citation: [UCI Iris](https://archive.ics.uci.edu/dataset/53/iris)
 
 ## Network
-- Sparse Categorical
-- Four inputs
+- Four input features
 - Two hidden layers
-- Three output layers
+- Three output units: one for each class, encoding the probability for
+each class
 
 ## Details
-This model takes in the details of an iris flower and predicts which species it is out of three options. It uses sparse categorical which makes a prediction on which flower the model thinks is most likely.
+This model predicts the type of iris based on four observed features.
+The desired output is a 1D sparse categorical value (translated from a
+string to a natural number)
 
 ## Experiment Suggestion
-Try playing around with the hidden layers, see if the accuracy goes up any the more layers you have. Or see how few layers you need for an accurate model. 
+Try changing the hidden layers and units to see if the accuracy
+changes.  

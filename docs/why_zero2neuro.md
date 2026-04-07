@@ -6,7 +6,7 @@ parent: Zero2Neuro
 
 # Why Zero2Neuro?
 
-Our goals in developing Zero2Neuro are:
+Our goals in developing Zero2Neuro are to:
 - Provide a low barrier-to-entry for new users to access deep learning
 tools in building predictive models using their own data and
 experimental questions
@@ -36,12 +36,14 @@ pipelines, we do not pretend that this is a solution to all problems.
 Some users will find that Zero2Neuro does everything they need.  Other
 users will find that with experience, they will grow out of Zero2Neuro
 and "strike out" on their own by writing their own Python code (either
-by only using some Zero2Neuro components or by developing new code
-bases).  This is fine and encouraged.  
+by creating plug-in code, using only some Zero2Neuro components, or
+developing entirely new code bases).  All options are fine and
+encouraged! 
 
 We do not anticipate Zero2Neuro to solve problems in the areas of:
 
 - Large Language Models (though we support data involving sequences of
-tokens)
+tokens!)
+
 - Reinforcement Learning
 
