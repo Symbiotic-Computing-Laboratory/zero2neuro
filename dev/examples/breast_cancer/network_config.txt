@@ -4,7 +4,11 @@
 --number_hidden_units
 20
 10
+--hidden_activation=elu
+
+# Single output encodes the probability of class M
 --output_shape
 1
---hidden_activation=elu
+
+# Use sigmoid with binary cross-entropy
 --output_activation=sigmoid
