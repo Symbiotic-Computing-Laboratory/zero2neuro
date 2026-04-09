@@ -1,11 +1,17 @@
 --data_format=tabular
+--data_file=wdbc.csv
+
+# Desired output column contains one of two strings; these are
+#  translated into the values 0 and 1, respectively
 --data_columns_categorical_to_int
 Diagnosis:B,M
---batch=32
---data_file=wdbc.csv
+
+# Randomly split the data into 10 folds for cross-validation
 --data_fold_split=random
 --data_set_type=holistic-cross-validation
 --data_n_folds=10
+
+# Input features
 --data_inputs
 radius1
 texture1
@@ -36,5 +42,10 @@ concavity3
 concave_points3
 symmetry3
 fractal_dimension3
+
+# Desired output
 --data_outputs
 Diagnosis
+
+# Training batch size
+--batch=32

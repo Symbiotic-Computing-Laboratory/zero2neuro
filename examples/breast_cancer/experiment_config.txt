@@ -1,7 +1,10 @@
 --experiment_name=breast_cancer
 --data_rotation=1
+
+# Single output with sigmoid non-linearity calls for binary cross-entropy
 --loss=binary_crossentropy
 --metrics=binary_accuracy
+
 --learning_rate=0.0001
 --epochs=5000
 --early_stopping_monitor=loss

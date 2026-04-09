@@ -1,14 +1,25 @@
 --data_format=tabular
+
+# Desired output value (Class column) is expressed as a string:
+#  translate to one of four integers (0,1,2,3)
 --data_columns_categorical_to_int
 Class:Iris-setosa,Iris-versicolor,Iris-virginica
+
+# Data Source
 --data_files=iris_data.csv
+
+# Split into 10 folds randomly and perform cross-validation
 --data_fold_split=random
 --data_set_type=holistic-cross-validation
 --data_n_folds=10
+
+# Four features
 --data_inputs
 sepal length
 sepal width
 petal length
 petal width
+
+# Output column
 --data_outputs
 Class
