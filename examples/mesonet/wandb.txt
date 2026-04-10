@@ -1,0 +1,3 @@
+--wandb
+--wandb_project=Mesonet_Rain_Pred
+--wandb_name=amino_{args.network_type}_R{args.data_rotation}

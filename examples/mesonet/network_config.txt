@@ -1,0 +1,12 @@
+--network_type=fully_connected
+--input_shape
+34
+--number_hidden_units
+64
+32
+--hidden_activation=relu
+--output_shape
+1
+--output_activation=linear
+
+--dropout=0.2
