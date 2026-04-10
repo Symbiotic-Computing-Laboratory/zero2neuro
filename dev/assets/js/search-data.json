@@ -1,52 +1,52 @@
 {"0": {
-    "doc": "Iris Classification",
-    "title": "Example: Predicting Iris Flower Class",
+    "doc": "Exclusive-Or",
+    "title": "Example: Implementing the Exclusive OR (XOR) Function",
     "content": " ",
-    "url": "/zero2neuro/dev/examples/iris/README.html#example-predicting-iris-flower-class",
+    "url": "/zero2neuro/dev/examples/xor/README.html#example-implementing-the-exclusive-or-xor-function",
     
-    "relUrl": "/examples/iris/README.html#example-predicting-iris-flower-class"
+    "relUrl": "/examples/xor/README.html#example-implementing-the-exclusive-or-xor-function"
   },"1": {
-    "doc": "Iris Classification",
+    "doc": "Exclusive-Or",
     "title": "Data",
-    "content": ". | File: iris_data.csv | Citation: UCI Iris | data.txt | . ",
-    "url": "/zero2neuro/dev/examples/iris/README.html#data",
+    "content": ". | XOR Data: xor_data.csv | Data configuration: data.txt | . ",
+    "url": "/zero2neuro/dev/examples/xor/README.html#data",
     
-    "relUrl": "/examples/iris/README.html#data"
+    "relUrl": "/examples/xor/README.html#data"
   },"2": {
-    "doc": "Iris Classification",
-    "title": "Network",
-    "content": ". | Four input features | Two hidden layers | Three output units: one for each class, encoding the probability for each class | network.txt | . ",
-    "url": "/zero2neuro/dev/examples/iris/README.html#network",
+    "doc": "Exclusive-Or",
+    "title": "Network Details",
+    "content": ". | Two binary inputs | Two hidden layers: 20 and 10 hidden units | One binary output | Network configuration: network.txt | . ",
+    "url": "/zero2neuro/dev/examples/xor/README.html#network-details",
     
-    "relUrl": "/examples/iris/README.html#network"
+    "relUrl": "/examples/xor/README.html#network-details"
   },"3": {
-    "doc": "Iris Classification",
+    "doc": "Exclusive-Or",
     "title": "Training Details",
     "content": ". | experiment.txt | . ",
-    "url": "/zero2neuro/dev/examples/iris/README.html#training-details",
+    "url": "/zero2neuro/dev/examples/xor/README.html#training-details",
     
-    "relUrl": "/examples/iris/README.html#training-details"
+    "relUrl": "/examples/xor/README.html#training-details"
   },"4": {
-    "doc": "Iris Classification",
-    "title": "Details",
-    "content": "This model predicts the type of iris based on four observed features. The desired output is a single sparse categorical value (translated from a string to a natural number) . ",
-    "url": "/zero2neuro/dev/examples/iris/README.html#details",
+    "doc": "Exclusive-Or",
+    "title": "Training Process: Command Line",
+    "content": "Execute from the examples/xor/ directory: . python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv . ",
+    "url": "/zero2neuro/dev/examples/xor/README.html#training-process-command-line",
     
-    "relUrl": "/examples/iris/README.html#details"
+    "relUrl": "/examples/xor/README.html#training-process-command-line"
   },"5": {
-    "doc": "Iris Classification",
-    "title": "Experiment Suggestion",
-    "content": "Try changing the hidden layers and numbers of units to see if the accuracy changes . ",
-    "url": "/zero2neuro/dev/examples/iris/README.html#experiment-suggestion",
+    "doc": "Exclusive-Or",
+    "title": "Training Process: SLURM Batch File",
+    "content": ". | File: batch.sh | . ",
+    "url": "/zero2neuro/dev/examples/xor/README.html#training-process-slurm-batch-file",
     
-    "relUrl": "/examples/iris/README.html#experiment-suggestion"
+    "relUrl": "/examples/xor/README.html#training-process-slurm-batch-file"
   },"6": {
-    "doc": "Iris Classification",
-    "title": "Iris Classification",
+    "doc": "Exclusive-Or",
+    "title": "Exclusive-Or",
     "content": " ",
-    "url": "/zero2neuro/dev/examples/iris/README.html",
+    "url": "/zero2neuro/dev/examples/xor/README.html",
     
-    "relUrl": "/examples/iris/README.html"
+    "relUrl": "/examples/xor/README.html"
   },"7": {
     "doc": "Wisconsin Diagnostic Breast Cancer (WDBC)",
     "title": "Example: Detecting Malignant or Benign Breast Tumors",
@@ -97,54 +97,54 @@
     
     "relUrl": "/examples/breast_cancer/README.html"
   },"14": {
-    "doc": "Exclusive-Or",
-    "title": "Example: Implementing the Exclusive OR (XOR) Function",
+    "doc": "Iris Classification",
+    "title": "Example: Predicting Iris Flower Class",
     "content": " ",
-    "url": "/zero2neuro/dev/examples/xor/README.html#example-implementing-the-exclusive-or-xor-function",
+    "url": "/zero2neuro/dev/examples/iris/README.html#example-predicting-iris-flower-class",
     
-    "relUrl": "/examples/xor/README.html#example-implementing-the-exclusive-or-xor-function"
+    "relUrl": "/examples/iris/README.html#example-predicting-iris-flower-class"
   },"15": {
-    "doc": "Exclusive-Or",
+    "doc": "Iris Classification",
     "title": "Data",
-    "content": ". | XOR Data: xor_data.csv | Data configuration: data.txt | . ",
-    "url": "/zero2neuro/dev/examples/xor/README.html#data",
+    "content": ". | File: iris_data.csv | Citation: UCI Iris | data.txt | . ",
+    "url": "/zero2neuro/dev/examples/iris/README.html#data",
     
-    "relUrl": "/examples/xor/README.html#data"
+    "relUrl": "/examples/iris/README.html#data"
   },"16": {
-    "doc": "Exclusive-Or",
-    "title": "Network Details",
-    "content": ". | Two binary inputs | Two hidden layers: 20 and 10 hidden units | One binary output | Network configuration: network.txt | . ",
-    "url": "/zero2neuro/dev/examples/xor/README.html#network-details",
+    "doc": "Iris Classification",
+    "title": "Network",
+    "content": ". | Four input features | Two hidden layers | Three output units: one for each class, encoding the probability for each class | network.txt | . ",
+    "url": "/zero2neuro/dev/examples/iris/README.html#network",
     
-    "relUrl": "/examples/xor/README.html#network-details"
+    "relUrl": "/examples/iris/README.html#network"
   },"17": {
-    "doc": "Exclusive-Or",
+    "doc": "Iris Classification",
     "title": "Training Details",
     "content": ". | experiment.txt | . ",
-    "url": "/zero2neuro/dev/examples/xor/README.html#training-details",
+    "url": "/zero2neuro/dev/examples/iris/README.html#training-details",
     
-    "relUrl": "/examples/xor/README.html#training-details"
+    "relUrl": "/examples/iris/README.html#training-details"
   },"18": {
-    "doc": "Exclusive-Or",
-    "title": "Training Process: Command Line",
-    "content": "Execute from the examples/xor/ directory: . python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv . ",
-    "url": "/zero2neuro/dev/examples/xor/README.html#training-process-command-line",
+    "doc": "Iris Classification",
+    "title": "Details",
+    "content": "This model predicts the type of iris based on four observed features. The desired output is a single sparse categorical value (translated from a string to a natural number) . ",
+    "url": "/zero2neuro/dev/examples/iris/README.html#details",
     
-    "relUrl": "/examples/xor/README.html#training-process-command-line"
+    "relUrl": "/examples/iris/README.html#details"
   },"19": {
-    "doc": "Exclusive-Or",
-    "title": "Training Process: SLURM Batch File",
-    "content": ". | File: batch.sh | . ",
-    "url": "/zero2neuro/dev/examples/xor/README.html#training-process-slurm-batch-file",
+    "doc": "Iris Classification",
+    "title": "Experiment Suggestion",
+    "content": "Try changing the hidden layers and numbers of units to see if the accuracy changes . ",
+    "url": "/zero2neuro/dev/examples/iris/README.html#experiment-suggestion",
     
-    "relUrl": "/examples/xor/README.html#training-process-slurm-batch-file"
+    "relUrl": "/examples/iris/README.html#experiment-suggestion"
   },"20": {
-    "doc": "Exclusive-Or",
-    "title": "Exclusive-Or",
+    "doc": "Iris Classification",
+    "title": "Iris Classification",
     "content": " ",
-    "url": "/zero2neuro/dev/examples/xor/README.html",
+    "url": "/zero2neuro/dev/examples/iris/README.html",
     
-    "relUrl": "/examples/xor/README.html"
+    "relUrl": "/examples/iris/README.html"
   },"21": {
     "doc": "Cartesian Experiments",
     "title": "Performing Many Experiments (Advanced)",
@@ -517,145 +517,145 @@
     
     "relUrl": "/examples/#test-examples"
   },"74": {
-    "doc": "Network Builder",
-    "title": "Network Builder",
-    "content": "TODO: intro material . ",
-    "url": "/zero2neuro/dev/docs/modules/networkbuilder/",
-    
-    "relUrl": "/docs/modules/networkbuilder/"
-  },"75": {
-    "doc": "Network Builder",
-    "title": "Description",
-    "content": "The Network Builder module is in charge of creating the model’s network. It does this by taking in user-defined arguments and using keras3_tools to create either fully connected networks or convolutional neural networks. ",
-    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#description",
-    
-    "relUrl": "/docs/modules/networkbuilder/#description"
-  },"76": {
-    "doc": "Network Builder",
-    "title": "Key Concepts",
-    "content": "Individual neurons . A neuron is a computational unit of a neural network. Each neuron: . | Take n inputs | Multiply each input by a corresponding weight | Add a bias to the weighted sum of inputs | Apply a non-linear activation | . Non-linearities . Non-linear activation functions are what make neural networks special, without non-linearity a model can only graph a linear function. Activation function examples: . | ReLU | Tanh | Sigmoid | Softmax | . These non linear activation functions allow neural networks to: . | Learn complex relationships | Approximate non-linear functions | . Layers . Layers are collections of neurons inside the section of the network. There are three types of layers: . | Input layer: Takes in input data | Hidden layers: Perform transformations on input data | Output layers: Makes the final prediction | . Each layer transforms its input and deep neural networks can have several layers. Network Architecture . A model’s architecture consists of: . | Number of layers | Number of neurons in each layer | How each layer connects | . The more complex an architecture the better its ability to approximate complex functions. Architecture Examples: . | Fully connected networks | Convolutional networks | Recurrent networks | . Propagation . Forward Propagation . Forward propagation is the process than eables passing input data through each layer. Each layer: . | The linear transformation gets applied (weight and bias) | Non-linear activation function is applied | Result is passed to the next layer | . Once it reaches the output layer the model will make a prediction. Backpropagation . TODO . Loss Functions . Loss functions show the level of error between the prediction and true value. Examples: . | Mean Squared Error | Mean Absolute Error | Cross-Entropy Loss | . Optimizers . Optimizers update the model parameters in order to minimize the loss function. Examples: . | Adam | Lion | . Regression vs Classification . The two biggest types oft asks for neural networks are regression and classification. Regression . | Predicts specific values | Used in cases such as stock price prediction | Output layer often has a linear activation function Classification . | Predicts categories | Example would be spam vs non-spam emails | Binary Classification (two cases): sigmoid activation | Multi-class Classifcation (n cases): softmax activation | . ",
-    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#key-concepts",
-    
-    "relUrl": "/docs/modules/networkbuilder/#key-concepts"
-  },"77": {
-    "doc": "Network Builder",
-    "title": "Zero2Neuro-Supported Network Types",
-    "content": ". | Fully-Connected Neural Network: Translate a vector of values into another vector of values . | Convolutional Neural Network: Translate 1D (timeseries), 2D (images), or 3D (volumetric) data into a vector of values . | Recurrent Neural Network: Process sequences by taking in information from previous steps . | . ",
-    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#zero2neuro-supported-network-types",
-    
-    "relUrl": "/docs/modules/networkbuilder/#zero2neuro-supported-network-types"
-  },"78": {
-    "doc": "SuperDataSet",
-    "title": "SuperDataSet",
-    "content": "SuperDataSet is responsible for loading your data and configuring it for a training/evaluation experiment. We support a range of file formats and configuration options. ",
-    "url": "/zero2neuro/dev/docs/modules/superdataset/",
-    
-    "relUrl": "/docs/modules/superdataset/"
-  },"79": {
-    "doc": "SuperDataSet",
-    "title": "Data Sets",
-    "content": "A data set for machine learning is composed of a set of examples. Often, a single example is composed of an input/desired output pair, meaning that for a given numerical input, the ideal model will produce the desired output. For any machine learning experiment, it is important to distinguish between several different data set types: . | Training data sets are used to adjust the parameters of a model. In the deep network context, these parameters are adjusted incrementally to gradually reduce the prediction errors made by the model on the training data set. | Validation data sets are independent of the training set and are used to: . | Evaluate the performance of a model at each training step. This information is often used to detech when training is complete. | Compare the model to itself under different choices of hyper-parameter sets. | . | Test data sets are independent of both the training and validation data sets, and act as a simulation of possible future data sets. As such, a test data set is used only for the final evaluation of a model after hyper-parameter choices are made. | . ",
-    "url": "/zero2neuro/dev/docs/modules/superdataset/#data-sets",
-    
-    "relUrl": "/docs/modules/superdataset/#data-sets"
-  },"80": {
-    "doc": "SuperDataSet",
-    "title": "Stochastic Nature of Machine Learning Training and Evaluation",
-    "content": "The training of machine-learned models is a stochastic process due to a range of factors, including: . | the selection of the data used for training, validatin, and testing, | the initial choices for the model parameters (which are randomly selected), and | random factors during the training process (e.g., random assignment of examples to training batches, or Dropout). | . The consequence of these random processes is that when we train a model multiple times (even when we think the conditions are the same), the performance of the model (e.g., accuracy) can vary to some degree. Using statistical language, we say that the performance is a random variable. In practice, this means that training and evaluating a model cannot be done just once - if we want to show that a model is doing its job and doing it well, then we must show that it does so consistently under different training and evaluation conditions. SuperDataSet provides support for a range of different ways of constructing data sets, depending on what your goals are - all the way from only using a training set for a quick, informal exaperiment, to assembling multiple training, validation, and testing data sets to be used for formal evalution, including Cross-Validation. ",
-    "url": "/zero2neuro/dev/docs/modules/superdataset/#stochastic-nature-of-machine-learning-training-and-evaluation",
-    
-    "relUrl": "/docs/modules/superdataset/#stochastic-nature-of-machine-learning-training-and-evaluation"
-  },"81": {
-    "doc": "SuperDataSet",
-    "title": "SuperDataSet Topics",
-    "content": ". | Example: Loading Data Files | Supported File Types | Intermediate: Data Files to Data Sets | Advanced: Internal Data Representation | . ",
-    "url": "/zero2neuro/dev/docs/modules/superdataset/#superdataset-topics",
-    
-    "relUrl": "/docs/modules/superdataset/#superdataset-topics"
-  },"82": {
-    "doc": "Advanced Experiments",
-    "title": "Conducting Advanced Experiments",
-    "content": ". | Performing many experiments at once | . ",
-    "url": "/zero2neuro/dev/docs/modules/experiments/#conducting-advanced-experiments",
-    
-    "relUrl": "/docs/modules/experiments/#conducting-advanced-experiments"
-  },"83": {
-    "doc": "Advanced Experiments",
-    "title": "Advanced Experiments",
-    "content": " ",
-    "url": "/zero2neuro/dev/docs/modules/experiments/",
-    
-    "relUrl": "/docs/modules/experiments/"
-  },"84": {
-    "doc": "Zero2Neuro Engine",
-    "title": "Zero2Neuro Engine",
-    "content": " ",
-    "url": "/zero2neuro/dev/docs/modules/zero2neuro/",
-    
-    "relUrl": "/docs/modules/zero2neuro/"
-  },"85": {
-    "doc": "Zero2Neuro Engine",
-    "title": "Description",
-    "content": "The Zero2Neuro engine is in charge of taking in the data sets from SuperDataSet and the untrained model from Network Builder and performing the experiment. ",
-    "url": "/zero2neuro/dev/docs/modules/zero2neuro/#description",
-    
-    "relUrl": "/docs/modules/zero2neuro/#description"
-  },"86": {
-    "doc": "Zero2Neuro Engine",
-    "title": "Links",
-    "content": ". | Training A Model | Saving Results | . ",
-    "url": "/zero2neuro/dev/docs/modules/zero2neuro/#links",
-    
-    "relUrl": "/docs/modules/zero2neuro/#links"
-  },"87": {
-    "doc": "Zero2Neuro Modules",
-    "title": "Zero2Neuro Modules",
-    "content": "Zero2Neuro consistis of three primary modules that work together to allow you to import your data (SuperDataset), create your ML model (Network Builder), and conduct training and evaluation of that model (Zero2Neuro Training and Evaluation Engine). Each module is configured with a set of command-line arguments that can conveniently partitioned into separate configuration text files. ",
-    "url": "/zero2neuro/dev/docs/modules/",
-    
-    "relUrl": "/docs/modules/"
-  },"88": {
-    "doc": "Zero2Neuro Modules",
-    "title": "Modules",
-    "content": ". | SuperDataSet . | Import one or more files containing data | Construct from these data: training, validation, and testing data sets | . | Network Builder . | Create a deep neural network that implements your model | Supported DNN types include: . | Fully-connected networks (FCNs) | Convolutional neural networks (CNNs) | Recurrent neural networks (RNNs), including simple RNNs, Long-Short-Term Memory networks (LSTMs), and Gated Recurrent Unit-based networks (GRUs) | . | . | Zero2Neuro Engine . | Use the training and validation data sets to train the model until specified criteria are met | (Weights and Biases support)[https://wandb.ai] for tracking and comparing models | Evaluation of the trained model against each of the training, validation, and testing data sets | Generation of reports for further analysis | . | . ",
-    "url": "/zero2neuro/dev/docs/modules/#modules",
-    
-    "relUrl": "/docs/modules/#modules"
-  },"89": {
-    "doc": "Zero2Neuro Modules",
-    "title": "Advanced Topics",
-    "content": ". | . ",
-    "url": "/zero2neuro/dev/docs/modules/#advanced-topics",
-    
-    "relUrl": "/docs/modules/#advanced-topics"
-  },"90": {
     "doc": "Getting Started",
     "title": "Getting Started with Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/#getting-started-with-zero2neuro",
     
     "relUrl": "/docs/getting_started/#getting-started-with-zero2neuro"
-  },"91": {
+  },"75": {
     "doc": "Getting Started",
     "title": "Existing Python/Zero2Neuro Environments (easy)",
     "content": "We have multiple options for accessing pre-existing Python and Zero2Neuro environments . | Oklahoma researchers and students: OU Supercomputer | (many) US University researchers and students: Jupyter Lab | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#existing-pythonzero2neuro-environments-easy",
     
     "relUrl": "/docs/getting_started/#existing-pythonzero2neuro-environments-easy"
-  },"92": {
+  },"76": {
     "doc": "Getting Started",
     "title": "Setting up Your Own Environment (advanced)",
     "content": "Python: . | General instructions: Setting up a Python Virtual Environment; see Using a requirements file | Requirements File for Zero2Neuro | . Zero2Neuro: . | Download and Configure Zero2Neuro | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#setting-up-your-own-environment-advanced",
     
     "relUrl": "/docs/getting_started/#setting-up-your-own-environment-advanced"
-  },"93": {
+  },"77": {
     "doc": "Getting Started",
     "title": "Getting Started",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/",
     
     "relUrl": "/docs/getting_started/"
+  },"78": {
+    "doc": "Zero2Neuro Engine",
+    "title": "Zero2Neuro Engine",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/modules/zero2neuro/",
+    
+    "relUrl": "/docs/modules/zero2neuro/"
+  },"79": {
+    "doc": "Zero2Neuro Engine",
+    "title": "Description",
+    "content": "The Zero2Neuro engine is in charge of taking in the data sets from SuperDataSet and the untrained model from Network Builder and performing the experiment. ",
+    "url": "/zero2neuro/dev/docs/modules/zero2neuro/#description",
+    
+    "relUrl": "/docs/modules/zero2neuro/#description"
+  },"80": {
+    "doc": "Zero2Neuro Engine",
+    "title": "Links",
+    "content": ". | Training A Model | Saving Results | . ",
+    "url": "/zero2neuro/dev/docs/modules/zero2neuro/#links",
+    
+    "relUrl": "/docs/modules/zero2neuro/#links"
+  },"81": {
+    "doc": "SuperDataSet",
+    "title": "SuperDataSet",
+    "content": "SuperDataSet is responsible for loading your data and configuring it for a training/evaluation experiment. We support a range of file formats and configuration options. ",
+    "url": "/zero2neuro/dev/docs/modules/superdataset/",
+    
+    "relUrl": "/docs/modules/superdataset/"
+  },"82": {
+    "doc": "SuperDataSet",
+    "title": "Data Sets",
+    "content": "A data set for machine learning is composed of a set of examples. Often, a single example is composed of an input/desired output pair, meaning that for a given numerical input, the ideal model will produce the desired output. For any machine learning experiment, it is important to distinguish between several different data set types: . | Training data sets are used to adjust the parameters of a model. In the deep network context, these parameters are adjusted incrementally to gradually reduce the prediction errors made by the model on the training data set. | Validation data sets are independent of the training set and are used to: . | Evaluate the performance of a model at each training step. This information is often used to detech when training is complete. | Compare the model to itself under different choices of hyper-parameter sets. | . | Test data sets are independent of both the training and validation data sets, and act as a simulation of possible future data sets. As such, a test data set is used only for the final evaluation of a model after hyper-parameter choices are made. | . ",
+    "url": "/zero2neuro/dev/docs/modules/superdataset/#data-sets",
+    
+    "relUrl": "/docs/modules/superdataset/#data-sets"
+  },"83": {
+    "doc": "SuperDataSet",
+    "title": "Stochastic Nature of Machine Learning Training and Evaluation",
+    "content": "The training of machine-learned models is a stochastic process due to a range of factors, including: . | the selection of the data used for training, validatin, and testing, | the initial choices for the model parameters (which are randomly selected), and | random factors during the training process (e.g., random assignment of examples to training batches, or Dropout). | . The consequence of these random processes is that when we train a model multiple times (even when we think the conditions are the same), the performance of the model (e.g., accuracy) can vary to some degree. Using statistical language, we say that the performance is a random variable. In practice, this means that training and evaluating a model cannot be done just once - if we want to show that a model is doing its job and doing it well, then we must show that it does so consistently under different training and evaluation conditions. SuperDataSet provides support for a range of different ways of constructing data sets, depending on what your goals are - all the way from only using a training set for a quick, informal exaperiment, to assembling multiple training, validation, and testing data sets to be used for formal evalution, including Cross-Validation. ",
+    "url": "/zero2neuro/dev/docs/modules/superdataset/#stochastic-nature-of-machine-learning-training-and-evaluation",
+    
+    "relUrl": "/docs/modules/superdataset/#stochastic-nature-of-machine-learning-training-and-evaluation"
+  },"84": {
+    "doc": "SuperDataSet",
+    "title": "SuperDataSet Topics",
+    "content": ". | Example: Loading Data Files | Supported File Types | Intermediate: Data Files to Data Sets | Advanced: Internal Data Representation | . ",
+    "url": "/zero2neuro/dev/docs/modules/superdataset/#superdataset-topics",
+    
+    "relUrl": "/docs/modules/superdataset/#superdataset-topics"
+  },"85": {
+    "doc": "Advanced Experiments",
+    "title": "Conducting Advanced Experiments",
+    "content": ". | Performing many experiments at once | . ",
+    "url": "/zero2neuro/dev/docs/modules/experiments/#conducting-advanced-experiments",
+    
+    "relUrl": "/docs/modules/experiments/#conducting-advanced-experiments"
+  },"86": {
+    "doc": "Advanced Experiments",
+    "title": "Advanced Experiments",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/modules/experiments/",
+    
+    "relUrl": "/docs/modules/experiments/"
+  },"87": {
+    "doc": "Network Builder",
+    "title": "Network Builder",
+    "content": "TODO: intro material . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/",
+    
+    "relUrl": "/docs/modules/networkbuilder/"
+  },"88": {
+    "doc": "Network Builder",
+    "title": "Description",
+    "content": "The Network Builder module is in charge of creating the model’s network. It does this by taking in user-defined arguments and using keras3_tools to create either fully connected networks or convolutional neural networks. ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#description",
+    
+    "relUrl": "/docs/modules/networkbuilder/#description"
+  },"89": {
+    "doc": "Network Builder",
+    "title": "Key Concepts",
+    "content": "Individual neurons . A neuron is a computational unit of a neural network. Each neuron: . | Take n inputs | Multiply each input by a corresponding weight | Add a bias to the weighted sum of inputs | Apply a non-linear activation | . Non-linearities . Non-linear activation functions are what make neural networks special, without non-linearity a model can only graph a linear function. Activation function examples: . | ReLU | Tanh | Sigmoid | Softmax | . These non linear activation functions allow neural networks to: . | Learn complex relationships | Approximate non-linear functions | . Layers . Layers are collections of neurons inside the section of the network. There are three types of layers: . | Input layer: Takes in input data | Hidden layers: Perform transformations on input data | Output layers: Makes the final prediction | . Each layer transforms its input and deep neural networks can have several layers. Network Architecture . A model’s architecture consists of: . | Number of layers | Number of neurons in each layer | How each layer connects | . The more complex an architecture the better its ability to approximate complex functions. Architecture Examples: . | Fully connected networks | Convolutional networks | Recurrent networks | . Propagation . Forward Propagation . Forward propagation is the process than eables passing input data through each layer. Each layer: . | The linear transformation gets applied (weight and bias) | Non-linear activation function is applied | Result is passed to the next layer | . Once it reaches the output layer the model will make a prediction. Backpropagation . TODO . Loss Functions . Loss functions show the level of error between the prediction and true value. Examples: . | Mean Squared Error | Mean Absolute Error | Cross-Entropy Loss | . Optimizers . Optimizers update the model parameters in order to minimize the loss function. Examples: . | Adam | Lion | . Regression vs Classification . The two biggest types oft asks for neural networks are regression and classification. Regression . | Predicts specific values | Used in cases such as stock price prediction | Output layer often has a linear activation function Classification . | Predicts categories | Example would be spam vs non-spam emails | Binary Classification (two cases): sigmoid activation | Multi-class Classifcation (n cases): softmax activation | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#key-concepts",
+    
+    "relUrl": "/docs/modules/networkbuilder/#key-concepts"
+  },"90": {
+    "doc": "Network Builder",
+    "title": "Zero2Neuro-Supported Network Types",
+    "content": ". | Fully-Connected Neural Network: Translate a vector of values into another vector of values . | Convolutional Neural Network: Translate 1D (timeseries), 2D (images), or 3D (volumetric) data into a vector of values . | Recurrent Neural Network: Process sequences by taking in information from previous steps . | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#zero2neuro-supported-network-types",
+    
+    "relUrl": "/docs/modules/networkbuilder/#zero2neuro-supported-network-types"
+  },"91": {
+    "doc": "Zero2Neuro Modules",
+    "title": "Zero2Neuro Modules",
+    "content": "Zero2Neuro consistis of three primary modules that work together to allow you to import your data (SuperDataset), create your ML model (Network Builder), and conduct training and evaluation of that model (Zero2Neuro Training and Evaluation Engine). Each module is configured with a set of command-line arguments that can conveniently partitioned into separate configuration text files. ",
+    "url": "/zero2neuro/dev/docs/modules/",
+    
+    "relUrl": "/docs/modules/"
+  },"92": {
+    "doc": "Zero2Neuro Modules",
+    "title": "Modules",
+    "content": ". | SuperDataSet . | Import one or more files containing data | Construct from these data: training, validation, and testing data sets | . | Network Builder . | Create a deep neural network that implements your model | Supported DNN types include: . | Fully-connected networks (FCNs) | Convolutional neural networks (CNNs) | Recurrent neural networks (RNNs), including simple RNNs, Long-Short-Term Memory networks (LSTMs), and Gated Recurrent Unit-based networks (GRUs) | . | . | Zero2Neuro Engine . | Use the training and validation data sets to train the model until specified criteria are met | (Weights and Biases support)[https://wandb.ai] for tracking and comparing models | Evaluation of the trained model against each of the training, validation, and testing data sets | Generation of reports for further analysis | . | . ",
+    "url": "/zero2neuro/dev/docs/modules/#modules",
+    
+    "relUrl": "/docs/modules/#modules"
+  },"93": {
+    "doc": "Zero2Neuro Modules",
+    "title": "Advanced Topics",
+    "content": ". | . ",
+    "url": "/zero2neuro/dev/docs/modules/#advanced-topics",
+    
+    "relUrl": "/docs/modules/#advanced-topics"
   },"94": {
     "doc": "Zero2Neuro",
     "title": "Zero2Neuro",
