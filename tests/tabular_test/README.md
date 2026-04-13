@@ -1,6 +1,6 @@
 ---
-title: Tabular XLSX Test
-nav_order: 30
+title: Tabular Test
+nav_order: 20
 has_children: false
 parent: Zero2Neuro Tests
 ---
@@ -8,9 +8,9 @@ parent: Zero2Neuro Tests
 # Test: different header row and data columns using XOR problem
 
 ## Data
-- XOR Data: [xor_data.xlsx](xor_data.xlsx): 2 sheets
-- Data configuration: [data1.txt](data1.txt): Use a single sheet for one table
-- Data configuration: [data2.txt](data2.txt): Use two sheets: one for training, the other for validation
+- XOR Data: [xor_data.csv](xor_data.csv)
+- Data configuration: [data1.txt](data1.txt): provides a range of columns to extract from the CSV file
+- Data configuration: [data2.txt](data2.txt): provides a list of columns to extract
 
 ## Network
 - Two binary inputs
@@ -22,15 +22,9 @@ parent: Zero2Neuro Tests
 - [experiment.txt](experiment.txt)
 
 ## Training Process: Command Line
-Execute from the tests/tabular_xlsx_test/ directory:
-
+Execute from the tests/tabular_test/ directory:
 ```
-./exec1.sh
-
-OR
-
-./exec2.sh
-
+python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.txt @experiment.txt -vvv
 ```
 
 ## Training Process: SLURM Batch File

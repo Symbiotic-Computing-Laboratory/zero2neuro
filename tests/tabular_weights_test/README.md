@@ -1,9 +1,16 @@
+---
+title: Tabular Weights Test
+nav_order: 50
+has_children: false
+parent: Zero2Neuro Tests
+---
+
 # Test: sample weights in tabular data
 
 ## Data
 - XOR Data: [xor_data.csv](xor_data.csv)
 - Data configuration: [data.txt](data.txt)
-- The weights are set such that the model should learn to accurately predict the first 3 examples.  The fouth example has no weight, so its error does not factor into the loss (and the model will typically assign a 1 as the output).  However, the metrics take all examples into account, so we expect loss to go to zero, but the metrics will reflect the error in the last example.
+- The weights are set such that the model should learn to accurately predict the first 3 examples.  The fourth example has zero weight, so its error does not factor into the loss (and the model will typically assign a 1 as the output).  However, the metrics take all examples into account, so we expect loss to go to zero, but the metrics will reflect the error in the last example.
 
 ## Network
 - Two binary inputs

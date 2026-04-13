@@ -1,11 +1,13 @@
 ---
-title: Tabular XLSX Test
-nav_order: 30
+title: Data Conversion Test
+nav_order: 40
 has_children: false
 parent: Zero2Neuro Tests
 ---
 
-# Test: different header row and data columns using XOR problem
+# Test: Internal Data Format: TF-Dataset
+
+After each table is loaded, it is converted to a TF-Dataset for subsequent processing
 
 ## Data
 - XOR Data: [xor_data.xlsx](xor_data.xlsx): 2 sheets
@@ -23,7 +25,6 @@ parent: Zero2Neuro Tests
 
 ## Training Process: Command Line
 Execute from the tests/tabular_xlsx_test/ directory:
-
 ```
 ./exec1.sh
 
