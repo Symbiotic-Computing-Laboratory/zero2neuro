@@ -77,13 +77,9 @@ Generated files:
 ## Training Process: Command Line
 Used for testing (assuming that the python environment is already active):
 ```
-python 
+python $ZERO2NEURO_PATH/zero2neuro.py @network_config.txt @data_config6.txt @experiment_config.txt -vvv 
 ```
 
 ## Training Process: SLURM Batch File
 - File: [batch.sh](batch.sh)
 
-## Training Command (example)
-```
-python $ZERO2NEURO_PATH/zero2neuro.py @network_config.txt @data_config6.txt @experiment_config.txt -vvv 
-```

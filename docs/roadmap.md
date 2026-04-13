@@ -16,6 +16,9 @@ functionality inside of Zero2Neuro, including:
 data sets have been constructed
    - Custom fold-to-data-set translation
 
+- Automatic checkpointing and recovery
+   - Key for long-term training experiments on a supercomputer
+
 - Splitting data randomly with stratification
 
 - UNet schema
