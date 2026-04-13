@@ -27,7 +27,6 @@ relative_links:
   collections: true
 
 exclude:
-  - tests/
   - src/
   - README.md
   - Gemfile

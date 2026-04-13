@@ -97,6 +97,6 @@ Sequences](amino/README.md)
 
 
 ## Test Examples
-In addition to the standard examples, we also have a set of tests that exercise different Zero2Neuro features.  See [../tests/index.md](Test Example Documentation)
+In addition to the standard examples, we also have a set of tests that exercise different Zero2Neuro features.  See [Test Example Documentation](../tests/)
 
 
