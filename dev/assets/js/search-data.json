@@ -253,35 +253,35 @@
   },"36": {
     "doc": "Sentiment Analysis",
     "title": "Example: Analyzing Tweets to Determine Implied Sentiment",
-    "content": "The dataset used for this example is made up of 1.6 million tweets (subsampled down to 30k for PC convenience). The goal of this example is to perform natural language processing on a tweet and determine the sentiment behind the tweet, meaning whether it’s positive or negative. This natural language processing is used often in social media algorithms to categorize posts. For instance, companies may use a sentiment analysis model that focuses on posts about their brand in order to asess their reputation based off how their consumer describes them. ",
+    "content": "The dataset used for this example is made up of 1.6 million tweets (subsampled down to 30k for PC convenience). The goal of this example is to perform natural language processing on a tweet and determine the sentiment behind the tweet, meaning whether it’s a positive or negative comment. This form of natural language processing is used often in social media algorithms to categorize posts. For instance, companies may use a sentiment analysis model that focuses on posts about their brand in order to asess their reputation based off how their consumer describes them. ",
     "url": "/zero2neuro/dev/examples/sentiment140/README.html#example-analyzing-tweets-to-determine-implied-sentiment",
     
     "relUrl": "/examples/sentiment140/README.html#example-analyzing-tweets-to-determine-implied-sentiment"
   },"37": {
     "doc": "Sentiment Analysis",
     "title": "Data",
-    "content": "Source The dataset is a 30k example dataset sentiment_dataset. The CSV structure is: . | The tweet (column: sentence) | Whether the sentiment is positive (1) or negative (0) (column: sentiment) | . ",
+    "content": ". | Source | The dataset is a 30k example dataset sentiment_dataset. | The CSV structure is: . | The tweet (column: sentence) | Whether the sentiment is positive (1) or negative (0) (column: sentiment) | . | . ",
     "url": "/zero2neuro/dev/examples/sentiment140/README.html#data",
     
     "relUrl": "/examples/sentiment140/README.html#data"
   },"38": {
     "doc": "Sentiment Analysis",
     "title": "Data Configuration",
-    "content": "Data Configuration File . | Our input is made of strings so first we preprocess . | Tokenization: Translating from type string to integer . | Since the dataset is sentences we split up by whitespace to tokenize each word. | We have to define a maximum number of unique tokens (words), since we are doing natural language processing this has to be pretty high. For this examples we have it set to 5,000 but feel free to experiment with different values. | . | . | . ",
+    "content": ". | Data Configuration File | . ",
     "url": "/zero2neuro/dev/examples/sentiment140/README.html#data-configuration",
     
     "relUrl": "/examples/sentiment140/README.html#data-configuration"
   },"39": {
     "doc": "Sentiment Analysis",
     "title": "Prediction with Natural Language",
-    "content": "Natural language data counts as temporal data as it has a sequential and ordered nature. Words can change their meaning based on words from before (adjectives) and it is important to use models that can capture this relationship between sequence and values. ",
+    "content": "Natural language data counts as temporal data as it has a sequential and ordered nature. Words can change their meaning based on surrounding words (e.g., adjectives) and it is important to use models that can capture this relationship between sequence and values. ",
     "url": "/zero2neuro/dev/examples/sentiment140/README.html#prediction-with-natural-language",
     
     "relUrl": "/examples/sentiment140/README.html#prediction-with-natural-language"
   },"40": {
     "doc": "Sentiment Analysis",
     "title": "Networks",
-    "content": "Provided are two different network architectures, Simple RNN and GRU. LSTM is left out is viable and it’s encouraged to try your hand at making LSTM configuration files to practice writing these configuration files from scratch. An example of an LSTM configuration can be found in the Amino Example. | Simple Recurrent Neural Network | GRU Recurrent Neural Network | . ",
+    "content": "Provided are two different network architectures, Simple RNN and GRU. LSTM is left out but is a viable alternative. An example of an LSTM configuration can be found in the Amino Example. | Because our input is made of strings, the network architecture must include two stages of preprocessing: . | Tokenization: Translating from type string to a token integer (different words are encoding using unique integers) . | Since the dataset is sentences we split up by whitespace to tokenize each word. | We have to define a maximum number of unique tokens (words), since we are doing natural language processing this has to be pretty high. For this examples we have it set to 5,000 but feel free to experiment with different values. | This translation is performed prior to training | . | Embedding: Translate the integers into vectors that capture each tokens’ meaning. This translation is learned during the training process. | . | Simple Recurrent Neural Network | GRU Recurrent Neural Network | . ",
     "url": "/zero2neuro/dev/examples/sentiment140/README.html#networks",
     
     "relUrl": "/examples/sentiment140/README.html#networks"
