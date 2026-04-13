@@ -1,3 +1,10 @@
+---
+title: Predicting Peptide Binding from Amino Acid Sequences
+nav_order: 50
+has_children: false
+parent: Zero2Neuro Examples
+---
+
 # Example: Estimating Peptide Binding Affinity from Amino Acid Sequences
 
 Peptides are short chains of amino acids that perform a wide range of

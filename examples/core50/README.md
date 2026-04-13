@@ -1,7 +1,16 @@
+---
+title: Image Classification
+nav_order: 70
+has_children: false
+parent: Zero2Neuro Examples
+---
+
 # Example: Detecting Objects in Images
 
 ## Overview
-This is a convolutional neural network example, which is a type of deep neural network but has the capability of image processing. If you look inside of the data file you will also notice that there aren't images but rather a .csv of file paths. These images are in ~fagg/datasets/core50 on Schooner or can be found online by looking at the core50 dataset. The core50 dataset is made up of many images of objects and this model's goal is to be able to tell the difference between those everyday objects. 
+This is a convolutional neural network image classification example.  Here, we are using a small subset of the [Core 50](https://vlomonaco.github.io/core50/) image dataset. The data configuration file describes the full list of images to be loaded and their class labels.  The images are not included as a part of this repository; there are two options:
+- Download the 128x128 dataset from [Core 50](https://vlomonaco.github.io/core50/)
+- If you are on the OU Supercomputer, then the images can be accessed from: ~fagg/datasets/core50 
 
 ## Data
 - This example contains only a single data set that is used for training (i.e., no validation or testing data sets)
@@ -13,7 +22,7 @@ This is a convolutional neural network example, which is a type of deep neural n
    - 4 convolutional layers, with every other one followed with a max pooling step
    - A Global Max Pool step (implicit) reduces the feature arrays down to indivdual scalars
    - 2 hidden layers combine the features together in arbitrary ways
-   - Output is 2 units (one for each class
+   - THe output is 2 units (one for each class)
    - Network description: [network.txt](network.txt)
 
 ## Experiment
@@ -22,4 +31,4 @@ This is a convolutional neural network example, which is a type of deep neural n
 - Configuration: [experiment.txt](experiment.txt)
 
 ## Experiment Suggestion
-Try training with multiple objects and see if the model stays accurate or starts confusing objects with one another.
+Try training with multiple objects and see if the model stays accurate or starts confusing the objects with one another.

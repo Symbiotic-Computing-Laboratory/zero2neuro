@@ -1,3 +1,10 @@
+---
+title: Sentiment Analysis
+nav_order: 60
+has_children: false
+parent: Zero2Neuro Examples
+---
+
 # Example: Analyzing Tweets to Determine Implied Sentiment
 
 The dataset used for this example is made up of 1.6 million tweets (subsampled down to 30k for PC convenience). The goal of this example is to perform natural language processing on a tweet and determine the sentiment behind the tweet, meaning whether it's positive or negative.  
