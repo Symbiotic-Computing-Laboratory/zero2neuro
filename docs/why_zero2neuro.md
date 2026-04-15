@@ -36,7 +36,7 @@ pipelines, we do not pretend that this is a solution to all problems.
 Some users will find that Zero2Neuro does everything they need.  Other
 users will find that with experience, they will grow out of Zero2Neuro
 and "strike out" on their own by writing their own Python code (either
-by creating plug-in code, using only some Zero2Neuro components, or
+by creating code that _plugs in_ to Zero2Neuro, using only some Zero2Neuro components, or
 developing entirely new code bases).  All options are fine and
 encouraged! 
 
