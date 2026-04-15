@@ -41,8 +41,6 @@ END
 where START and END are integers specifying the column indices to
 include (columns START ... END, including END).
 
-TODO: check inclusive of END
-
 ```
 --tabular_column_list
 COL1
@@ -53,11 +51,12 @@ where COLX is an integer column index (counting from 1)
 
 ## Text Encoding
 
-The name of the byte encoding for the tabular files.  The default is
-ASCII (utf-8).
+The name of the byte encoding for the tabular files.  
 
 ```
 --tabular_encoding=ENCODING
 ```
 
-TODO: define ENCODING options
+The default value of _tabular_encoding_ is None (a reasonable choice).  In this case, SuperDataSet uses the content of the file to guess the character encoding.  If the format cannot be guessed, then SuperDataSet will use utf-8.
+
+One can also specify the character encoding explicitly: [see the Python Standard Encodings Table](https://docs.python.org/3/library/codecs.html#standard-encodings)
