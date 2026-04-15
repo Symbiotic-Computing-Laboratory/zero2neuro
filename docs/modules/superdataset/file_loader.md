@@ -2,6 +2,7 @@
 title: File Loader
 nav_order: 10
 parent: Data Files to Data Sets
+has_children: True
 ---
 # File Loader
 
@@ -95,8 +96,9 @@ out1
 ```
 
 Notes:
-- tabular, tabular-indirect: columns to include
-- pickle: keys from the dictionary to include
+- tabular, tabular-indirect: specifies the columns in the table to
+include
+- pickle: specifies the keys from the dictionary to include
 
 ### Data Weights (Advanced; optional)
 Each example in a dataset can be weighted for the purposes of
@@ -124,59 +126,6 @@ The values in FIELD are natural numbers (integers: 0, 1, ....).  See
 
 ___
 
-## Additional Tabular Arguments (Advanced)
-These arguments can be used for both csv and xlsx formatted files
-
-### Header Row
-By default, the header row is assumed to be the first row.  This
-argument can be used to set a different row
-
-```
---tabular_header_row=ROW
-```
-where ROW is the row index (counting from 1)
-
-### Header Names
-Some tabular files do not contain a header row.  Use this argument to
-force the names of the columns
-```
---tabular_header_names
-COL1
-COL2
- :
-```
-where COLX is the string name for column X.
-
-### Tabular Columns
-In some cases, one must ignore a subset of the tabular columns.  The
-next two arguments can be used to specify the set of columns to
-use for the full set of fields.
-
-```
---tabular_column_range
-START
-END
-```
-where START and END are integers specifying the column indices to
-include (columns START ... END, including END).
-
-TODO: check inclusive of END
-
-```
---tabular_column_list
-COL1
-COL2
- :
-```
-where COLX is an integer column index (counting from 1)
-
-### Text Encoding
-
-The name of the byte encoding for the tabular files.  The default is
-ASCII (utf-8).
-
-```
---tabular_encoding=ENCODING
-```
-
-TODO: define ENCODING options
+## Advanced Topics
+- [Options for Tabular Files](tabular_options.md): Fine-level control for reading tabular files
+- [Data Translation](data_translation.md): Translating categorical variables (including strings) into machine learning-ready representations
