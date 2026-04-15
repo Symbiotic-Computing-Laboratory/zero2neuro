@@ -49,8 +49,30 @@ class CommentedArgumentParser(argparse.ArgumentParser):
 
         # Value lines: keep internal whitespace, but trailing is already stripped
         return [line]
-
     
+    def parse_args_from_file(self, filepath):
+        '''
+        Parse the arguments from a specified file.  
+        We assume that the parser has already been configured
+
+        :param filepath: A path (either local or global) to the file that contains the
+        arguments to parse
+
+        :return: an args Namespace that contains all of the arguments (default values or 
+        those overridden by the file entries) 
+        '''
+
+        args = []
+        with open(filepath, 'r') as f:
+            # Loop over lines in the file
+            for line in f:
+                # Add to the list of raw arguments
+                args.extend(self.convert_arg_line_to_args(line))
+
+        # Parse the arguments and return the resulting namespace
+        return self.parse_args(args)
+
+
 #######################
 def create_parser(description='Zero2Neuro'):
     '''

@@ -4,96 +4,21 @@ nav_order: 20
 parent: Zero2Neuro Modules
 has_children: true
 ---
-
 # Network Builder
 
-TODO: intro material
+The _Network Builder_ module is responsible for creating the specific neural network model for your experiments.  The details of the network type (schema), the number and types of layers, and nature of the network output are all specified using arguments within a configuration file.
 
-## Description
+## Modeling Problem Types
+Deep neural networks solve a range of different problem types, determined by the output of the model and how that output is interpretted.  
 
-The Network Builder module is in charge of creating the model's
-network. It does this by taking in user-defined arguments and using
-keras3_tools to create either fully connected networks or
-convolutional neural networks.  
+determined by the model output, the training data desired outputs, and the loss fun
 
-## Key Concepts
+.  Two of the key types are 
 
-### Individual neurons
+Two key modeling problem types 
 
-A neuron is a computational unit of a neural network.  
-
-Each neuron:  
-- Take n inputs
-- Multiply each input by a corresponding weight
-- Add a bias to the weighted sum of inputs
-- Apply a non-linear activation
-
-### Non-linearities
-Non-linear activation functions are what make neural networks special, without non-linearity a model can only graph a linear function.  
-  
-Activation function examples:
-- ReLU
-- Tanh
-- Sigmoid
-- Softmax
-
-These non linear activation functions allow neural networks to:
-- Learn complex relationships
-- Approximate non-linear functions
-
-### Layers
-Layers are collections of neurons inside the section of the network.
-
-There are three types of layers:
-- Input layer: Takes in input data
-- Hidden layers: Perform transformations on input data
-- Output layers: Makes the final prediction
-
-Each layer transforms its input and deep neural networks can have several layers.
-
-### Network Architecture
-A model's architecture consists of:
-- Number of layers 
-- Number of neurons in each layer
-- How each layer connects
-
-The more complex an architecture the better its ability to approximate complex functions.
-
-Architecture Examples:
-- Fully connected networks
-- Convolutional networks
-- Recurrent networks
-
-### Propagation 
-#### Forward Propagation
-Forward propagation is the process than eables passing input data through each layer.
-
-Each layer:
-- The linear transformation gets applied (weight and bias)
-- Non-linear activation function is applied
-- Result is passed to the next layer
-
-Once it reaches the output layer the model will make a prediction.
-#### Backpropagation
-TODO
-
-### Loss Functions
-Loss functions show the level of error between the prediction and true value.
-
-Examples:  
-- Mean Squared Error  
-- Mean Absolute Error
-- Cross-Entropy Loss 
-
-### Optimizers 
-Optimizers update the model parameters in order to minimize the loss function.
-
-Examples:
-- Adam
-- Lion
-
-### Regression vs Classification
-The two biggest types oft asks for neural networks are regression and classification.  
+Regression vs Classification
+The two biggest types of tasks for neural networks are regression and classification.  
 #### Regression
 - Predicts specific values
 - Used in cases such as stock price prediction
@@ -104,13 +29,17 @@ The two biggest types oft asks for neural networks are regression and classifica
 - Binary Classification (two cases): sigmoid activation
 - Multi-class Classifcation (n cases): softmax activation
 
+##
+- [Introduction to Neural Networks](network_tutorial.md) (Tutorial)
+- Network Schemata 
+   - [Fully-Connected Neural Network](fully_connected.md): Translate a
+vector of values into another vector of values (Beginner)
+   - [Convolutional Neural Network](cnn.md): Translate spatial and/or temporal data (Intermediate)
 
-## Zero2Neuro-Supported Network Types
-
-- [Fully-Connected Neural Network](fully_connected.md): Translate a
-vector of values into another vector of values
-
-- [Convolutional Neural Network](cnn.md): Translate 1D (timeseries),
+Translate 1D (timeseries),
 2D (images), or 3D (volumetric) data into a vector of values
 
-- [Recurrent Neural Network](rnn.md): Process sequences by taking in information from previous steps
+   - [Recurrent Neural Network](rnn.md): Process sequences by taking in information from previous steps  (Intermediate)
+- 
+
+
