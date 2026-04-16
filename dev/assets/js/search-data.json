@@ -1156,221 +1156,235 @@
   },"165": {
     "doc": "Network Builder",
     "title": "Network Builder",
-    "content": "The Network Builder module is responsible for creating the specific neural network model for your experiments. The details of the network type (schema), the number and types of layers, and nature of the network output are all specified using arguments within a configuration file. ",
+    "content": "The Network Builder module is responsible for creating the specific neural network model for your experiments. The details of the network type (schema), the number and types of layers, and nature of the network output are all specified using arguments within a configuration file (typically the network configuration file). ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/",
     
     "relUrl": "/docs/modules/networkbuilder/"
   },"166": {
     "doc": "Network Builder",
-    "title": "Modeling Problem Types",
-    "content": "Deep neural networks solve a range of different problem types, determined by the output of the model and how that output is interpretted. determined by the model output, the training data desired outputs, and the loss fun . Two of the key types are . Two key modeling problem types . Regression vs Classification The two biggest types of tasks for neural networks are regression and classification. Regression . | Predicts specific values | Used in cases such as stock price prediction | Output layer often has a linear activation function Classification . | Predicts categories | Example would be spam vs non-spam emails | Binary Classification (two cases): sigmoid activation | Multi-class Classifcation (n cases): softmax activation | . ## . | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network: Translate a vector of values into another vector of values (Beginner) | Convolutional Neural Network: Translate spatial and/or temporal data (Intermediate) | . | . Translate 1D (timeseries), 2D (images), or 3D (volumetric) data into a vector of values . | Recurrent Neural Network: Process sequences by taking in information from previous steps (Intermediate) | | . ",
-    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#modeling-problem-types",
+    "title": "Prediction Problem Types",
+    "content": "Deep neural networks solve a range of different problem types, determined by the: . | the output of the model and how it is interpretted, | how the desired outputs are expressed, and | the loss function that is used to compare model outputs to the desired outputs | . The fundamental types of prediction problem supported by Zero2Neuro are Regression and Classification. Regression . | Output type: a real (continuous) value, a vector of real values, or any shaped tensor of values | Output interpretation: any continuous prediction, such as rainfall rate, or stock price | Desired outputs: also real values | Loss function: it is not uncommon to use Mean Squared Error (mse) or Mean Absolute Error (mae) | . Binary Classification . | Output type: a continous value in the range 0..1 (or any shaped tensor) | Output interpretation: the probability of some event, such as the probability that a protein will bind to some molecule, or the probability that an image contains a cat | Desired outputs: binary values (0 or 1) | Loss function: binary cross-entropy | . Categorical Classification . | Output type: a vector of continuous values that 1) each fall in the range 0..1, and 2) sum to 1 | Output interpretation: probability distribution over a discrete set of choices | Desired outputs: two typical options: . | Categorical Classification: One-hot encoded representation of the correct choice (all zeros, except for a single one in the correct position) | Sparse Categorical Classification: a single natural integer (0, 1, 2, …) that corresponds to the correct answer | . | Loss function: two options: . | categrocial cross-entropy | sparse categorical cross-entropy | . | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#prediction-problem-types",
     
-    "relUrl": "/docs/modules/networkbuilder/#modeling-problem-types"
+    "relUrl": "/docs/modules/networkbuilder/#prediction-problem-types"
   },"167": {
+    "doc": "Network Builder",
+    "title": "Network Architectures Types",
+    "content": "Different architecture types apply to different forms of model inputs and model outputs. Zero2Neuro includes schemata for a number of common network architecture types. Each architecture type supports regression and classification problems, depending on how it is configured. The key network types are: . | Fully-Connected Networks: . | The input is typically a continuous vector of some size | The output is also some scalar value or vector | . | Convolutional Neural Networks (CNNs): . | The input contains some form of spatial or temporal structure, including: . | A a squence of vectors (a 1-dimensional input) . | Example: the position and velocity of some object over time | Example: a sequence of words | . | A 2D grid of vectors (a 2-dimensional input) . | Example: a color image | . | A 3D grid of vectors (a 3-dimensional input) . | Example: a description of the atmosphere in terms of a vector at each 3D grid cell (e.g., the temperature, pressure, and speed of each voxel) | . | . | The output is some scalar value or vector | . | Recurrent Neural Networks (RNNs): . | The input contains some 1D spatial or temporal structure | The output can be either: . | A scalar value or vector | A 1D sequence of scalar values or vectors (often, there is one output vector for each input vector) | . | . | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#network-architectures-types",
+    
+    "relUrl": "/docs/modules/networkbuilder/#network-architectures-types"
+  },"168": {
+    "doc": "Network Builder",
+    "title": "More Details",
+    "content": ". | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network (Beginner) | Convolutional Neural Network (Intermediate) | Recurrent Neural Network (Intermediate) | . | TODO: tokenization and embedding | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/#more-details",
+    
+    "relUrl": "/docs/modules/networkbuilder/#more-details"
+  },"169": {
     "doc": "Zero2Neuro Modules",
     "title": "Zero2Neuro Modules",
     "content": "Zero2Neuro consistis of three primary modules that work together to allow you to import your data (SuperDataset), create your ML model (Network Builder), and conduct training and evaluation of that model (Zero2Neuro Training and Evaluation Engine). Each module is configured with a set of command-line arguments that can conveniently partitioned into separate configuration text files. ",
     "url": "/zero2neuro/dev/docs/modules/",
     
     "relUrl": "/docs/modules/"
-  },"168": {
+  },"170": {
     "doc": "Zero2Neuro Modules",
     "title": "Modules",
     "content": ". | SuperDataSet . | Import one or more files containing data | Construct from these data: training, validation, and testing data sets | . | Network Builder . | Create a deep neural network that implements your model | Supported DNN types include: . | Fully-connected networks (FCNs) | Convolutional neural networks (CNNs) | Recurrent neural networks (RNNs), including simple RNNs, Long-Short-Term Memory networks (LSTMs), and Gated Recurrent Unit-based networks (GRUs) | . | . | Zero2Neuro Engine . | Use the training and validation data sets to train the model until specified criteria are met | (Weights and Biases support)[https://wandb.ai] for tracking and comparing models | Evaluation of the trained model against each of the training, validation, and testing data sets | Generation of reports for further analysis | . | . ",
     "url": "/zero2neuro/dev/docs/modules/#modules",
     
     "relUrl": "/docs/modules/#modules"
-  },"169": {
+  },"171": {
     "doc": "Zero2Neuro Modules",
     "title": "Advanced Topics",
     "content": ". | . ",
     "url": "/zero2neuro/dev/docs/modules/#advanced-topics",
     
     "relUrl": "/docs/modules/#advanced-topics"
-  },"170": {
+  },"172": {
     "doc": "Zero2Neuro",
     "title": "Zero2Neuro",
     "content": ". Zero2Neuro is a no-code toolbox for constructing, training and evaluating Deep Neural Network (DNN) models for a wide range of modeling problems. This package provides easy-to-use solutions for: . | Loading data stored in a variety of formats (including the common Comma Separated Values format), and configuring the data for use in DNN training and evaluation. | Creation of Deep Neural Network models from several flexible DNN model schemata, including fully-connected networks (FCNs), convolutional neural networks (CNNs), and U-Nets. The user specifies the structural details of their specific model. | A standard DNN training and evaluation engine. This engine supports the production of result reports in various formats, including hooks for Weights and Biases. | . ",
     "url": "/zero2neuro/dev/",
     
     "relUrl": "/"
-  },"171": {
+  },"173": {
     "doc": "Zero2Neuro",
     "title": "Supported Environments",
     "content": "You can execute Zero2Neuro in several different environments, depending on your needs: . | Bash shell command line | Supercomputer using SLURM | Jupyter Notebooks | . ",
     "url": "/zero2neuro/dev/#supported-environments",
     
     "relUrl": "/#supported-environments"
-  },"172": {
+  },"174": {
     "doc": "Zero2Neuro",
     "title": "Flexible Configuration",
     "content": "The user specifies the details behind their specific DNN experiment using a set of simple configuration files: . | Data configuration includes: . | Location of data files and their type | Individual data features to be extracted from the files that capture the model inputs and desired outputs | Translation of data types for categorical variables, including one-hot encoding | Creation of training, validation, and testing data sets | . | Model configuration includes: . | Model schema | Form of the model inputs | Number and sizes of model layers | Non-linearities for hidden and output layers | . | Training/evaluation engine configuration includes: . | Learning parameters | Loss functions and metrics | Early-stopping parameters | How experiment results are reported | . | . ",
     "url": "/zero2neuro/dev/#flexible-configuration",
     
     "relUrl": "/#flexible-configuration"
-  },"173": {
+  },"175": {
     "doc": "Zero2Neuro",
     "title": "Detailed Example",
     "content": "The Full Example demonstrates the configuration and execution process for solving a simple logic problem. ",
     "url": "/zero2neuro/dev/#detailed-example",
     
     "relUrl": "/#detailed-example"
-  },"174": {
+  },"176": {
     "doc": "Zero2Neuro",
     "title": "Dependencies",
     "content": "Zero2Neuro is implemented in Python and built on top of Keras3. A full set of machine-readable dependencies is available for download . ",
     "url": "/zero2neuro/dev/#dependencies",
     
     "relUrl": "/#dependencies"
-  },"175": {
+  },"177": {
     "doc": "Zero2Neuro",
     "title": "Documentation Links",
     "content": ". | Why Zero2Neuro | Getting Started | Examples | Modules | API | Frequently Asked Questions | Road Map | Contributors | . ",
     "url": "/zero2neuro/dev/#documentation-links",
     
     "relUrl": "/#documentation-links"
-  },"176": {
+  },"178": {
     "doc": "Zero2Neuro",
     "title": "References",
     "content": ". | Zero2Neuro Repository | Zero2Neuro Presentation | . ",
     "url": "/zero2neuro/dev/#references",
     
     "relUrl": "/#references"
-  },"177": {
+  },"179": {
     "doc": "Roadmap",
     "title": "Zero2Neuro Roadmap",
     "content": "Our priorities for continued development include: . | The ability for users to provide plug-in code to implement custom functionality inside of Zero2Neuro, including: . | Loading custom file formats | Building custom networks | Preprocessing of data after the training, validation, and test data sets have been constructed | Custom fold-to-data-set translation | . | Automatic checkpointing and recovery . | Key for long-term training experiments on a supercomputer | . | Splitting data randomly with stratification . | UNet schema . | Support for Scikit-Learn models . | Orthogonalized cross-validation | . ",
     "url": "/zero2neuro/dev/docs/roadmap.html#zero2neuro-roadmap",
     
     "relUrl": "/docs/roadmap.html#zero2neuro-roadmap"
-  },"178": {
+  },"180": {
     "doc": "Roadmap",
     "title": "Roadmap",
     "content": " ",
     "url": "/zero2neuro/dev/docs/roadmap.html",
     
     "relUrl": "/docs/roadmap.html"
-  },"179": {
+  },"181": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options (Advanced)",
     "content": "These arguments can be used for both csv and xlsx formatted files . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced"
-  },"180": {
+  },"182": {
     "doc": "Tabular File Options",
     "title": "Header Row",
     "content": "By default, the header row is assumed to be the first row. This argument can be used to set a different row . --tabular_header_row=ROW . where ROW is the row index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-row",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-row"
-  },"181": {
+  },"183": {
     "doc": "Tabular File Options",
     "title": "Header Names",
     "content": "Some tabular files do not contain a header row. Use this argument to force the names of the columns . --tabular_header_names COL1 COL2 : . where COLX is the string name for column X. ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-names",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-names"
-  },"182": {
+  },"184": {
     "doc": "Tabular File Options",
     "title": "Tabular Columns",
     "content": "In some cases, one must ignore a subset of the tabular columns. The next two arguments can be used to specify the set of columns to use for the full set of fields. --tabular_column_range START END . where START and END are integers specifying the column indices to include (columns START … END, including END). --tabular_column_list COL1 COL2 : . where COLX is an integer column index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-columns",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-columns"
-  },"183": {
+  },"185": {
     "doc": "Tabular File Options",
     "title": "Text Encoding",
     "content": "The name of the byte encoding for the tabular files. --tabular_encoding=ENCODING . The default value of tabular_encoding is None (a reasonable choice). In this case, SuperDataSet uses the content of the file to guess the character encoding. If the format cannot be guessed, then SuperDataSet will use utf-8. One can also specify the character encoding explicitly: see the Python Standard Encodings Table . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#text-encoding",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#text-encoding"
-  },"184": {
+  },"186": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html"
-  },"185": {
+  },"187": {
     "doc": "What's New?",
     "title": "What’s New with Zero2Neuro?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html#whats-new-with-zero2neuro",
     
     "relUrl": "/docs/whats_new.html#whats-new-with-zero2neuro"
-  },"186": {
+  },"188": {
     "doc": "What's New?",
     "title": "2026-04-10: Version 0.6.0",
     "content": ". | Extensive online documentation | . ",
     "url": "/zero2neuro/dev/docs/whats_new.html#2026-04-10-version-060",
     
     "relUrl": "/docs/whats_new.html#2026-04-10-version-060"
-  },"187": {
+  },"189": {
     "doc": "What's New?",
     "title": "What's New?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html",
     
     "relUrl": "/docs/whats_new.html"
-  },"188": {
+  },"190": {
     "doc": "Why Zero2Neuro?",
     "title": "Why Zero2Neuro?",
     "content": "Our goals in developing Zero2Neuro are to: . | Provide a low barrier-to-entry for new users to access deep learning tools in building predictive models using their own data and experimental questions . | Provide a range of common model types that can be easily configured for use . | Codify a set of best (good?) practices for performing machine learning experiments . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html",
     
     "relUrl": "/docs/why_zero2neuro.html"
-  },"189": {
+  },"191": {
     "doc": "Why Zero2Neuro?",
     "title": "How to Use this Documentation",
     "content": "This documentation is written for users with a range of knowledge. Top level material provides general introduction to the different topics. Deeper material is often tagged with anticipated knowledge level: . | Tutorial: detailed introduction to key concepts | Beginner: what a new user needs to know to get started | Intermediate: useful additions as a user begins to gain some experience with using Zero2Neuro | Advanced: the powerful tools and options | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#how-to-use-this-documentation",
     
     "relUrl": "/docs/why_zero2neuro.html#how-to-use-this-documentation"
-  },"190": {
+  },"192": {
     "doc": "Why Zero2Neuro?",
     "title": "What Zero2Neuro is Not",
     "content": "While our goal is for Zero2Neuro to have practical use in research pipelines, we do not pretend that this is a solution to all problems. Some users will find that Zero2Neuro does everything they need. Other users will find that with experience, they will grow out of Zero2Neuro and “strike out” on their own by writing their own Python code (either by creating code that plugs in to Zero2Neuro, using only some Zero2Neuro components, or developing entirely new code bases). All options are fine and encouraged! . We do not anticipate Zero2Neuro to solve problems in the areas of: . | Large Language Models (though we support data involving sequences of tokens!) . | Reinforcement Learning . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#what-zero2neuro-is-not",
     
     "relUrl": "/docs/why_zero2neuro.html#what-zero2neuro-is-not"
-  },"191": {
+  },"193": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing Configuring Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
-  },"192": {
+  },"194": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
-  },"193": {
+  },"195": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
-  },"194": {
+  },"196": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
-  },"195": {
+  },"197": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
-  },"196": {
+  },"198": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing and Configuring Zero2Neuro",
     "content": " ",
