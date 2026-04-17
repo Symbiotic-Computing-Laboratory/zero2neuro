@@ -1280,139 +1280,153 @@
     
     "relUrl": "/#references"
   },"183": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Key Concepts",
+    "content": "Individual neurons . A neuron is a computational unit of a neural network. Each neuron: . | Take n inputs | Multiply each input by a corresponding weight | Add a bias to the weighted sum of inputs | Apply a non-linear activation | . Non-linearities . Non-linear activation functions are what make neural networks special, without non-linearity a model can only graph a linear function. Activation function examples: . | ReLU | Tanh | Sigmoid | Softmax | . These non linear activation functions allow neural networks to: . | Learn complex relationships | Approximate non-linear functions | . Layers . Layers are collections of neurons inside the section of the network. There are three types of layers: . | Input layer: Takes in input data | Hidden layers: Perform transformations on input data | Output layers: Makes the final prediction | . Each layer transforms its input and deep neural networks can have several layers. Network Architecture . A model’s architecture consists of: . | Number of layers | Number of neurons in each layer | How each layer connects | . The more complex an architecture the better its ability to approximate complex functions. Architecture Examples: . | Fully connected networks | Convolutional networks | Recurrent networks | . Propagation . Forward Propagation . Forward propagation is the process than eables passing input data through each layer. Each layer: . | The linear transformation gets applied (weight and bias) | Non-linear activation function is applied | Result is passed to the next layer | . Once it reaches the output layer the model will make a prediction. Backpropagation . TODO . Loss Functions . Loss functions show the level of error between the prediction and true value. Examples: . | Mean Squared Error | Mean Absolute Error | Cross-Entropy Loss | . Optimizers . Optimizers update the model parameters in order to minimize the loss function. Examples: . | Adam | Lion | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#key-concepts",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#key-concepts"
+  },"184": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Neural Networks Tutorial",
+    "content": "TODO . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html"
+  },"185": {
     "doc": "Roadmap",
     "title": "Zero2Neuro Roadmap",
     "content": "Our priorities for continued development include: . | The ability for users to provide plug-in code to implement custom functionality inside of Zero2Neuro, including: . | Loading custom file formats | Building custom networks | Preprocessing of data after the training, validation, and test data sets have been constructed | Custom fold-to-data-set translation | . | Automatic checkpointing and recovery . | Key for long-term training experiments on a supercomputer | . | Splitting data randomly with stratification . | UNet schema . | Support for Scikit-Learn models . | Orthogonalized cross-validation | . ",
     "url": "/zero2neuro/dev/docs/roadmap.html#zero2neuro-roadmap",
     
     "relUrl": "/docs/roadmap.html#zero2neuro-roadmap"
-  },"184": {
+  },"186": {
     "doc": "Roadmap",
     "title": "Roadmap",
     "content": " ",
     "url": "/zero2neuro/dev/docs/roadmap.html",
     
     "relUrl": "/docs/roadmap.html"
-  },"185": {
+  },"187": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options (Advanced)",
     "content": "These arguments can be used for both csv and xlsx formatted files . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced"
-  },"186": {
+  },"188": {
     "doc": "Tabular File Options",
     "title": "Header Row",
     "content": "By default, the header row is assumed to be the first row. This argument can be used to set a different row . --tabular_header_row=ROW . where ROW is the row index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-row",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-row"
-  },"187": {
+  },"189": {
     "doc": "Tabular File Options",
     "title": "Header Names",
     "content": "Some tabular files do not contain a header row. Use this argument to force the names of the columns . --tabular_header_names COL1 COL2 : . where COLX is the string name for column X. ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-names",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-names"
-  },"188": {
+  },"190": {
     "doc": "Tabular File Options",
     "title": "Tabular Columns",
     "content": "In some cases, one must ignore a subset of the tabular columns. The next two arguments can be used to specify the set of columns to use for the full set of fields. --tabular_column_range START END . where START and END are integers specifying the column indices to include (columns START … END, including END). --tabular_column_list COL1 COL2 : . where COLX is an integer column index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-columns",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-columns"
-  },"189": {
+  },"191": {
     "doc": "Tabular File Options",
     "title": "Text Encoding",
     "content": "The name of the byte encoding for the tabular files. --tabular_encoding=ENCODING . The default value of tabular_encoding is None (a reasonable choice). In this case, SuperDataSet uses the content of the file to guess the character encoding. If the format cannot be guessed, then SuperDataSet will use utf-8. One can also specify the character encoding explicitly: see the Python Standard Encodings Table . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#text-encoding",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#text-encoding"
-  },"190": {
+  },"192": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html"
-  },"191": {
+  },"193": {
     "doc": "What's New?",
     "title": "What’s New with Zero2Neuro?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html#whats-new-with-zero2neuro",
     
     "relUrl": "/docs/whats_new.html#whats-new-with-zero2neuro"
-  },"192": {
+  },"194": {
     "doc": "What's New?",
     "title": "2026-04-10: Version 0.6.0",
     "content": ". | Extensive online documentation | . ",
     "url": "/zero2neuro/dev/docs/whats_new.html#2026-04-10-version-060",
     
     "relUrl": "/docs/whats_new.html#2026-04-10-version-060"
-  },"193": {
+  },"195": {
     "doc": "What's New?",
     "title": "What's New?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html",
     
     "relUrl": "/docs/whats_new.html"
-  },"194": {
+  },"196": {
     "doc": "Why Zero2Neuro?",
     "title": "Why Zero2Neuro?",
     "content": "Our goals in developing Zero2Neuro are to: . | Provide a low barrier-to-entry for new users to access deep learning tools in building predictive models using their own data and experimental questions . | Provide a range of common model types that can be easily configured for use . | Codify a set of best (good?) practices for performing machine learning experiments . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html",
     
     "relUrl": "/docs/why_zero2neuro.html"
-  },"195": {
+  },"197": {
     "doc": "Why Zero2Neuro?",
     "title": "How to Use this Documentation",
     "content": "This documentation is written for users with a range of knowledge. Top level material provides general introduction to the different topics. Deeper material is often tagged with anticipated knowledge level: . | Tutorial: detailed introduction to key concepts | Beginner: what a new user needs to know to get started | Intermediate: useful additions as a user begins to gain some experience with using Zero2Neuro | Advanced: the powerful tools and options | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#how-to-use-this-documentation",
     
     "relUrl": "/docs/why_zero2neuro.html#how-to-use-this-documentation"
-  },"196": {
+  },"198": {
     "doc": "Why Zero2Neuro?",
     "title": "What Zero2Neuro is Not",
     "content": "While our goal is for Zero2Neuro to have practical use in research pipelines, we do not pretend that this is a solution to all problems. Some users will find that Zero2Neuro does everything they need. Other users will find that with experience, they will grow out of Zero2Neuro and “strike out” on their own by writing their own Python code (either by creating code that plugs in to Zero2Neuro, using only some Zero2Neuro components, or developing entirely new code bases). All options are fine and encouraged! . We do not anticipate Zero2Neuro to solve problems in the areas of: . | Large Language Models (though we support data involving sequences of tokens!) . | Reinforcement Learning . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#what-zero2neuro-is-not",
     
     "relUrl": "/docs/why_zero2neuro.html#what-zero2neuro-is-not"
-  },"197": {
+  },"199": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing Configuring Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
-  },"198": {
+  },"200": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
-  },"199": {
+  },"201": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
-  },"200": {
+  },"202": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
-  },"201": {
+  },"203": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
-  },"202": {
+  },"204": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing and Configuring Zero2Neuro",
     "content": " ",
