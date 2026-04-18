@@ -1,5 +1,6 @@
 import os
 import sys
+from glob import glob
 
 # Import keras3_tools from proper path
 neuro_path = os.getenv("NEURO_REPOSITORY_PATH")
@@ -26,13 +27,31 @@ class NetworkBuilder:
             
 
     @staticmethod
-    def args2model(args):
+    def args2model(args, fbase:str):
         model_text_vectorization = None
+
+        # Starting epoch is typically 0
+        epoch_start = 0
         
+        # Find the most recent checkpoint file (filename includes epoch number)
+        checkpoint_files = sorted(glob('%s_checkpoint_*.keras'%fbase))
+        # Get the highest numbered file
+        fname_checkpoint = checkpoint_files[-1] if checkpoint_files else None
+
+        # Extract the epoch number from the file name
+        if fname_checkpoint is not None:
+            epoch = int(fname_checkpoint.removesuffix('.keras').rsplit('_', 1)[-1])
+
         if args.load_trained_model is not None:
             # Load an already trained model
-            model = load_model(args.load_trained_model)
+            models = load_model(args.load_trained_model)
             print_debug('Model %s loaded'%args.load_trained_model, 1, args.debug)
+
+        elif args.checkpoint_model and fname_checkpoint is not None:
+            # Load model from the most recent checkpoint
+            models = load_model(fname_checkpoint)
+            epoch_start = epoch
+            print_debug('Model %s loaded'%fname_checkpoint, 1, args.debug)
 
         else:
             # Build a new model
@@ -169,7 +188,7 @@ class NetworkBuilder:
             NetworkBuilder.recursive_summary(model)
 
         # Return both models
-        return models
+        return models, epoch_start
 
 #         if model_text_vectorization is not None:
 #             return model, model_text_vectorization

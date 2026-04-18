@@ -82,6 +82,41 @@ def compatibility_checks(args):
     NetworkBuilder.compatibility_checks(args)
 
     
+class AtomicModelCheckpoint(keras.callbacks.ModelCheckpoint):
+    '''
+    Model Checkpointing with atomic file save; keeps only the most recent checkpoint.
+    '''
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._last_checkpoint_path = None
+
+    def _save_model(self, epoch, batch, logs):
+        # Resolve format specifiers (e.g. {epoch:03d}) to get the actual path
+        new_path = self._get_file_path(epoch, batch, logs)
+        tmp_path = new_path.replace(".keras", "_tmp.keras")
+
+        # Temporarily swap the correct path for the tmp path
+        orig_filepath = self.filepath
+        self.filepath = tmp_path
+
+        # Save the model
+        super()._save_model(epoch, batch, logs)
+
+        # Swap back
+        self.filepath = orig_filepath
+
+        if os.path.exists(tmp_path):
+            # Move the tmp file over to the right name
+            os.replace(tmp_path, new_path)  # atomic on most OSes
+
+            # If there was an older version, then delete it
+            if self._last_checkpoint_path and self._last_checkpoint_path != new_path:
+                if os.path.exists(self._last_checkpoint_path):
+                    os.remove(self._last_checkpoint_path)
+
+            # Remember the current path
+            self._last_checkpoint_path = new_path
+
 def args2wandb_name(args)->str:
     #outstr = args.experiment_name
     #if args.rotation is not None:
@@ -128,14 +163,12 @@ def args2fbase(args):
     return outstr
 
     
-def execute_exp(sds, model, args):
+def execute_exp(sds, model, args, fbase, epochs_start):
     # 
     if args.verbose >= 2:
         print(model.summary())
 
-    # Output file base and pkl file
-    fbase = args2fbase(args)
-    print(fbase)
+    # Results file
     fname_out = "%s_results.pkl"%fbase
 
     # Plot the model
@@ -188,6 +221,13 @@ def execute_exp(sds, model, args):
         wandb_metrics_cb = wandb.keras.WandbMetricsLogger()
         cbs.append(wandb_metrics_cb)
 
+    if args.checkpoint_model:
+        checkpoint_cb = AtomicModelCheckpoint(filepath='%s_checkpoint_{epoch:05d}.keras'%fbase,
+                                                monitor=args.early_stopping_monitor,
+                                                        save_best_only=True,
+        )
+        cbs.append(checkpoint_cb)
+        
     if args.verbose >= 1:
         print('Fitting model')
 
@@ -195,6 +235,8 @@ def execute_exp(sds, model, args):
     #  steps_per_epoch: how many batches from the training set do we use for training in one epoch?
     #          Note that if you use this, then you must repeat the training set
     #  validation_steps=None means that ALL validation samples will be used
+
+    print_debug('Starting epoch: %d'%epochs_start, 1, args.debug)
 
     if args.epochs > 0:
         # Train model
@@ -205,7 +247,8 @@ def execute_exp(sds, model, args):
                                 epochs=args.epochs,
                                 validation_data=sds.validation,
                                 verbose=args.verbose>=3,
-                                callbacks=cbs)
+                                callbacks=cbs,
+                                initial_epoch=epochs_start)
         else:
             # Numpy arrays
             history = model.fit(sds.ins_training,
@@ -216,7 +259,8 @@ def execute_exp(sds, model, args):
                                 batch_size=args.batch,
                                 validation_data=sds.validation,
                                 verbose=args.verbose>=3,
-                                callbacks=cbs)
+                                callbacks=cbs,
+                                initial_epoch=epochs_start)
 
     #######
     # LOG RESULTS
@@ -730,8 +774,10 @@ def prepare_and_execute_experiment(args):
         tf.config.threading.set_intra_op_parallelism_threads(int(args.cpus_per_task//args.inter_ops))
         tf.config.threading.set_inter_op_parallelism_threads(int(args.inter_ops))
 
-
-
+    # Output file base and pkl file
+    fbase = args2fbase(args)
+    print(fbase)
+    
     ######
     # Fetch the dataset
     #if not args.network_test:
@@ -739,7 +785,7 @@ def prepare_and_execute_experiment(args):
 
     ######
     # Create the model
-    models = NetworkBuilder.args2model(args)
+    models, epochs_start = NetworkBuilder.args2model(args, fbase)
 
     if isinstance(models, tuple):
         # TODO: probably need to do modularization here
@@ -767,11 +813,11 @@ def prepare_and_execute_experiment(args):
         print_debug('Vocabulary (%d):%s'%(len(vocab), str(vocab)), 2, args.debug)
         
     else:
-        model = models
+        model = models  
 
     ######
     # Execute the experiment
-    execute_exp(sds, model, args)
+    execute_exp(sds, model, args, fbase, epochs_start)
 
     return models
 

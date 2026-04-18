@@ -2,8 +2,9 @@
 
 Use inverse order
 
-## v0.5.3 2026-03-4 Andrew H. Fagg (devel)
-Now not creating new releases for every push.  Add notes here as to what has changed so far  
+## v0.6.0 2026-03-4  (current devel)
+* Added documentation
+* Added --checkpoing_model: checkpointing and gracefully handling restarts
   
 2026-03-12 Luke Sewell 
 * Added new example, Sentiment140
