@@ -86,9 +86,22 @@ class AtomicModelCheckpoint(keras.callbacks.ModelCheckpoint):
     '''
     Model Checkpointing with atomic file save; keeps only the most recent checkpoint.
     '''
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, nepochs:int=1, **kwargs):
+        '''
+        :param nepochs: Number of epochs between saving steps
+        '''
         super().__init__(*args, **kwargs)
         self._last_checkpoint_path = None
+        self.nepochs = nepochs
+
+    def on_epoch_end(self, epoch, logs=None):
+        '''
+        Called at end of epoch.  Only do the job of the callback (saving)
+        every nepochs epocsh
+        '''
+        if (epoch + 1) % self.nepochs == 0:
+            super().on_epoch_end(epoch, logs)
+
 
     def _save_model(self, epoch, batch, logs):
         # Resolve format specifiers (e.g. {epoch:03d}) to get the actual path
@@ -223,8 +236,11 @@ def execute_exp(sds, model, args, fbase, epochs_start):
 
     if args.checkpoint_model:
         checkpoint_cb = AtomicModelCheckpoint(filepath='%s_checkpoint_{epoch:05d}.keras'%fbase,
-                                                monitor=args.early_stopping_monitor,
-                                                        save_best_only=True,
+                                             monitor=args.early_stopping_monitor,
+                                             nepochs=args.checkpoint_nepochs,
+                                             save_best_only=True,
+                                             
+
         )
         cbs.append(checkpoint_cb)
         

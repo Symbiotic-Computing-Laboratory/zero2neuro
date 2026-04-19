@@ -188,6 +188,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--save_model', action='store_true', default=False , help='Save a model file')
     parser.add_argument('--no-save_model', action='store_false', dest='save_model', help='Do not save a model file')
     parser.add_argument('--checkpoint_model', action='store_true', default=False , help='Checkpoing model file')
+    parser.add_argument('--checkpoint_nepochs', type=int, default=1, help="Number of epochs between checkpoints")
     parser.add_argument('--log_training_set', action='store_true', default=False , help='Log the full training set in results')
     parser.add_argument('--log_validation_set', action='store_true', default=False , help='Log the full validation set in results')
     parser.add_argument('--log_testing_set', action='store_true', default=False , help='Log the full test set in results')
