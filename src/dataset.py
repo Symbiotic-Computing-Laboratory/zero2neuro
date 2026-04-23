@@ -355,6 +355,10 @@ class SuperDataSet:
         elif self.args.data_format == 'tf-dataset':
             self.data = self.load_tf_set()
             
+        elif self.args.data_format == 'plugin':
+            # TODO: Shayan to implement
+            self.data = self.load_via_plugin()
+
         else:
             assert False, "Data format %s not recognized"%self.args.data_format
 

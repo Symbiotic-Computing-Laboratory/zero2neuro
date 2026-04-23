@@ -69,5 +69,6 @@ Different architecture types apply to different forms of model inputs and model 
    - [Convolutional Neural Network](cnn.md) (Intermediate)
    - [Recurrent Neural Network](rnn.md) (Intermediate)
 - TODO: tokenization and embedding
+- TODO: preprocessing
 
 
