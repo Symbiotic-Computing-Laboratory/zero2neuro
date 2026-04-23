@@ -1205,7 +1205,7 @@
   },"172": {
     "doc": "Network Builder",
     "title": "More Details",
-    "content": ". | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network (Beginner) | Convolutional Neural Network (Intermediate) | Recurrent Neural Network (Intermediate) | . | TODO: tokenization and embedding | . ",
+    "content": ". | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network (Beginner) | Convolutional Neural Network (Intermediate) | Recurrent Neural Network (Intermediate) | . | TODO: tokenization and embedding | TODO: preprocessing | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/#more-details",
     
     "relUrl": "/docs/modules/networkbuilder/#more-details"
