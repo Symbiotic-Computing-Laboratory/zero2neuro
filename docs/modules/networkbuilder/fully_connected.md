@@ -1,61 +1,71 @@
-[Base Index](../../index.md)  
-[Previous Index](index.md)  
-# Fully Connected Neural Network
+---
+title: Fully Connected Neural Networks
+nav_order: 20
+parent: Network Builder
+has_children: true
+---
 
-## Introduction
+# Fully Connected Neural Networks
+A fully connected neural network is one in which:
+1. There is a sequence of neural layers.
+2. Each neuron in one layer provides input to each neuron in the next layer.
 
-A fully connected neural network (FCNN) generally translates one vector (the
-inputs) into another vector (the outputs). Each neuron in a FCNN is connect to every neuron in the next layer which allows the model to learn more complex patterns in the data. 
+The _network configuration file_ typically specifies:
+- The network architecture
+- The number of input units
+- The number of hidden layers and the number of neurons within each
+- The non-linear activation function for the hidden layers
+- The number of output units and the corresponding non-linear activation function
 
-## Key Components
+## Example Network
+Here is an example network with one input, two hidden, and one output layer:
 
-### Layers:  
-- Input: Is the layer that takes in data to give to the hidden layer.  
-- Hidden: Is where computations happen with linear regression and nonlinear transformations, often thought of as a black box.  
-- Output: Is data that the model predicts, there are also nonlinear transformations that occur between the hidden and otuput layers. This can also contain predetermined values while training a model.
+<img src="../../../images/neurons/fully_connected_network.png" width="600">
 
-### Activation Functions:  
-Activation functions are what introduct nonlinearity into the the model. A few examples are relu, sigmoid, and tanh. For a full list see [Keras Activation Function Documentation](https://keras.io/api/layers/activations/).
+The corresponding network configuration file:
 
-### Input Shape
-The input shape is the dimension of the data and is one of the few things that one must specify before an experiment. When preparing the data for use it is turned into a tensor, which can be interpreted as an n-dimensional array. This is declared in the `network_config.txt` file under a `--input_shape` argument.  
-Example: for a csv file that has 8 features  
-```---input_shape 8```
-
-### Hidden Layers
-The hidden layer is responsible for taking the input data and doing linear regression, but it also applies non-linearity via the activation functions. The hidden layer also utilizes weights and will adjust these weights through a process called back-propagation. There are no strict guidelines for what a hidden layer should look like, but it is generally best to start small and build up in complexity. Here is an example of a small two layer network described in the `network_config.txt` file.
 ```
---number_hidden_units  
-10  
-5
-```
-This produces a neural network with ten neurons in the first layer and five in the second. 
-
-### Output Layer Shape
-
-The output layer shape depends on what the task is for example,
-- Regression: A single neuron that has a linear activation function
-- Binary Classification: Single neuron that has a sigmoid activation function
-- Multi-class Classification: n Neurons where n is the number of classes with a softmax activation function
-  
-___
-
-## Example Network Configuration
-```
+# Fully connected network
 --network_type=fully_connected
---input_shape 
-8
+
+# Seven inputs
+--input_shape
+7
+
+# Two hidden layers
 --number_hidden_units
-10
 5
+4
+--hidden_activation=elu
+
+# Two output units
 --output_shape
-1
---output_activation=linear
-
+2
+--output_activation=sigmoid
 ```
-___
 
-## Oddities
+Configuration file notes:
+- Blank lines are ignored.
+- Any characters following '#' are considered comments and are ignored.
+- The ```--input_shape``` argument specifies an input vector of size 7
+- The ```--number_hidden_units``` argument specifies the number of layers and the number of neurons in each layer, in sequence.  In this case, there are two hidden layers of size 5 and 4 neurons are specified.
+- The hidden layer activation function is _elu_ for all hidden layers.
+- The ```--output_shape``` argument specifies an output vector of size 2.
+- The output activation function is _sigmoid_ (output range of [0,1]).
 
-Dropout can be applied to both input and hidden layers in order to reduce overfitting.  
-Output shape can be multi-dimensional if it's appropriate for the task for instance multi task learning.
+## Constraints
+- The input_shape must be the same shape as the input data.
+- The output_shape (typically) must also be the same shape as the desired outputs.
+
+## Extensions
+1. Hidden layers: Any number of hidden layers (and corresponding sizes) can be specified using the ```--number_hidden_units``` argument
+2. Output layer: The output can be of any shape (e.g., a 2D matrix, or a N-D tensor), as long as this shape is the same as the data.
+
+## Fully-Connected Neural Network Examples
+- Regression: 
+   - [Exclusive OR Logic Function](../../../examples/xor/README.md)
+- Classification: 
+   - [Iris Shape Classification](../../../examples/iris/README.md)
+
+## More Details (Intermediate)
+- [Fully-Connected Neural Network Details](fully_connected_details.md)
