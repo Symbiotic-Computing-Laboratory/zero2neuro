@@ -1070,363 +1070,461 @@
     
     "relUrl": "/docs/examples/full_example.html"
   },"153": {
+    "doc": "Fully Connected Neural Networks",
+    "title": "Fully Connected Neural Networks",
+    "content": "A fully connected neural network is one in which: . | There is a sequence of neural layers. | Each neuron in one layer provides input to each neuron in the next layer. | . The network configuration file typically specifies: . | The network architecture | The number of input units | The number of hidden layers and the number of neurons within each | The non-linear activation function for the hidden layers | The number of output units and the corresponding non-linear activation function | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected.html",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected.html"
+  },"154": {
+    "doc": "Fully Connected Neural Networks",
+    "title": "Example Network",
+    "content": "Here is an example network with one input, two hidden, and one output layer: . The corresponding network configuration file: . # Fully connected network --network_type=fully_connected # Seven inputs --input_shape 7 # Two hidden layers --number_hidden_units 5 4 --hidden_activation=elu # Two output units --output_shape 2 --output_activation=sigmoid . Configuration file notes: . | Blank lines are ignored. | Any characters following ‘#’ are considered comments and are ignored. | The --input_shape argument specifies an input vector of size 7 | The --number_hidden_units argument specifies the number of layers and the number of neurons in each layer, in sequence. In this case, there are two hidden layers of size 5 and 4 neurons are specified. | The hidden layer activation function is elu for all hidden layers. | The --output_shape argument specifies an output vector of size 2. | The output activation function is sigmoid (output range of [0,1]). | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected.html#example-network",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected.html#example-network"
+  },"155": {
+    "doc": "Fully Connected Neural Networks",
+    "title": "Constraints",
+    "content": ". | The input_shape must be the same shape as the input data. | The output_shape (typically) must also be the same shape as the desired outputs. | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected.html#constraints",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected.html#constraints"
+  },"156": {
+    "doc": "Fully Connected Neural Networks",
+    "title": "Extensions",
+    "content": ". | Hidden layers: Any number of hidden layers (and corresponding sizes) can be specified using the --number_hidden_units argument | Output layer: The output can be of any shape (e.g., a 2D matrix, or a N-D tensor), as long as this shape is the same as the data. | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected.html#extensions",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected.html#extensions"
+  },"157": {
+    "doc": "Fully Connected Neural Networks",
+    "title": "Fully-Connected Neural Network Examples",
+    "content": ". | Regression: . | Exclusive OR Logic Function | . | Classification: . | Iris Shape Classification | . | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected.html#fully-connected-neural-network-examples",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected.html#fully-connected-neural-network-examples"
+  },"158": {
+    "doc": "Fully Connected Neural Networks",
+    "title": "More Details (Intermediate)",
+    "content": ". | Fully-Connected Neural Network Details | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected.html#more-details-intermediate",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected.html#more-details-intermediate"
+  },"159": {
+    "doc": "Fully Connected Neural Networks Schema",
+    "title": "Fully-Connected Network Schema Details",
+    "content": "A fully-connected network (FCN) is composed of a sequence of fully-connected layers (also referred to as Dense layers), followe by an output layer. However, there are many other components that can be added to these networks to improve their performance or to expand the types of problems that can be solved. In this section, we present the details of the Zero2Neuro Fully Connected Schema and show how the different components can be configured using network arguments. ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-network-schema-details",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-network-schema-details"
+  },"160": {
+    "doc": "Fully Connected Neural Networks Schema",
+    "title": "Fully-Connected Module",
+    "content": "The base of a FCN is implemented using a seqeunce of fully-connected modules, which add functionality on top of Fully Connected Layers: . Components: . | Fully Connected Layer (also referred to as a Dense Layer): a layer that contains the specified number of hidden neurons; each receives input from all neurons in the previous layer. | --hidden_activation: non-linear activation function | --number_hidden_units: number of hidden units in the layer | L1/L2 weight regularization (default = none): explicit form of regularization that penalizes the absolute value of weights (L1) or the square of the weights (L2). This penalty is added to the loss function. Typical choices for L1 are ~1; typical choices for L2 are 0.001 … 0.00001 | . | Dropout: during training, randomly deactivate neurons within the layer with the specified probability (default = none). This implements an implicit form of regularization. | Batch Normalization: scale and shift each output neuron of the module so their values individually fall within a standard normal distribution across a training batch. While computationally expensive, batch normalization can improve the overall speed of training for very deep networks. Default: none. | . Notes: . | All arguments are shared across all Fully-Connected Modules in the network, with the exception that each has its own number of neurons (--num_hidden_units accepts a list of hidden neuron numbers, one for each layer). | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-module",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-module"
+  },"161": {
+    "doc": "Fully Connected Neural Networks Schema",
+    "title": "Fully-Connected Network",
+    "content": ". Components . | Inputs: shape specified by --input_shape | Tokenizer: translation from an input string to a sequence of integers . | --tokenizer turns on tokenization; | Other options: TODO: link to description | . | Embedding + Flatten: translates a sequence of integers into a sequence of vectors which are then appended together to form one large vector . | --embedding_dims (int): length of the individual vectors | . | Batch Normalization (switch): Normalize the input feature values . | --batch_normalization_input (switch): Turn on batch normalization for the input features. | . | Input Dropout: randomly drop out input features during training. This can help the network to learn representations that rely on different subsets of input features. | --dropout_input (float): Dropout probability (0..1) | . | Fully Connected Layer: Final output layer . | --output_shape (int sequence): The shape of the network output | L1/L2 weight regularization (default = none): Same as for the Fully-Connected Modules. | . | . Notes: . | TODO | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-network",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-network"
+  },"162": {
+    "doc": "Fully Connected Neural Networks Schema",
+    "title": "Fully Connected Neural Networks Schema",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected_details.html",
+    
+    "relUrl": "/docs/modules/networkbuilder/fully_connected_details.html"
+  },"163": {
     "doc": "Zero2Neuro Tests",
     "title": "Zero2Neuro Tests",
     "content": "The following tests exercise specific Zero2Neuro features, covering different data formats, data configurations, and training options. | Categorical Variables: Testing the translation of categorical variables into integer representations . | Problem type: XOR | Data file type: csv and pickle | Case 1: Boolean strings (T/F) translated to 1 and 0 | Case 2: Integer-valued categorical columns (31/32 translated to 1 and 0) | Cases 3 &amp; 4: Pickle versions of Cases 1 and 2 | . | Tabular Test: Testing different header row and data column configurations using the XOR problem . | Problem type: XOR | Input data: binary feature vector | Model type: fully-connected (2 hidden layers: 20 and 10 units) | Data file type: csv | Multiple data configurations: . | Header row is non-standard (explicitly specified) | Case 1: Define a range of columns to use | Case 2: Define a list of columns to use | . | . | Tabular XLSX Test: Testing different header row and data column configurations using xlsx format . | Problem type: XOR | Input data: binary feature vector | Model type: fully-connected (2 hidden layers: 20 and 10 units) | Data file type: xlsx (multiple sheets) | Multiple data configurations: . | Case 1: single data table (maps to training set) | Case 2: two sheets in the same file are data tables 0 and 1, which are mapped to training and validation data sets, respectively | . | . | Data Conversion Test: Each data table is converted from a numpy array to a tf-dataset . | Problem type: XOR | Input data: binary feature vector | Model type: fully-connected (2 hidden layers: 20 and 10 units) | Data file type: xlsx | . | Tabular Weights Test: Testing per-sample weights in tabular data using the XOR problem . | Problem type: XOR | Input data: binary feature vector | Model type: fully-connected (2 hidden layers: 20 and 10 units) | Data file type: csv | Demonstrates the effect of different sample weights on model training | Look for: trained model will perform properly for the first three examples, but the output for the last example will typically be incorrect | . | Pickle Test: Testing the pickle data format with a parity problem . | Data file type: pickle | Data representation: numpy | Multiple data configurations across 6 variants | Fixed train/validation/testing data set splits | . | . ",
     "url": "/zero2neuro/dev/tests/",
     
     "relUrl": "/tests/"
-  },"154": {
+  },"164": {
     "doc": "Zero2Neuro Examples",
     "title": "Zero2Neuro Examples",
     "content": "The following examples explore the essential features of Zero2Neuro, inluding different data formats and network architectures. | Exclusive-Or: simple 2-input, 1-output logic problem. | Problem type: logistic regression | Input data: binary feature vector | Model type: fully-connected | Data file type: csv | Loss function: mean squared error | . | Iris: UCI iris flower classification problem . | Problem type: classification | Input data: feature vector | Model type: fully-connected | Data file type: csv | 4 input features | 3 classes specified using strings for categorical variable values | Loss function: sparse categorical cross-entropy | Metric: sparse categorical accuracy | Cross-Validation for generating training/validation/testing data sets | . | Wisconsin Diagnostic Breast Cancer . | Problem type: classification | Input data: feature vector | Model type: fully-connected | Data file type: csv | 30 input features | Estimate the probability of being in class M | Loss function: binary cross-entropy | Metric: binary accuracy | Cross-Validation for generating training/validation/testing data sets | . | Daily Rainfall Retrieval: Oklahoma Mesonet rainfall estimation from other weather sensors . | Problem type: both regression and classification | Input data: feature vector | Model type: fully-connected | Data file type: csv | ?? input features | Can be configured as either a continuous estimation problem or a rain/no rain classification problem | Loss functions: mean absolute error (mae) / Sparse categorical cross-entropy | Metrics: n/a / Sparse categorical accuracy | Cross-Validation for generating training/validation/testing data sets | . | Predicting Peptide Binding from Amino Acid Sequences . | Problem type: both regression and classification | Input data: strings of amino acid sequences | Model type: examples with fully-connected, convolutional neural network (1D), and recurrent neural network . | Tokenization by character (one character per amino acid) | Embedding: translate integer token ID to a vector | . | Data file type: csv | One input feature: variable length string | One output: either scaled binding affinity (0 … 1) or binary class | Loss functions: mean absolute error or binary cross-entropy | Metrics: mse/mae or binary accuracy | N-fold cross-validation | TF Datasets . | Example of translating CSV file to TF Dataset folds | Use of TF Dataset folds instead of CSV file | . | . | Sentiment140 Natural Language Processing . | Problem type: classification | Input data: strings of natural language | Model type: recurrent neural network . | Tokenization by whitespace (each token is a unique word) | Embedding: translate integer token ID to a vector | . | Data file type: csv | One input feature: string containing social media post | One output: whether the sentiment was positive (1) or negative (0) | Loss functions: binary cross-entropy | Metrics: binary accuracy | N-fold cross validation | . | Core 50 Image Recognition: Object classification problem from images . | Problem type: classification | Input data: images | Model type: convolutional neural network (2D) | Data file type: csv that refers to a set of images (tabular-indirect) . | Note: the image data are not included in this repository | . | Images are 128x128 in size | Output: 2 classes (though there are 10 available in the full data set) | Loss function: sparse categorical cross-entropy | Metrics: sparse categorical accuracy | Cross-Validation | . | . ",
     "url": "/zero2neuro/dev/examples/",
     
     "relUrl": "/examples/"
-  },"155": {
+  },"165": {
     "doc": "Zero2Neuro Examples",
     "title": "Test Examples",
     "content": "In addition to the standard examples, we also have a set of tests that exercise different Zero2Neuro features. See Test Example Documentation . ",
     "url": "/zero2neuro/dev/examples/#test-examples",
     
     "relUrl": "/examples/#test-examples"
-  },"156": {
+  },"166": {
     "doc": "Getting Started",
     "title": "Getting Started with Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/#getting-started-with-zero2neuro",
     
     "relUrl": "/docs/getting_started/#getting-started-with-zero2neuro"
-  },"157": {
+  },"167": {
     "doc": "Getting Started",
     "title": "Existing Python/Zero2Neuro Environments (easy)",
     "content": "We have multiple options for accessing pre-existing Python and Zero2Neuro environments . | Oklahoma researchers and students: OU Supercomputer | (many) US University researchers and students: Jupyter Lab | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#existing-pythonzero2neuro-environments-easy",
     
     "relUrl": "/docs/getting_started/#existing-pythonzero2neuro-environments-easy"
-  },"158": {
+  },"168": {
     "doc": "Getting Started",
     "title": "Setting up Your Own Environment (advanced)",
     "content": "Python: . | General instructions: Setting up a Python Virtual Environment; see Using a requirements file | Requirements File for Zero2Neuro | . Zero2Neuro: . | Download and Configure Zero2Neuro | . ",
     "url": "/zero2neuro/dev/docs/getting_started/#setting-up-your-own-environment-advanced",
     
     "relUrl": "/docs/getting_started/#setting-up-your-own-environment-advanced"
-  },"159": {
+  },"169": {
     "doc": "Getting Started",
     "title": "Getting Started",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/",
     
     "relUrl": "/docs/getting_started/"
-  },"160": {
+  },"170": {
     "doc": "Zero2Neuro Engine",
     "title": "Zero2Neuro Engine",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/zero2neuro/",
     
     "relUrl": "/docs/modules/zero2neuro/"
-  },"161": {
+  },"171": {
     "doc": "Zero2Neuro Engine",
     "title": "Description",
     "content": "The Zero2Neuro engine is in charge of taking in the data sets from SuperDataSet and the untrained model from Network Builder and performing the experiment. ",
     "url": "/zero2neuro/dev/docs/modules/zero2neuro/#description",
     
     "relUrl": "/docs/modules/zero2neuro/#description"
-  },"162": {
+  },"172": {
     "doc": "Zero2Neuro Engine",
     "title": "Links",
     "content": ". | Training A Model | Saving Results | . ",
     "url": "/zero2neuro/dev/docs/modules/zero2neuro/#links",
     
     "relUrl": "/docs/modules/zero2neuro/#links"
-  },"163": {
+  },"173": {
     "doc": "SuperDataSet",
     "title": "SuperDataSet",
     "content": "SuperDataSet is responsible for loading your data and configuring it for a training/evaluation experiment. We support a range of file formats and configuration options. ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/",
     
     "relUrl": "/docs/modules/superdataset/"
-  },"164": {
+  },"174": {
     "doc": "SuperDataSet",
     "title": "Data Sets",
     "content": "A data set for machine learning is composed of a set of examples. Often, a single example is composed of an input/desired output pair, meaning that for a given numerical input, the ideal model will produce the desired output. For any machine learning experiment, it is important to distinguish between several different data set types: . | Training data sets are used to adjust the parameters of a model. In the deep network context, these parameters are adjusted incrementally to gradually reduce the prediction errors made by the model on the training data set. | Validation data sets are independent of the training set and are used to: . | Evaluate the performance of a model at each training step. This information is often used to detech when training is complete. | Compare the model to itself under different choices of hyper-parameter sets. | . | Test data sets are independent of both the training and validation data sets, and act as a simulation of possible future data sets. As such, a test data set is used only for the final evaluation of a model after hyper-parameter choices are made. | . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/#data-sets",
     
     "relUrl": "/docs/modules/superdataset/#data-sets"
-  },"165": {
+  },"175": {
     "doc": "SuperDataSet",
     "title": "Stochastic Nature of Machine Learning Training and Evaluation",
     "content": "The training of machine-learned models is a stochastic process due to a range of factors, including: . | the selection of the data used for training, validatin, and testing, | the initial choices for the model parameters (which are randomly selected), and | random factors during the training process (e.g., random assignment of examples to training batches, or Dropout). | . The consequence of these random processes is that when we train a model multiple times (even when we think the conditions are the same), the performance of the model (e.g., accuracy) can vary to some degree. Using statistical language, we say that the performance is a random variable. In practice, this means that training and evaluating a model cannot be done just once - if we want to show that a model is doing its job and doing it well, then we must show that it does so consistently under different training and evaluation conditions. SuperDataSet provides support for a range of different ways of constructing data sets, depending on what your goals are - all the way from only using a training set for a quick, informal exaperiment, to assembling multiple training, validation, and testing data sets to be used for formal evalution, including Cross-Validation. ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/#stochastic-nature-of-machine-learning-training-and-evaluation",
     
     "relUrl": "/docs/modules/superdataset/#stochastic-nature-of-machine-learning-training-and-evaluation"
-  },"166": {
+  },"176": {
     "doc": "SuperDataSet",
     "title": "SuperDataSet Topics",
     "content": ". | Example: Loading Data Files | Supported File Types | Intermediate: Data Files to Data Sets | Advanced: Internal Data Representation | . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/#superdataset-topics",
     
     "relUrl": "/docs/modules/superdataset/#superdataset-topics"
-  },"167": {
+  },"177": {
     "doc": "Advanced Experiments",
     "title": "Conducting Advanced Experiments",
     "content": ". | Performing many experiments at once | . ",
     "url": "/zero2neuro/dev/docs/modules/experiments/#conducting-advanced-experiments",
     
     "relUrl": "/docs/modules/experiments/#conducting-advanced-experiments"
-  },"168": {
+  },"178": {
     "doc": "Advanced Experiments",
     "title": "Advanced Experiments",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/experiments/",
     
     "relUrl": "/docs/modules/experiments/"
-  },"169": {
+  },"179": {
     "doc": "Network Builder",
     "title": "Network Builder",
     "content": "The Network Builder module is responsible for creating the specific neural network model for your experiments. The details of the network type (schema), the number and types of layers, and nature of the network output are all specified using arguments within a configuration file (typically the network configuration file). ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/",
     
     "relUrl": "/docs/modules/networkbuilder/"
-  },"170": {
+  },"180": {
     "doc": "Network Builder",
     "title": "Prediction Problem Types",
     "content": "Deep neural networks solve a range of different problem types, determined by the: . | the output of the model and how it is interpretted, | how the desired outputs are expressed, and | the loss function that is used to compare model outputs to the desired outputs | . The fundamental types of prediction problem supported by Zero2Neuro are Regression and Classification. Regression . | Output type: a real (continuous) value, a vector of real values, or any shaped tensor of values | Output interpretation: any continuous prediction, such as rainfall rate, or stock price | Desired outputs: also real values | Loss function: it is not uncommon to use Mean Squared Error (mse) or Mean Absolute Error (mae) | . Binary Classification . | Output type: a continous value in the range 0..1 (or any shaped tensor) | Output interpretation: the probability of some event, such as the probability that a protein will bind to some molecule, or the probability that an image contains a cat | Desired outputs: binary values (0 or 1) | Loss function: binary cross-entropy | . Categorical Classification . | Output type: a vector of continuous values that 1) each fall in the range 0..1, and 2) sum to 1 | Output interpretation: probability distribution over a discrete set of choices | Desired outputs: two typical options: . | Categorical Classification: One-hot encoded representation of the correct choice (all zeros, except for a single one in the correct position) | Sparse Categorical Classification: a single natural integer (0, 1, 2, …) that corresponds to the correct answer | . | Loss function: two options: . | categrocial cross-entropy | sparse categorical cross-entropy | . | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/#prediction-problem-types",
     
     "relUrl": "/docs/modules/networkbuilder/#prediction-problem-types"
-  },"171": {
+  },"181": {
     "doc": "Network Builder",
     "title": "Network Architectures Types",
     "content": "Different architecture types apply to different forms of model inputs and model outputs. Zero2Neuro includes schemata for a number of common network architecture types. Each architecture type supports regression and classification problems, depending on how it is configured. The key network types are: . | Fully-Connected Networks: . | The input is typically a continuous vector of some size | The output is also some scalar value or vector | . | Convolutional Neural Networks (CNNs): . | The input contains some form of spatial or temporal structure, including: . | A a squence of vectors (a 1-dimensional input) . | Example: the position and velocity of some object over time | Example: a sequence of words | . | A 2D grid of vectors (a 2-dimensional input) . | Example: a color image | . | A 3D grid of vectors (a 3-dimensional input) . | Example: a description of the atmosphere in terms of a vector at each 3D grid cell (e.g., the temperature, pressure, and speed of each voxel) | . | . | The output is some scalar value or vector | . | Recurrent Neural Networks (RNNs): . | The input contains some 1D spatial or temporal structure | The output can be either: . | A scalar value or vector | A 1D sequence of scalar values or vectors (often, there is one output vector for each input vector) | . | . | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/#network-architectures-types",
     
     "relUrl": "/docs/modules/networkbuilder/#network-architectures-types"
-  },"172": {
+  },"182": {
     "doc": "Network Builder",
     "title": "More Details",
     "content": ". | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network (Beginner) | Convolutional Neural Network (Intermediate) | Recurrent Neural Network (Intermediate) | . | TODO: tokenization and embedding | TODO: preprocessing | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/#more-details",
     
     "relUrl": "/docs/modules/networkbuilder/#more-details"
-  },"173": {
+  },"183": {
     "doc": "Zero2Neuro Modules",
     "title": "Zero2Neuro Modules",
     "content": "Zero2Neuro consistis of three primary modules that work together to allow you to import your data (SuperDataset), create your ML model (Network Builder), and conduct training and evaluation of that model (Zero2Neuro Training and Evaluation Engine). Each module is configured with a set of command-line arguments that can conveniently partitioned into separate configuration text files. ",
     "url": "/zero2neuro/dev/docs/modules/",
     
     "relUrl": "/docs/modules/"
-  },"174": {
+  },"184": {
     "doc": "Zero2Neuro Modules",
     "title": "Modules",
     "content": ". | SuperDataSet . | Import one or more files containing data | Construct from these data: training, validation, and testing data sets | . | Network Builder . | Create a deep neural network that implements your model | Supported DNN types include: . | Fully-connected networks (FCNs) | Convolutional neural networks (CNNs) | Recurrent neural networks (RNNs), including simple RNNs, Long-Short-Term Memory networks (LSTMs), and Gated Recurrent Unit-based networks (GRUs) | . | . | Zero2Neuro Engine . | Use the training and validation data sets to train the model until specified criteria are met | (Weights and Biases support)[https://wandb.ai] for tracking and comparing models | Evaluation of the trained model against each of the training, validation, and testing data sets | Generation of reports for further analysis | . | . ",
     "url": "/zero2neuro/dev/docs/modules/#modules",
     
     "relUrl": "/docs/modules/#modules"
-  },"175": {
+  },"185": {
     "doc": "Zero2Neuro Modules",
     "title": "Advanced Topics",
     "content": ". | . ",
     "url": "/zero2neuro/dev/docs/modules/#advanced-topics",
     
     "relUrl": "/docs/modules/#advanced-topics"
-  },"176": {
+  },"186": {
     "doc": "Zero2Neuro",
     "title": "Zero2Neuro",
     "content": ". Zero2Neuro is a no-code toolbox for constructing, training and evaluating Deep Neural Network (DNN) models for a wide range of modeling problems. This package provides easy-to-use solutions for: . | Loading data stored in a variety of formats (including the common Comma Separated Values format), and configuring the data for use in DNN training and evaluation. | Creation of Deep Neural Network models from several flexible DNN model schemata, including fully-connected networks (FCNs), convolutional neural networks (CNNs), and U-Nets. The user specifies the structural details of their specific model. | A standard DNN training and evaluation engine. This engine supports the production of result reports in various formats, including hooks for Weights and Biases. | . ",
     "url": "/zero2neuro/dev/",
     
     "relUrl": "/"
-  },"177": {
+  },"187": {
     "doc": "Zero2Neuro",
     "title": "Supported Environments",
     "content": "You can execute Zero2Neuro in several different environments, depending on your needs: . | Bash shell command line | Supercomputer using SLURM | Jupyter Notebooks | . ",
     "url": "/zero2neuro/dev/#supported-environments",
     
     "relUrl": "/#supported-environments"
-  },"178": {
+  },"188": {
     "doc": "Zero2Neuro",
     "title": "Flexible Configuration",
     "content": "The user specifies the details behind their specific DNN experiment using a set of simple configuration files: . | Data configuration includes: . | Location of data files and their type | Individual data features to be extracted from the files that capture the model inputs and desired outputs | Translation of data types for categorical variables, including one-hot encoding | Creation of training, validation, and testing data sets | . | Model configuration includes: . | Model schema | Form of the model inputs | Number and sizes of model layers | Non-linearities for hidden and output layers | . | Training/evaluation engine configuration includes: . | Learning parameters | Loss functions and metrics | Early-stopping parameters | How experiment results are reported | . | . ",
     "url": "/zero2neuro/dev/#flexible-configuration",
     
     "relUrl": "/#flexible-configuration"
-  },"179": {
+  },"189": {
     "doc": "Zero2Neuro",
     "title": "Detailed Example",
     "content": "The Full Example demonstrates the configuration and execution process for solving a simple logic problem. ",
     "url": "/zero2neuro/dev/#detailed-example",
     
     "relUrl": "/#detailed-example"
-  },"180": {
+  },"190": {
     "doc": "Zero2Neuro",
     "title": "Dependencies",
     "content": "Zero2Neuro is implemented in Python and built on top of Keras3. A full set of machine-readable dependencies is available for download . ",
     "url": "/zero2neuro/dev/#dependencies",
     
     "relUrl": "/#dependencies"
-  },"181": {
+  },"191": {
     "doc": "Zero2Neuro",
     "title": "Documentation Links",
     "content": ". | Why Zero2Neuro | Getting Started | Examples | Modules | API | Frequently Asked Questions | Road Map | Contributors | . ",
     "url": "/zero2neuro/dev/#documentation-links",
     
     "relUrl": "/#documentation-links"
-  },"182": {
+  },"192": {
     "doc": "Zero2Neuro",
     "title": "References",
     "content": ". | Zero2Neuro Repository | Zero2Neuro Presentation | . ",
     "url": "/zero2neuro/dev/#references",
     
     "relUrl": "/#references"
-  },"183": {
-    "doc": "Neural Networks Tutorial",
-    "title": "Key Concepts",
-    "content": "Individual neurons . A neuron is a computational unit of a neural network. Each neuron: . | Take n inputs | Multiply each input by a corresponding weight | Add a bias to the weighted sum of inputs | Apply a non-linear activation | . Non-linearities . Non-linear activation functions are what make neural networks special, without non-linearity a model can only graph a linear function. Activation function examples: . | ReLU | Tanh | Sigmoid | Softmax | . These non linear activation functions allow neural networks to: . | Learn complex relationships | Approximate non-linear functions | . Layers . Layers are collections of neurons inside the section of the network. There are three types of layers: . | Input layer: Takes in input data | Hidden layers: Perform transformations on input data | Output layers: Makes the final prediction | . Each layer transforms its input and deep neural networks can have several layers. Network Architecture . A model’s architecture consists of: . | Number of layers | Number of neurons in each layer | How each layer connects | . The more complex an architecture the better its ability to approximate complex functions. Architecture Examples: . | Fully connected networks | Convolutional networks | Recurrent networks | . Propagation . Forward Propagation . Forward propagation is the process than eables passing input data through each layer. Each layer: . | The linear transformation gets applied (weight and bias) | Non-linear activation function is applied | Result is passed to the next layer | . Once it reaches the output layer the model will make a prediction. Backpropagation . TODO . Loss Functions . Loss functions show the level of error between the prediction and true value. Examples: . | Mean Squared Error | Mean Absolute Error | Cross-Entropy Loss | . Optimizers . Optimizers update the model parameters in order to minimize the loss function. Examples: . | Adam | Lion | . ",
-    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#key-concepts",
-    
-    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#key-concepts"
-  },"184": {
+  },"193": {
     "doc": "Neural Networks Tutorial",
     "title": "Neural Networks Tutorial",
-    "content": "TODO . ",
+    "content": " ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html",
     
     "relUrl": "/docs/modules/networkbuilder/network_tutorial.html"
-  },"185": {
+  },"194": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Individual Neurons",
+    "content": "The fundamental unit in a deep neural network is the individual neuron. The neuron receives N continuous (real numbered) inputs () that each have their own weight (). In addition, each neuron includes its own bias term (). The neuron computes its state in two stages: . | The net input () into the neuron is a weighted sum of the inputs and the bias: | . | The net input into the neuron is (typically) transformed using a nonlinear activation function of the following form: | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#individual-neurons",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#individual-neurons"
+  },"195": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Non-Linearities",
+    "content": "Non-linearities are key to the utility of deep neural networks. The choice of non-linearity varies depending on the type of problem that is being solved. Traditional non-linear activation functions include: . | sigmoid: the output range falls within [0,1]. This can be interpretted as a probability. | tanh (hyperbolic tangent): similar shape as signmoid, but has a symmetric output range of [-1,1]. | . Other common non-linear activation functions (often used for regression) include the following: . | relu has an output range of [0, infinity], and is piecewise-linear (with no derivative at zero). | elu has an output range of [-1, infinity] and has a similar shape as relu, except that it has a non-zero derivative throughout the input domain (though the derivative becomes very small to the left) | elup1 (elu plus 1; a custom Zero2Neuro non-linearity) has an output range of [0, infinity] | gelu has an output range of [-.17, infinity] | . Full documentation for available non-linear activation functions can be found in the Keras Activation Function Documentation. ___ . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#non-linearities",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#non-linearities"
+  },"196": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Collections of Neurons",
+    "content": "The power of deep neural networks comes from the assembly of many individual neurons into layers and multiple layers into a much larger network. The following is an example fully connected network: . | There are 7 neurons that comprise the input to the network. The continous value associated with each of these neurons is supplied from “outside” the network. One can think of the group of inputs as a 7-element vector. | Each input neuron is connected to each neuron in Layer 1. These connections all have their own set of parameters (a total of 7x5 + 5 weights and biases, respectively). Likewise each neuron in Layer 1 is connected to Layer 2, and each in Layer 2 is connected to each of Layer 3. | Layer 3 contstitutes the output of the network. Because there are two neurons in the output layer, we can think of the network as generating a 2-element vector as the output. | The network training process typically involves the use of a set of known input/desired output pairs (i.e., the input and what the network should output in response). | When there is a disagreement between what the network actually produces as output and the desired values, the parameters are adjusted to reduce this disagreement. | The input/desired output pairs do not explicitly determine how the neurons in intermediate layers (1 and 2) should respond to inputs. For this reason, these layers are often referred to as _hidden layers__. The network training process infers how these neurons should “behave” in service to producing the correct output values. | . | It is typical to choose different non-linear activation functions for the hidden layers and the output layer. The latter is often chosen to match the output range of the desired outputs. | The neurons within any given layer are independent of one-another: they have their own weights and biases. A notable exception is the softmax activation function that takes into account the net input for all of the neurons in the layer when computing the output activation for each neuron. | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#collections-of-neurons",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#collections-of-neurons"
+  },"197": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Generalizations",
+    "content": "Network input / outputs do not have to be single vectors as shown in the example above. For example . | An image can be represented as a 2D field of vectors (with each pixel containing a vector that represents the red, green, and blue components of a color). | A timeseries is a 1D field of vectors (e.g., x,y,z of some object over time). | A movie is a 3D field of vectors (2 spatial dimenstions + 1 time dimension of color vectors). | A sentence is a 1D field of tokens. | . Choosing your network architecture, including the number and dimensionality of your inputs and outputs, as well as the non-linear activation functions of your hidden and output neurons, depends on the nature of your data and on the type of problem that you are trying to solve. ___ . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#generalizations",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#generalizations"
+  },"198": {
+    "doc": "Neural Networks Tutorial",
+    "title": "Loss Functions",
+    "content": "The loss function is a function that measures the degree of error between the output of the network and the corresponding desired output. Typical loss functions for regression include: . | Mean squared error (mse). This is the same loss function that is used by traditional linear regression. | Mean absolute error (mae). | . Typical loss functions for classifier networks include: . | Binary cross-entropy. | Categorical cross-entropy. | Sparse categorical cross-entropy. | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/network_tutorial.html#loss-functions",
+    
+    "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#loss-functions"
+  },"199": {
     "doc": "Roadmap",
     "title": "Zero2Neuro Roadmap",
     "content": "Our priorities for continued development include: . | The ability for users to provide plug-in code to implement custom functionality inside of Zero2Neuro, including: . | Loading custom file formats | Building custom networks | Preprocessing of data after the training, validation, and test data sets have been constructed | Custom fold-to-data-set translation | . | Automatic checkpointing and recovery . | Key for long-term training experiments on a supercomputer | . | Splitting data randomly with stratification . | UNet schema . | Support for Scikit-Learn models . | Orthogonalized cross-validation | . ",
     "url": "/zero2neuro/dev/docs/roadmap.html#zero2neuro-roadmap",
     
     "relUrl": "/docs/roadmap.html#zero2neuro-roadmap"
-  },"186": {
+  },"200": {
     "doc": "Roadmap",
     "title": "Roadmap",
     "content": " ",
     "url": "/zero2neuro/dev/docs/roadmap.html",
     
     "relUrl": "/docs/roadmap.html"
-  },"187": {
+  },"201": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options (Advanced)",
     "content": "These arguments can be used for both csv and xlsx formatted files . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced"
-  },"188": {
+  },"202": {
     "doc": "Tabular File Options",
     "title": "Header Row",
     "content": "By default, the header row is assumed to be the first row. This argument can be used to set a different row . --tabular_header_row=ROW . where ROW is the row index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-row",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-row"
-  },"189": {
+  },"203": {
     "doc": "Tabular File Options",
     "title": "Header Names",
     "content": "Some tabular files do not contain a header row. Use this argument to force the names of the columns . --tabular_header_names COL1 COL2 : . where COLX is the string name for column X. ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-names",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-names"
-  },"190": {
+  },"204": {
     "doc": "Tabular File Options",
     "title": "Tabular Columns",
     "content": "In some cases, one must ignore a subset of the tabular columns. The next two arguments can be used to specify the set of columns to use for the full set of fields. --tabular_column_range START END . where START and END are integers specifying the column indices to include (columns START … END, including END). --tabular_column_list COL1 COL2 : . where COLX is an integer column index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-columns",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-columns"
-  },"191": {
+  },"205": {
     "doc": "Tabular File Options",
     "title": "Text Encoding",
     "content": "The name of the byte encoding for the tabular files. --tabular_encoding=ENCODING . The default value of tabular_encoding is None (a reasonable choice). In this case, SuperDataSet uses the content of the file to guess the character encoding. If the format cannot be guessed, then SuperDataSet will use utf-8. One can also specify the character encoding explicitly: see the Python Standard Encodings Table . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#text-encoding",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#text-encoding"
-  },"192": {
+  },"206": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html"
-  },"193": {
+  },"207": {
     "doc": "What's New?",
     "title": "What’s New with Zero2Neuro?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html#whats-new-with-zero2neuro",
     
     "relUrl": "/docs/whats_new.html#whats-new-with-zero2neuro"
-  },"194": {
+  },"208": {
     "doc": "What's New?",
     "title": "2026-04-10: Version 0.6.0",
     "content": ". | Extensive online documentation | . ",
     "url": "/zero2neuro/dev/docs/whats_new.html#2026-04-10-version-060",
     
     "relUrl": "/docs/whats_new.html#2026-04-10-version-060"
-  },"195": {
+  },"209": {
     "doc": "What's New?",
     "title": "What's New?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html",
     
     "relUrl": "/docs/whats_new.html"
-  },"196": {
+  },"210": {
     "doc": "Why Zero2Neuro?",
     "title": "Why Zero2Neuro?",
     "content": "Our goals in developing Zero2Neuro are to: . | Provide a low barrier-to-entry for new users to access deep learning tools in building predictive models using their own data and experimental questions . | Provide a range of common model types that can be easily configured for use . | Codify a set of best (good?) practices for performing machine learning experiments . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html",
     
     "relUrl": "/docs/why_zero2neuro.html"
-  },"197": {
+  },"211": {
     "doc": "Why Zero2Neuro?",
     "title": "How to Use this Documentation",
     "content": "This documentation is written for users with a range of knowledge. Top level material provides general introduction to the different topics. Deeper material is often tagged with anticipated knowledge level: . | Tutorial: detailed introduction to key concepts | Beginner: what a new user needs to know to get started | Intermediate: useful additions as a user begins to gain some experience with using Zero2Neuro | Advanced: the powerful tools and options | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#how-to-use-this-documentation",
     
     "relUrl": "/docs/why_zero2neuro.html#how-to-use-this-documentation"
-  },"198": {
+  },"212": {
     "doc": "Why Zero2Neuro?",
     "title": "What Zero2Neuro is Not",
     "content": "While our goal is for Zero2Neuro to have practical use in research pipelines, we do not pretend that this is a solution to all problems. Some users will find that Zero2Neuro does everything they need. Other users will find that with experience, they will grow out of Zero2Neuro and “strike out” on their own by writing their own Python code (either by creating code that plugs in to Zero2Neuro, using only some Zero2Neuro components, or developing entirely new code bases). All options are fine and encouraged! . We do not anticipate Zero2Neuro to solve problems in the areas of: . | Large Language Models (though we support data involving sequences of tokens!) . | Reinforcement Learning . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#what-zero2neuro-is-not",
     
     "relUrl": "/docs/why_zero2neuro.html#what-zero2neuro-is-not"
-  },"199": {
+  },"213": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing Configuring Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
-  },"200": {
+  },"214": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
-  },"201": {
+  },"215": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
-  },"202": {
+  },"216": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
-  },"203": {
+  },"217": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
-  },"204": {
+  },"218": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing and Configuring Zero2Neuro",
     "content": " ",
