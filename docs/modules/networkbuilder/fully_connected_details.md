@@ -31,7 +31,6 @@ Components
 - __Inputs__: shape specified by ```--input_shape```
 - __Tokenizer__: translation from an input string to a sequence of integers
    - ```--tokenizer``` turns on tokenization;
-   - Other options: TODO: link to description
 - __Embedding + Flatten__: translates a sequence of integers into a sequence of vectors which are then appended together to form one large vector
    - ```--embedding_dims``` (int): length of the individual vectors
 - __Batch Normalization__ (switch): Normalize the input feature values
@@ -42,5 +41,7 @@ Components
    - ```--output_shape``` (int sequence): The shape of the network output
    - L1/L2 weight regularization (default = none): Same as for the Fully-Connected Modules.
 
-Notes:
-- TODO   
+References:
+   - [Tokenization and Embedding](tokenization_embedding.md)
+   - [Input Batch Normalization](input_batch_normalization.md)
+

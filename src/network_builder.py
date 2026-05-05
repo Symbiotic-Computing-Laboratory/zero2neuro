@@ -172,7 +172,14 @@ class NetworkBuilder:
                                                                        )
 
 
-                                               
+            elif args.network_type == 'plugin':
+                # TODO
+                models = plugin_manager.apply_plugins(
+                    'custom_network_builder',
+                    chaining = False,
+                    args = args,
+                )    
+
             else:
                 handle_error('Unsupported network type (%s)'%args.network_type, args.verbose)
 

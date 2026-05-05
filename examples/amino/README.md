@@ -47,7 +47,7 @@ Notes
 - Because the example inputs are strings, we must take two preprocessing steps (could be defined here or in the network configuration):
    1. Tokenization: translate a string into a sequence of integers
       - Split by individual characters since they map to individual amino acids
-      - We define the maximum number of unique tokens (we happen to know that this is 24).  Each unique token is assigned a unique integer prior to the learning process (based on the training data set); tokens are include a "no value" and an "unknown value" token.
+      - We define the maximum number of unique tokens (we happen to know that this is 24).  Each unique token is assigned a unique integer prior to the learning process (based on the training data set); tokens are include a "no value" and an "unknown value" token.q
       - We declare the maximum number of tokens in the sequence (30)
    2. Embedding: translate token integer into a vector
       - Embedding dimensions is the size of the vector
@@ -151,11 +151,11 @@ python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt  -v
 ```
 
 Notes:
-- --data_save_folds indicates where the TF_dataset directories should
+- ```--data_save_folds``` indicates where the TF_dataset directories should
 be placed.  These are placed in ds/amino_fold_00.ds,
 ds/amino_fold_01.ds, ...  Each is a directory with a small number of
 files
-- --nogo means that only the data are saved and no training is
+- ```--nogo``` means that only the data are saved and no training is
 performed during this extraction
 
 

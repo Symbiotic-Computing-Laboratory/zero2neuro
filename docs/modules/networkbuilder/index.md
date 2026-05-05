@@ -68,7 +68,11 @@ Different architecture types apply to different forms of model inputs and model 
    - [Fully-Connected Neural Network](fully_connected.md) (Beginner)
    - [Convolutional Neural Network](cnn.md) (Intermediate)
    - [Recurrent Neural Network](rnn.md) (Intermediate)
-- TODO: tokenization and embedding
-- TODO: preprocessing
+- Model-Embedded Preprocessing (Intermediate)
+   - [Tokenization and Embedding](tokenization_embedding.md)
+   - [Input Batch Normalization](input_batch_normalization.md)
+
+
+
 
 
