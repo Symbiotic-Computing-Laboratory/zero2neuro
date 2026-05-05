@@ -337,7 +337,7 @@
   },"48": {
     "doc": "Predicting Peptide Binding from Amino Acid Sequences",
     "title": "Data Configuration",
-    "content": "Data Configuration File . Notes . | The CSV file does not include header names, so these are supplied in the configuration | Because the example inputs are strings, we must take two preprocessing steps (could be defined here or in the network configuration): . | Tokenization: translate a string into a sequence of integers . | Split by individual characters since they map to individual amino acids | We define the maximum number of unique tokens (we happen to know that this is 24). Each unique token is assigned a unique integer prior to the learning process (based on the training data set); tokens are include a “no value” and an “unknown value” token. | We declare the maximum number of tokens in the sequence (30) | . | Embedding: translate token integer into a vector . | Embedding dimensions is the size of the vector | This mapping is learned during model training | . | . | . ",
+    "content": "Data Configuration File . Notes . | The CSV file does not include header names, so these are supplied in the configuration | Because the example inputs are strings, we must take two preprocessing steps (could be defined here or in the network configuration): . | Tokenization: translate a string into a sequence of integers . | Split by individual characters since they map to individual amino acids | We define the maximum number of unique tokens (we happen to know that this is 24). Each unique token is assigned a unique integer prior to the learning process (based on the training data set); tokens are include a “no value” and an “unknown value” token.q | We declare the maximum number of tokens in the sequence (30) | . | Embedding: translate token integer into a vector . | Embedding dimensions is the size of the vector | This mapping is learned during model training | . | . | . ",
     "url": "/zero2neuro/dev/examples/amino/README.html#data-configuration",
     
     "relUrl": "/examples/amino/README.html#data-configuration"
@@ -386,7 +386,7 @@
   },"55": {
     "doc": "Predicting Peptide Binding from Amino Acid Sequences",
     "title": "Bonus Example: TF-Datasets",
-    "content": "The data set described above is represented in Zero2Neuro as a numpy array. The alternative to this representation is a TF-Dataset, which is more structured, but can be much more efficient when loading the data from disk and managing it in RAM. These efficiencies are particularly visible when the data set is very large (even large enough to not fit entirely in the available RAM). In the following example, we translate the Amino Acid dataset from CSV format to TF-Dataset format. As part of this process, we first split the CSV dataset into 10 folds before saving each fold separately in a TF Dataset file format. These folds can then be reassembled later to form the training, validation, and testing data sets on the fly. Translate the input amino acid tabular data into a set of TF Dataset folds. | Create the local ‘ds’ directory: mkdir ds . | Generate the folded data without performing an experiment | . python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt -vvv --data_save_folds ds/amino --nogo . Notes: . | –data_save_folds indicates where the TF_dataset directories should be placed. These are placed in ds/amino_fold_00.ds, ds/amino_fold_01.ds, … Each is a directory with a small number of files | –nogo means that only the data are saved and no training is performed during this extraction | . Use the TF-Dataset files instead of the raw amino acid file . The key difference is that we now use an alternative data configuration file: data_tf.txt: . python $ZERO2NEURO_PATH/zero2neuro.py @data_tf.txt @experiment.txt @network.txt -vvv . ",
+    "content": "The data set described above is represented in Zero2Neuro as a numpy array. The alternative to this representation is a TF-Dataset, which is more structured, but can be much more efficient when loading the data from disk and managing it in RAM. These efficiencies are particularly visible when the data set is very large (even large enough to not fit entirely in the available RAM). In the following example, we translate the Amino Acid dataset from CSV format to TF-Dataset format. As part of this process, we first split the CSV dataset into 10 folds before saving each fold separately in a TF Dataset file format. These folds can then be reassembled later to form the training, validation, and testing data sets on the fly. Translate the input amino acid tabular data into a set of TF Dataset folds. | Create the local ‘ds’ directory: mkdir ds . | Generate the folded data without performing an experiment | . python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt -vvv --data_save_folds ds/amino --nogo . Notes: . | --data_save_folds indicates where the TF_dataset directories should be placed. These are placed in ds/amino_fold_00.ds, ds/amino_fold_01.ds, … Each is a directory with a small number of files | --nogo means that only the data are saved and no training is performed during this extraction | . Use the TF-Dataset files instead of the raw amino acid file . The key difference is that we now use an alternative data configuration file: data_tf.txt: . python $ZERO2NEURO_PATH/zero2neuro.py @data_tf.txt @experiment.txt @network.txt -vvv . ",
     "url": "/zero2neuro/dev/examples/amino/README.html#bonus-example-tf-datasets",
     
     "relUrl": "/examples/amino/README.html#bonus-example-tf-datasets"
@@ -1128,7 +1128,7 @@
   },"161": {
     "doc": "Fully Connected Neural Networks Schema",
     "title": "Fully-Connected Network",
-    "content": ". Components . | Inputs: shape specified by --input_shape | Tokenizer: translation from an input string to a sequence of integers . | --tokenizer turns on tokenization; | Other options: TODO: link to description | . | Embedding + Flatten: translates a sequence of integers into a sequence of vectors which are then appended together to form one large vector . | --embedding_dims (int): length of the individual vectors | . | Batch Normalization (switch): Normalize the input feature values . | --batch_normalization_input (switch): Turn on batch normalization for the input features. | . | Input Dropout: randomly drop out input features during training. This can help the network to learn representations that rely on different subsets of input features. | --dropout_input (float): Dropout probability (0..1) | . | Fully Connected Layer: Final output layer . | --output_shape (int sequence): The shape of the network output | L1/L2 weight regularization (default = none): Same as for the Fully-Connected Modules. | . | . Notes: . | TODO | . ",
+    "content": ". Components . | Inputs: shape specified by --input_shape | Tokenizer: translation from an input string to a sequence of integers . | --tokenizer turns on tokenization; | . | Embedding + Flatten: translates a sequence of integers into a sequence of vectors which are then appended together to form one large vector . | --embedding_dims (int): length of the individual vectors | . | Batch Normalization (switch): Normalize the input feature values . | --batch_normalization_input (switch): Turn on batch normalization for the input features. | . | Input Dropout: randomly drop out input features during training. This can help the network to learn representations that rely on different subsets of input features. | --dropout_input (float): Dropout probability (0..1) | . | Fully Connected Layer: Final output layer . | --output_shape (int sequence): The shape of the network output | L1/L2 weight regularization (default = none): Same as for the Fully-Connected Modules. | . | . References: . | Tokenization and Embedding | Input Batch Normalization | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-network",
     
     "relUrl": "/docs/modules/networkbuilder/fully_connected_details.html#fully-connected-network"
@@ -1275,7 +1275,7 @@
   },"182": {
     "doc": "Network Builder",
     "title": "More Details",
-    "content": ". | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network (Beginner) | Convolutional Neural Network (Intermediate) | Recurrent Neural Network (Intermediate) | . | TODO: tokenization and embedding | TODO: preprocessing | . ",
+    "content": ". | Introduction to Neural Networks (Tutorial) | Network Schemata . | Fully-Connected Neural Network (Beginner) | Convolutional Neural Network (Intermediate) | Recurrent Neural Network (Intermediate) | . | Model-Embedded Preprocessing (Intermediate) . | Tokenization and Embedding | Input Batch Normalization | . | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/#more-details",
     
     "relUrl": "/docs/modules/networkbuilder/#more-details"
@@ -1448,83 +1448,104 @@
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html"
   },"207": {
+    "doc": "Tokenization and Embedding",
+    "title": "Tokenization and Embedding",
+    "content": "Tokenizaiton and embedding allow our DNN models to receive text and other discrete objects as input. Tokenization is the process of translating text into a sequence of integer values (specifically, natural numbers). For example, each integer might represent a different word in an input sentence. The tokenization process is implemented using a table that maps unique words to integers. For our purposes, these sequences are a defined length (e.g., a maximum of 20 words). Two special tokens address exceptional conditions: the unknown token represents any word that is not recognized; the nonexistent token is used to fill slots in the fixed length sequence that have no corresponding word. For example, consider the following table: . | Token | Word | . | 0 | (unknown) | . | 1 | (nonexistent) | . | 2 | allow | . | 3 | and | . | 4 | as | . | 5 | discrete | . | 6 | DNN | . | 7 | embedding | . | 8 | input | . | 9 | models | . | 10 | objects | . | 11 | our | . | 12 | receive | . | 13 | text | . | 14 | to | . | 15 | tokenizaiton | . The first sentence of this page would be encoded using the following sequence of integers: . [15, 3, 7, 2, 11, 6, 9, 14, 12, 13, 3, 0, 5, 10, 4, 8, 1, 1, 1, 1] . The table can be constructed automatically from a dataset or can be declared explicitly by the user. Embedding is the process of translating a sequence of individual natural numbers into a corresponding seqeuence of feature vectors. Internally, this is implemented a matrix that has the shape (N, M), where N is the maximum number of tokens, and M is a defined number of embedding dimensions. For a token sequence of length K, this will yield a matrix that is of shape (K,M), with each row corresponding to the token at a particular position in the sequence. Most typically, the values contained within the (N, M) embedding matrix are tuned as part of the full model training process. Tokenization and embedding are currently supported for Fully-Connected Neural Networks, 1D Convolutional Neural Networks, and Recurrent Neural Networks. ___ . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/tokenization_embedding.html",
+    
+    "relUrl": "/docs/modules/networkbuilder/tokenization_embedding.html"
+  },"208": {
+    "doc": "Tokenization and Embedding",
+    "title": "Tokenization Details",
+    "content": "The following arguments define the behavior of the tokenizer. | Turn on the tokenizer: --tokenizer . Notes: . | Model input shape must be (1,) (i.e., single strings) | The data must be single strings | This argument automatically turns on the embedding step | . | Set the maxmimum number of tokens (N): --tokenizer_max_tokens=N . | Standardize incoming strings: --tokenizer_standardize=STANDARDIZE . where STANDARDIZE is one of: . | lower_and_strip_punctuation: lowercase all characters and remove punctuation | lower: lowercase all characters | strip_punctuation: remove punctuation | . | String Splitting: set the string splitting criterion --tokenizer_split=SPLIT . where SPLIT is one of: . | whitespace (default): split at spaces, tabs, etc. | character: each character is its own token | . | String sequence length: define the maximum length of a given string (in tokens) (K) --tokenizer_output_sequence_length=K . | Pre-defined vocabulary: define the tokens in the table: --tokenizer_vocabulary WORD1 WORD2 WORD3 : . Notes: . | The default behavior (with no defined vocabulary) is to construct the table automatically from the training set inputs | . | Character encoding: define how the characters are represented internally: --tokenizer_encoding=LANG . where LANG is: . | utf-8 (default): unicode transformation format | latin-1 (or iso-8859-1): single byte format that combines ASCII and some Western European characters | ascii: single byte ASCII | utf-16: unicode transformation format (less common) ___ ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/tokenization_embedding.html#tokenization-details",
+    
+    "relUrl": "/docs/modules/networkbuilder/tokenization_embedding.html#tokenization-details"
+  },"209": {
+    "doc": "Tokenization and Embedding",
+    "title": "Embedding Details",
+    "content": "The following arguments define the behavior of the embedding layer. | . | Turn on embedding layer --embedding . Notes: . | Automatically turned on when using the tokenizer | This layer expects as input a sequence of natural numbers (integers) for each example | . | Define the dimensionality of each encoding vector: --embeding_dimensions=M . | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/tokenization_embedding.html#embedding-details",
+    
+    "relUrl": "/docs/modules/networkbuilder/tokenization_embedding.html#embedding-details"
+  },"210": {
     "doc": "What's New?",
     "title": "What’s New with Zero2Neuro?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html#whats-new-with-zero2neuro",
     
     "relUrl": "/docs/whats_new.html#whats-new-with-zero2neuro"
-  },"208": {
+  },"211": {
     "doc": "What's New?",
     "title": "2026-04-10: Version 0.6.0",
     "content": ". | Extensive online documentation | . ",
     "url": "/zero2neuro/dev/docs/whats_new.html#2026-04-10-version-060",
     
     "relUrl": "/docs/whats_new.html#2026-04-10-version-060"
-  },"209": {
+  },"212": {
     "doc": "What's New?",
     "title": "What's New?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html",
     
     "relUrl": "/docs/whats_new.html"
-  },"210": {
+  },"213": {
     "doc": "Why Zero2Neuro?",
     "title": "Why Zero2Neuro?",
     "content": "Our goals in developing Zero2Neuro are to: . | Provide a low barrier-to-entry for new users to access deep learning tools in building predictive models using their own data and experimental questions . | Provide a range of common model types that can be easily configured for use . | Codify a set of best (good?) practices for performing machine learning experiments . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html",
     
     "relUrl": "/docs/why_zero2neuro.html"
-  },"211": {
+  },"214": {
     "doc": "Why Zero2Neuro?",
     "title": "How to Use this Documentation",
     "content": "This documentation is written for users with a range of knowledge. Top level material provides general introduction to the different topics. Deeper material is often tagged with anticipated knowledge level: . | Tutorial: detailed introduction to key concepts | Beginner: what a new user needs to know to get started | Intermediate: useful additions as a user begins to gain some experience with using Zero2Neuro | Advanced: the powerful tools and options | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#how-to-use-this-documentation",
     
     "relUrl": "/docs/why_zero2neuro.html#how-to-use-this-documentation"
-  },"212": {
+  },"215": {
     "doc": "Why Zero2Neuro?",
     "title": "What Zero2Neuro is Not",
     "content": "While our goal is for Zero2Neuro to have practical use in research pipelines, we do not pretend that this is a solution to all problems. Some users will find that Zero2Neuro does everything they need. Other users will find that with experience, they will grow out of Zero2Neuro and “strike out” on their own by writing their own Python code (either by creating code that plugs in to Zero2Neuro, using only some Zero2Neuro components, or developing entirely new code bases). All options are fine and encouraged! . We do not anticipate Zero2Neuro to solve problems in the areas of: . | Large Language Models (though we support data involving sequences of tokens!) . | Reinforcement Learning . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#what-zero2neuro-is-not",
     
     "relUrl": "/docs/why_zero2neuro.html#what-zero2neuro-is-not"
-  },"213": {
+  },"216": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing Configuring Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
-  },"214": {
+  },"217": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
-  },"215": {
+  },"218": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
-  },"216": {
+  },"219": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
-  },"217": {
+  },"220": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
-  },"218": {
+  },"221": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing and Configuring Zero2Neuro",
     "content": " ",
