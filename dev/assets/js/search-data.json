@@ -932,7 +932,7 @@
   },"133": {
     "doc": "Jupyter Environments",
     "title": "Existing Jupyter Lab Environments",
-    "content": " ",
+    "content": "OU has a Jupyter server for use by OU students and faculty. To utilize this server login with your OU account at jupyter.lib.ou.edu. Once inside the Jupyter enviroment, click the plus icon in the top left and open the terminal. Then to get Zero2Neuro working follow these steps. | cd ../.. | cd data | cp -r zero2neuro ~/ | . Now to run an experiment, follow the format of the example notbooks except replaceneuro_path = os.getenv(\"NEURO_REPOSITORY_PATH\") with . os.environ[\"NEURO_REPOSITORY_PATH\"] = \"/home/jovyan/zero2neuro\" neuro_path = os.getenv(\"NEURO_REPOSITORY_PATH\") . Note: The Jupyter Server can be slower than running locally or on the supercomputer and is not appropiate for larger jobs and should be used for small experiments or testing. ",
     "url": "/zero2neuro/dev/docs/getting_started/environment_jupyter.html#existing-jupyter-lab-environments",
     
     "relUrl": "/docs/getting_started/environment_jupyter.html#existing-jupyter-lab-environments"
