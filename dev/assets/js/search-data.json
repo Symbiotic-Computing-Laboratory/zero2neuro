@@ -1427,160 +1427,195 @@
     
     "relUrl": "/docs/modules/networkbuilder/network_tutorial.html#loss-functions"
   },"204": {
+    "doc": "Recurrent Neural Networks",
+    "title": "Recurrent Neural Network",
+    "content": " ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/rnn.html#recurrent-neural-network",
+    
+    "relUrl": "/docs/modules/networkbuilder/rnn.html#recurrent-neural-network"
+  },"205": {
+    "doc": "Recurrent Neural Networks",
+    "title": "Introduction",
+    "content": "A reccurent neural network (RNN) is designed for tasks that require the processing of sequential data. RNNs have the ability to process the sequential data by keeping a memory of previous inputs. RNNs are often used for time series problems, natural language processing, and any problem where either context or order matters to the result. ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/rnn.html#introduction",
+    
+    "relUrl": "/docs/modules/networkbuilder/rnn.html#introduction"
+  },"206": {
+    "doc": "Recurrent Neural Networks",
+    "title": "Key Components",
+    "content": "Recurrent Layers . Reccurent layers take in the current input and also take the memory of past inputs (called a hidden state) . | Simple RNN: A basic reccurent layer that has only one hidden state | Long Short-Term Memory (LSTM): | Gated Recurent Unit (GRU): | . Sequence Handling . RNNs process the sequences in data step by step. This simulates the ability of memory and allows the model to “remember” previous inputs. Sequence length and batch size are very important to keep in mind when training an RNN model. Hidden states . The hidden state is a trainable memory that remembers information about past inputs in a sequence. | For what are called stacked RNNs, each layer of the RNN can have its own hidden state | The hidden state can be returned at either each timestep or at only the final time step | . Output Types . Outputs depend on the task . | Sequence to one: An RNN can produce a single output for a input sequence (ex. sentiment analysis) | Sequence to sequence: RNNs can also produce an output at each time step which causes a sequential output (ex. language translation) | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/rnn.html#key-components",
+    
+    "relUrl": "/docs/modules/networkbuilder/rnn.html#key-components"
+  },"207": {
+    "doc": "Recurrent Neural Networks",
+    "title": "Example RNN Configuration",
+    "content": "--experiment_name=sentiment_140_rnn --network_type=rnn --rnn_type=simple --input_shape 1 --rnn_reverse_time --rnn_filters 60 --rnn_pool_average_last 2 --rnn_filters_last 40 --rnn_dropout=0.2 --number_hidden_units 20 10 5 --hidden_activation=tanh --output_shape 1 --output_activation=sigmoid . Explanation: . TODO: This is the network config for the sentiment140 example. Oddities . | RNNs can suffer from vanishing gradients when sequences are too long (model starts to forget) | LSTM and GRU were built to address the vanishing gradient problem and are preferred for longer sequences | Training is often slower than with a fully connected or convolutional neural network because of sequential processing. | . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/rnn.html#example-rnn-configuration",
+    
+    "relUrl": "/docs/modules/networkbuilder/rnn.html#example-rnn-configuration"
+  },"208": {
+    "doc": "Recurrent Neural Networks",
+    "title": "Recurrent Neural Networks",
+    "content": "TODO . ",
+    "url": "/zero2neuro/dev/docs/modules/networkbuilder/rnn.html",
+    
+    "relUrl": "/docs/modules/networkbuilder/rnn.html"
+  },"209": {
     "doc": "Roadmap",
     "title": "Zero2Neuro Roadmap",
     "content": "Our priorities for continued development include: . | The ability for users to provide plug-in code to implement custom functionality inside of Zero2Neuro, including: . | Loading custom file formats | Building custom networks | Preprocessing of data after the training, validation, and test data sets have been constructed | Custom fold-to-data-set translation | . | Automatic checkpointing and recovery . | Key for long-term training experiments on a supercomputer | . | Splitting data randomly with stratification . | UNet schema . | Support for Scikit-Learn models . | Orthogonalized cross-validation | . ",
     "url": "/zero2neuro/dev/docs/roadmap.html#zero2neuro-roadmap",
     
     "relUrl": "/docs/roadmap.html#zero2neuro-roadmap"
-  },"205": {
+  },"210": {
     "doc": "Roadmap",
     "title": "Roadmap",
     "content": " ",
     "url": "/zero2neuro/dev/docs/roadmap.html",
     
     "relUrl": "/docs/roadmap.html"
-  },"206": {
+  },"211": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options (Advanced)",
     "content": "These arguments can be used for both csv and xlsx formatted files . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-file-options-advanced"
-  },"207": {
+  },"212": {
     "doc": "Tabular File Options",
     "title": "Header Row",
     "content": "By default, the header row is assumed to be the first row. This argument can be used to set a different row . --tabular_header_row=ROW . where ROW is the row index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-row",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-row"
-  },"208": {
+  },"213": {
     "doc": "Tabular File Options",
     "title": "Header Names",
     "content": "Some tabular files do not contain a header row. Use this argument to force the names of the columns . --tabular_header_names COL1 COL2 : . where COLX is the string name for column X. ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#header-names",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#header-names"
-  },"209": {
+  },"214": {
     "doc": "Tabular File Options",
     "title": "Tabular Columns",
     "content": "In some cases, one must ignore a subset of the tabular columns. The next two arguments can be used to specify the set of columns to use for the full set of fields. --tabular_column_range START END . where START and END are integers specifying the column indices to include (columns START … END, including END). --tabular_column_list COL1 COL2 : . where COLX is an integer column index (counting from 1) . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#tabular-columns",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#tabular-columns"
-  },"210": {
+  },"215": {
     "doc": "Tabular File Options",
     "title": "Text Encoding",
     "content": "The name of the byte encoding for the tabular files. --tabular_encoding=ENCODING . The default value of tabular_encoding is None (a reasonable choice). In this case, SuperDataSet uses the content of the file to guess the character encoding. If the format cannot be guessed, then SuperDataSet will use utf-8. One can also specify the character encoding explicitly: see the Python Standard Encodings Table . ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html#text-encoding",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html#text-encoding"
-  },"211": {
+  },"216": {
     "doc": "Tabular File Options",
     "title": "Tabular File Options",
     "content": " ",
     "url": "/zero2neuro/dev/docs/modules/superdataset/tabular_options.html",
     
     "relUrl": "/docs/modules/superdataset/tabular_options.html"
-  },"212": {
+  },"217": {
     "doc": "Tokenization and Embedding",
     "title": "Tokenization and Embedding",
     "content": "Tokenizaiton and embedding allow our DNN models to receive text and other discrete objects as input. Tokenization is the process of translating text into a sequence of integer values (specifically, natural numbers). For example, each integer might represent a different word in an input sentence. The tokenization process is implemented using a table that maps unique words to integers. For our purposes, these sequences are a defined length (e.g., a maximum of 20 words). Two special tokens address exceptional conditions: the unknown token represents any word that is not recognized; the nonexistent token is used to fill slots in the fixed length sequence that have no corresponding word. For example, consider the following table: . | Token | Word | . | 0 | (unknown) | . | 1 | (nonexistent) | . | 2 | allow | . | 3 | and | . | 4 | as | . | 5 | discrete | . | 6 | DNN | . | 7 | embedding | . | 8 | input | . | 9 | models | . | 10 | objects | . | 11 | our | . | 12 | receive | . | 13 | text | . | 14 | to | . | 15 | tokenizaiton | . The first sentence of this page would be encoded using the following sequence of integers: . [15, 3, 7, 2, 11, 6, 9, 14, 12, 13, 3, 0, 5, 10, 4, 8, 1, 1, 1, 1] . The table can be constructed automatically from a dataset or can be declared explicitly by the user. Embedding is the process of translating a sequence of individual natural numbers into a corresponding seqeuence of feature vectors. Internally, this is implemented a matrix that has the shape (N, M), where N is the maximum number of tokens, and M is a defined number of embedding dimensions. For a token sequence of length K, this will yield a matrix that is of shape (K,M), with each row corresponding to the token at a particular position in the sequence. Most typically, the values contained within the (N, M) embedding matrix are tuned as part of the full model training process. Tokenization and embedding are currently supported for Fully-Connected Neural Networks, 1D Convolutional Neural Networks, and Recurrent Neural Networks. ___ . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/tokenization_embedding.html",
     
     "relUrl": "/docs/modules/networkbuilder/tokenization_embedding.html"
-  },"213": {
+  },"218": {
     "doc": "Tokenization and Embedding",
     "title": "Tokenization Details",
     "content": "The following arguments define the behavior of the tokenizer. | Turn on the tokenizer: --tokenizer . Notes: . | Model input shape must be (1,) (i.e., single strings) | The data must be single strings | This argument automatically turns on the embedding step | . | Set the maxmimum number of tokens (N): --tokenizer_max_tokens=N . | Standardize incoming strings: --tokenizer_standardize=STANDARDIZE . where STANDARDIZE is one of: . | lower_and_strip_punctuation: lowercase all characters and remove punctuation | lower: lowercase all characters | strip_punctuation: remove punctuation | . | String Splitting: set the string splitting criterion --tokenizer_split=SPLIT . where SPLIT is one of: . | whitespace (default): split at spaces, tabs, etc. | character: each character is its own token | . | String sequence length: define the maximum length of a given string (in tokens) (K) --tokenizer_output_sequence_length=K . | Pre-defined vocabulary: define the tokens in the table: --tokenizer_vocabulary WORD1 WORD2 WORD3 : . Notes: . | The default behavior (with no defined vocabulary) is to construct the table automatically from the training set inputs | . | Character encoding: define how the characters are represented internally: --tokenizer_encoding=LANG . where LANG is: . | utf-8 (default): unicode transformation format | latin-1 (or iso-8859-1): single byte format that combines ASCII and some Western European characters | ascii: single byte ASCII | utf-16: unicode transformation format (less common) | . | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/tokenization_embedding.html#tokenization-details",
     
     "relUrl": "/docs/modules/networkbuilder/tokenization_embedding.html#tokenization-details"
-  },"214": {
+  },"219": {
     "doc": "Tokenization and Embedding",
     "title": "Embedding Details",
     "content": "The following arguments define the behavior of the embedding layer. | Turn on embedding layer --embedding . Notes: . | Automatically turned on when using the tokenizer | This layer expects as input a sequence of natural numbers (integers) for each example | . | Define the dimensionality of each encoding vector: --embeding_dimensions=M . | . ",
     "url": "/zero2neuro/dev/docs/modules/networkbuilder/tokenization_embedding.html#embedding-details",
     
     "relUrl": "/docs/modules/networkbuilder/tokenization_embedding.html#embedding-details"
-  },"215": {
+  },"220": {
     "doc": "What's New?",
     "title": "What’s New with Zero2Neuro?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html#whats-new-with-zero2neuro",
     
     "relUrl": "/docs/whats_new.html#whats-new-with-zero2neuro"
-  },"216": {
+  },"221": {
     "doc": "What's New?",
     "title": "2026-04-10: Version 0.6.0",
     "content": ". | Extensive online documentation | . ",
     "url": "/zero2neuro/dev/docs/whats_new.html#2026-04-10-version-060",
     
     "relUrl": "/docs/whats_new.html#2026-04-10-version-060"
-  },"217": {
+  },"222": {
     "doc": "What's New?",
     "title": "What's New?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html",
     
     "relUrl": "/docs/whats_new.html"
-  },"218": {
+  },"223": {
     "doc": "Why Zero2Neuro?",
     "title": "Why Zero2Neuro?",
     "content": "Our goals in developing Zero2Neuro are to: . | Provide a low barrier-to-entry for new users to access deep learning tools in building predictive models using their own data and experimental questions . | Provide a range of common model types that can be easily configured for use . | Codify a set of best (good?) practices for performing machine learning experiments . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html",
     
     "relUrl": "/docs/why_zero2neuro.html"
-  },"219": {
+  },"224": {
     "doc": "Why Zero2Neuro?",
     "title": "How to Use this Documentation",
     "content": "This documentation is written for users with a range of knowledge. Top level material provides general introduction to the different topics. Deeper material is often tagged with anticipated knowledge level: . | Tutorial: detailed introduction to key concepts | Beginner: what a new user needs to know to get started | Intermediate: useful additions as a user begins to gain some experience with using Zero2Neuro | Advanced: the powerful tools and options | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#how-to-use-this-documentation",
     
     "relUrl": "/docs/why_zero2neuro.html#how-to-use-this-documentation"
-  },"220": {
+  },"225": {
     "doc": "Why Zero2Neuro?",
     "title": "What Zero2Neuro is Not",
     "content": "While our goal is for Zero2Neuro to have practical use in research pipelines, we do not pretend that this is a solution to all problems. Some users will find that Zero2Neuro does everything they need. Other users will find that with experience, they will grow out of Zero2Neuro and “strike out” on their own by writing their own Python code (either by creating code that plugs in to Zero2Neuro, using only some Zero2Neuro components, or developing entirely new code bases). All options are fine and encouraged! . We do not anticipate Zero2Neuro to solve problems in the areas of: . | Large Language Models (though we support data involving sequences of tokens!) . | Reinforcement Learning . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#what-zero2neuro-is-not",
     
     "relUrl": "/docs/why_zero2neuro.html#what-zero2neuro-is-not"
-  },"221": {
+  },"226": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing Configuring Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
-  },"222": {
+  },"227": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
-  },"223": {
+  },"228": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
-  },"224": {
+  },"229": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
-  },"225": {
+  },"230": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
-  },"226": {
+  },"231": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing and Configuring Zero2Neuro",
     "content": " ",
