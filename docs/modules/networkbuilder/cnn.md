@@ -1,47 +1,90 @@
-[Base Index](../../index.md)  
-[Previous Index](index.md)  
-# Convolutional Neural Network
+---
+title: Convolutional Neural Networks
+nav_order: 30
+parent: Network Builder
+has_children: true
+---
 
-## Introduction
+# Convolutional Neural Networks
 
-A convolutional neural network (CNN) generally translates 1D, 2D, or 3D data
-(the inputs) into a vector (the outputs). CNNs work by extracting spacial features using what are called convolutional filters and then downsample the data using "pooling" layers and then produce an output vector once downsampled enough.
+In many situations, the input to a model involves data that has some temporal or spatial organization.  For example:
+- Timeseries data containing environmental features, such as temperature and pressure.  In this 1-dimensiaonl case, the input data is in the shape of a matrix (T,2), where T is the number of timesteps in the example, and the two _channels_ are temperature and pressure.
+- Images that have pixels organized along both height and width, with each pixel containing information about the color of the pixel in terms of red, green, and blue magnitudes.  For this 2-dimensional case, the shape of the input data is (R,C,3), where R is the number of image rows; C is the number of columns; and the 3 corresponds to the red/green/blue channels.
+- Atmospheric state can be described as small, 3D volumes of air (voxels), each of which have features of temperature, pressure, water content, and velocity.  The shape of the input data is (X,Y,Z,F), where X, Y, Z are the extents along the cardinal directions, and F corresponds to the number of features.
 
-## Key Components
+Convolutional Neural Networks (CNNs) are particularly powerful in their ability to identify local patterns in the input data at many different scales.  For a CNN that takes an image as an input, the network might first identify small edges in the image, then combine those ediges into larger scale patterns, ultimately resulting in pattern detectors for high-level features, such as eyes, beaks, feathers, and talons.  
+
+## Convolutional Modules
+In Zero2Neuro, a CNN is implemented as a stack of _convolutional modules_.  Each module contains a sequence of neural layers; at minimum a module contains:
+
+1. __Convolutional Layer__: responsible for identifying spatial patterns over some limited region of the input.   This layer "searches" for each spatial pattern over the entire input.  These layers are defined by:
+   - The size of the temporal/spatial region.  For images, this is typically 3x3 or 5x5 pixels
+   - The number of distinct patterns to identify.  This is referred to as the _number of filters_ or _channels_
+   - A non-linear activation function
+
+The output of this layer also contains temporal/spatial extent, though it may be smaller in size than the input.
+
+2. __Max Pooling Layer__: computes the maximum over small temporal/spatial regions.  This is defined by:
+   - The size of the region.  For images, these regions are typically 2x2
+   
+In Zero2Neuro, the max pooling layer also reduces the size of the output commensurate with the size of the pool.  So, each 2x2 pixel region will produce 1 pixel as output.  Thus, a 2x2 pool will reduce produce an output that is half the size of the input in each of the number of rows and columns.  
+
+One way to interpret the combination of these two layers is that the convolutional layer identifies patterns from the input, and then the max pooling layer asks whether the patterns _exist_ over the small region.
+
+___
+## Example Network
+
+### Image Inputs
+In this example, the input to the network is a single 3-color image. The input shape must reflect the image size:
+
+```
+--network_type=cnn
+
+--input_shape
+128
+128
+3
+```
 
 ### Convolutional Modules
-A convolutional module is made of:
-- Convolutional layer: Applies filters (kernels) across the input that can learn.
-- Pooling: Reduces the spatial dimensions of the data while maintaining important features.
+These modules are specified using several arguments.  Here, we define a sequence of four modules
+```
+--conv_kernel_size
+3
+3
+5
+5
 
-#### Convolutional Layer
-This layer applies learnable filters, called kernels, over the input.
+--conv_number_filters
+8
+16
+16
+32
+--conv_activation=elu
 
-**Kernel Size**  
-The size of the kernel determines what the dimensions of the filter are (3x3, 5x5, ..., nxn)
-- Small kernels will capture more detail
-- Large kernels capture the larger patterns
+--conv_pool_size
+0
+2
+0
+0
+```
 
-**Number of filters**   
-The number of filters will determine how many feature maps the layer will use.
-- More filters means more capacity for complex patterns
-- The downside is higher computational cost
-Each filter learns to detect specific patterns like edges, shapes, etc.
+Configuration notes:
+- Each module has a corresponding element from each argument
+- ```--conv_kernel_size``` specifies the size of the filters.  Because this is a 2D problem, then the 3s and 5s are automatically translated into 3x3 and 5x5 kernels, respectively.
+- ```--conv_number_filters``` specifies the number of filters for each model.  It is typical that this number increases in the deeper modules.
+- ```--conv_activation``` is the activation function used for each filter.
+- ```--conv_pool_size``` defines the size of the pools for the max pooling step.  Here, only the second module involves a degree of pooling (0 = no pooling)
 
-**Strides**  
-A stride is how far the filter will move across the input.
-- Stride = 1: Filter takes one step through data, for images this would be one pixel.
-- Stride > 1: Filter takes n steps through data and downsample the feature maps, can decrease compuational cost
+Convolutional modules:
+- Module 0: eight 3x3 filters with no pooling
+- Module 1: sixteen 3x3 filters with pooling.  This reduces the size of the image by a factor of 2 in both the rows and columns
+- Module 2: sixteen 5x5 filters
+- Module 3: 32 5x5 filters
 
-**Max Pooling**  
-Max pooling reduces the dimensions by finding the maximum value inside of certain section.
-- Downsample feature maps
-- Reduces computation
+### Global Max Pooling
 
-#### Global Max Pooling
-Global max pooling reduces every feature map to a single value by taking the maximum value from the entire dimension of the feature map.
-
-A 10x10 feature map gets reduced to 1x1 
+Global max pooling reduces every feature map to a single value by taking the maximum value across the extent of each feature.  In this example, the TODO
 
 Usually used before the final layer and helps prevent overfitting.
 

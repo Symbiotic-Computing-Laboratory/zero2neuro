@@ -102,7 +102,9 @@ where LANG is:
 - latin-1 (or iso-8859-1): single byte format that combines ASCII and some Western European characters
 - ascii: single byte ASCII
 - utf-16: unicode transformation format (less common)
+
 ___
+
 ## Embedding Details
 The following arguments define the behavior of the embedding layer.
 
