@@ -1,5 +1,11 @@
-[Base Index](../../index.md)  
-[Previous Index](index.md)  
+---
+title: Recurrent Neural Networks
+nav_order: 40
+parent: Network Builder
+has_children: true
+---
+TODO 
+
 # Recurrent Neural Network
 
 ## Introduction
