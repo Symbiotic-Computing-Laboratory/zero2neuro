@@ -11,6 +11,7 @@ In many situations, the input to a model involves data that has some temporal or
 - Timeseries data containing environmental features, such as temperature and pressure.  In this 1-dimensiaonl case, the input data is in the shape of a matrix (T,2), where T is the number of timesteps in the example, and the two _channels_ are temperature and pressure.
 - Images that have pixels organized along both height and width, with each pixel containing information about the color of the pixel in terms of red, green, and blue magnitudes.  For this 2-dimensional case, the shape of the input data is (R,C,3), where R is the number of image rows; C is the number of columns; and the 3 corresponds to the red/green/blue channels.
 - Atmospheric state can be described as small, 3D volumes of air (voxels), each of which have features of temperature, pressure, water content, and wind velocity.  The shape of the input data is (X,Y,Z,F), where X, Y, Z are the extents along the cardinal directions, and F corresponds to the number of features.
+- Whether the data are 1D, 2D, or 3D, we will refer to each time step/pixel/voxel as a _cell_.
 
 Convolutional Neural Networks (CNNs) are particularly powerful in their ability to identify local temporal or spatial patterns in the input data at many different scales.  For a CNN that takes an image of an animal as an input, the network might first identify small edges in the image, then combine those edges into larger scale patterns, ultimately resulting in pattern detectors for high-level features, such as eyes, beaks, feathers, and talons.  
 
@@ -108,10 +109,11 @@ Configuration notes:
 - ```--output_activation`` of _softmax_ produces as output a probability distribution over the two classes.  This choice is appropriate when the classes are _exclusive_ (the true class can be exactly one, but not more)
 
 ## Fully-Connected Neural Network Examples
-- Classification: 
+- Classification with 2-dimensional data: 
    - [Image Classification](../../../examples/core50/README.md)
-- Classification and Regression: 
-   - [Peptide Binding](../../../examples/amino/README.md) (see the CNN implementation)
+- Classification and Regression with 1-dimensional data: 
+   - [Peptide Binding](../../../examples/amino/README.md) (see the CNN implementation) 
 
-## More Details (Intermediate)
-- [Convolutional Neural Network Details](cnn_details.md)
+## More Details 
+- Convolutional Neural Network Tutorial: _COMING SOON_ (Beginner)
+- [Convolutional Neural Network Details](cnn_details.md) (Intermediate)

@@ -267,7 +267,7 @@ class SuperDataSet:
             if self.categorical_feature_translation is None:
                 self.categorical_feature_translation = tmp
             else:
-                self.categorical_feature_translation = self.categorical_featuretranslation + tmp
+                self.categorical_feature_translation = self.categorical_feature_translation + tmp
                 
         ####
         
