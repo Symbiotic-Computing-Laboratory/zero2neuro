@@ -11,6 +11,7 @@ python pickle_viewer.py --file FNAME
 
 import argparse
 import pickle
+import numpy as np
 
 parser = argparse.ArgumentParser('Pickle Viewer')
 parser.add_argument('--file', type=str, default=None, help='File to summarize')
@@ -29,7 +30,11 @@ else:
 
         # Loop over all key, value pairs and report
         for k,v in d.items():
-            print(k, v.shape)
+            print(k, type(v))
+            if isinstance(v, np.ndarray):
+                print("\t", v.shape)
+            else:
+                pass
             if args.verbose > 0:
-                print(v)
+                print("\t", v)
 
