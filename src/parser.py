@@ -91,6 +91,7 @@ def create_parser(description='Zero2Neuro'):
 
     # TODO: change to list of lists
     parser.add_argument('--metrics', nargs='+', type=str, default=[], help="Metrics to compute")
+    
     parser.add_argument('--rotation', type=int, default=None, help='Expired')
     parser.add_argument('--epochs', type=int, default=100, help='Training epochs')
     parser.add_argument('--learning_rate', '--lrate', type=float, default=0.0001, help="Learning rate")
