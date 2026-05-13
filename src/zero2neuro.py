@@ -22,6 +22,27 @@ VERSION = "0.5.2"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 
 def compatibility_checks(args):
+    """
+    Validate arguments for backward compatibility and consistency
+
+    Check parsed arguments to insure: 
+    - Deprecated arguments aren't used
+    - Argument combinations are valid
+    - Data format and representation are consistent
+    - Required dependencies are included
+    - Output directories are valid
+    - Rules specific to networks are applied
+
+    If an invalid configuration is detected, errors are handed to ``handle_error``.
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :raises: Errors are handled with handle_error (no exceptions raised directly).
+
+    :return: None
+    :rtype: None
+    """
     if args.data_output_sparse_categorical:
         handle_error('data_output_sparse_categorical is no longer supported.  Use data_columns_categorical_to_int instead', args.verbose)
 
@@ -131,9 +152,17 @@ class AtomicModelCheckpoint(keras.callbacks.ModelCheckpoint):
             self._last_checkpoint_path = new_path
 
 def args2wandb_name(args)->str:
-    #outstr = args.experiment_name
-    #if args.rotation is not None:
-    #outstr = outstr + '_R%d'%args.rotation
+    """
+    Generate a W&B run name from arguments. 
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: Formatted W&B run name.
+    :rtype: str
+
+    :raises: Errors handled via ``handle_error`` if formatting fails.
+    """
 
     try:
         output_name = args.wandb_name.format(args=args)
@@ -146,13 +175,28 @@ def args2wandb_name(args)->str:
 
 
 def args2fbase(args):
-    '''
-    '''
+    """
+    Generate a outptu file bath for the experiment results.
+
+    If ``args.output_file_base`` is not provided create a default path
+    using results directory, experiment name, and model config.
+
+    If ``args.output_file_base`` is provided it is formatted using 
+    ``str.format(args=args)``.
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: Base output file path.
+    :rtype: str
+
+    :raises: Errors handled via ``handle_error`` if formatting fails. 
+    """
     if args.output_file_base is None:
         # Generate default output file name
         outstr = '%s/%s'%(args.results_path, args.experiment_name)
 
-        if args.conv_nfilters is not None:
+        if args.conv_number_filters is not None:
             outstr = outstr + '_filt_' + '_'.join(str(x) for x in args.conv_nfilters)
 
         if args.number_hidden_units is not None:
@@ -177,6 +221,39 @@ def args2fbase(args):
 
     
 def execute_exp(sds, model, args, fbase, epochs_start):
+    """
+    Execute the full training, evaluation, and reporting experiment cycle.
+
+    Handles the complete cycle of an experiment including:
+    - Optional model visualization
+    - Optional W&B logging.
+    - Optional checkpointing and early stopping
+    - Training (NumPy or tf-dataset based)
+    - Evaluation on training/validation/testing sets
+    - Saving predictions and metrics
+    - Generating xlsx and pickle reports
+    - Saving the trained model
+
+    The behavior of the execution cycle is customized entirely through ``args``.
+
+    :param sds: Dataset object holding the training/validation/testing sets.
+    :type sds: dataset.SuperDataSet
+
+    :param model: Keras model to train and evaluate
+    :type model: keras.Model
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :param fbase: Base file path used for saving results
+    :type fbase: str
+
+    :param epochs_start: Initial epoch index (for resuming training when using checkpoints)
+    :type epochs_start: int
+
+    :return: None
+    :rtype: None
+    """
     # 
     if args.verbose >= 2:
         print(model.summary())
@@ -422,7 +499,7 @@ def execute_exp(sds, model, args, fbase, epochs_start):
         if args.wandb:
             wandb.log(d)
 
-        if args.log_testing_set and args.data_representation == 'numpy':
+        if args.log_testing_set:
             if args.data_representation == 'numpy':
                 results['ins_testing'] = sds.ins_testing
                 results['outs_testing'] = sds.outs_testing
@@ -528,13 +605,21 @@ def execute_exp(sds, model, args, fbase, epochs_start):
 
 def xlsx_args_list(args):
     '''
-    Function that creates two pandas dataframes for the arguments list
+    Convert parsed arguments into two pandas DataFrames:
 
-    Args:
-        args(argparse.Namespace): The list of arguments the user has defined.
-    Returns:
-        Two dataframes, one with only the key arguments and the other with all the arguments
-        from the parser.
+    1. A key arguments DataFrame that contains the most important settings
+    2. A full arguments DataFrame containing all parsed arguments
+
+    All values are normalized to lists to ensure consistent structures and shorter
+    columns are padded in order to match the longest column lenght
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: Tuple: 
+             - DataFrame of key arguments
+             - DataFrame of all arguments
+    :rtype: tuple[pandas.DataFrame, pandas.DataFrame]
     '''
     # Turn the args list into a dictionary
     args_dict = args.__dict__
@@ -572,13 +657,17 @@ def xlsx_args_list(args):
 
 def xlsx_performance_report(merged_metrics):
     '''
-    Function creates a pandas dataframe for performance metrics.
+    Convert performance metrics into pandas DataFrame
 
-    Args: 
-        merged_metrics(dict): A dictionary with train/val/test metrics merged if applicable.
+    Takes in a dictionary of evaluation metrics (training, validation,
+    testing losses/metrics) and converts to DataFrame where each metrix
+    is a column and the value is a single row.
 
-    Returns:
-        Pandas DataFrame with one row of data for each column of training/validation/testing metric. 
+    :param merged_metrics: Dictionary containing performance metrics
+    :type merged_metrics: dict
+
+    :return: DataFrame with one row containing training/val/test metrics.
+    :rtype: pandas.DataFrame
     '''
 
     keys = merged_metrics.keys()
@@ -590,17 +679,25 @@ def xlsx_performance_report(merged_metrics):
 
 def xlsx_training_report(sds, model, args):
     '''
-    Function creates a pandas dataframe for the training dataset.
+    Create a pandas DataFrame containing training set predictions and labels.
 
-    Args:
-        sds(dataset.SuperDataSet'): The object the contains the processed data 
-                                    used for training/evaluating the model.
-        model(keras.src.models.functional.Functional): The trained Keras model.
-        args(argparse.Namespace): The list of arguments the user has defined. 
+    Generates a report of model performance on the training set. Includes
+    model predictions, true outputs, and optionally the input features depending on
+    configuration.
 
-    Returns:
-        A pandas dataframe that contains the predictions and true values 
-        of the training dataset and the training data if applicable.
+    Function supports both NumPy and TF datasets.
+
+    :param sd: Dataset container for training/validation/testing sets
+    :type sds: dataset.SuperDataset
+
+    :param model: Trained keras model
+    :type model: keras.Model
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: DataFrame containing training predictions, labels, and optionally inputs
+    :rtype: pandas.DataFrame
     '''
     
     predict_columns = []
@@ -648,17 +745,25 @@ def xlsx_training_report(sds, model, args):
     
 def xlsx_validation_report(sds, model, args):
     '''
-    Function creates a pandas dataframe for the validation dataset.
+    Create a pandas DataFrame containing validation set predictions and labels.
 
-    Args:
-        sds(dataset.SuperDataSet'): The object the contains the processed data 
-                                    used for training/evaluating the model.
-        model(keras.src.models.functional.Functional): The trained Keras model.
-        args(argparse.Namespace): The list of arguments the user has defined. 
+    Generates a report of model performance on the training set. Includes
+    model predictions, true outputs, and optionally the input features depending on
+    configuration.
 
-    Returns:
-        A pandas dataframe that contains the predictions and true values 
-        of the validation dataset and the validation data if applicable.
+    Function supports both NumPy and TF datasets.
+
+    :param sd: Dataset container for training/validation/testing sets
+    :type sds: dataset.SuperDataset
+
+    :param model: Trained keras model
+    :type model: keras.Model
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: DataFrame containing validation predictions, labels, and optionally inputs
+    :rtype: pandas.DataFrame
     '''
     
     predict_columns = []
@@ -706,17 +811,25 @@ def xlsx_validation_report(sds, model, args):
     
 def xlsx_testing_report(sds, model, args):
     '''
-    Function creates a pandas dataframe for the testing dataset.
+    Create a pandas DataFrame containing testing set predictions and labels.
 
-    Args:
-        sds(dataset.SuperDataSet'): The object the contains the processed data 
-                                    used for training/evaluating the model.
-        model(keras.src.models.functional.Functional): The trained Keras model.
-        args(argparse.Namespace): The list of arguments the user has defined. 
+    Generates a report of model performance on the training set. Includes
+    model predictions, true outputs, and optionally the input features depending on
+    configuration.
 
-    Returns:
-        A pandas dataframe that contains the predictions and true values 
-        of the testing dataset and the testing data if applicable.
+    Function supports both NumPy and TF datasets.
+
+    :param sd: Dataset container for training/validation/testing sets
+    :type sds: dataset.SuperDataset
+
+    :param model: Trained keras model
+    :type model: keras.Model
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: DataFrame containing testing predictions, labels, and optionally inputs
+    :rtype: pandas.DataFrame
     '''
     
     predict_columns = []
@@ -763,6 +876,24 @@ def xlsx_testing_report(sds, model, args):
 
 
 def prepare_and_execute_experiment(args):
+    """
+    Prepare the environment and execute the experiment.
+
+    This function handles the experiment pipeline including:
+    - Argument compatibility checks
+    - GPU/CPU configuration
+    - Dataset construction
+    - Model creation
+    - Execution of the training/evaluation pipeline
+
+    Acts as the main entry point for the toolkit.
+
+    :param args: Parsed arguments
+    :type args: argparse.Namespace
+
+    :return: Created model from the experiment
+    :rtype: keras.Model
+    """
     # Compatibility checks
     compatibility_checks(args)
     
