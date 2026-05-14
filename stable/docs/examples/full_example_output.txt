@@ -1,0 +1,61 @@
+Example output from Zero2Neuro (with 10 epochs of training):
+
+
+************************************************************
+              This is Zero2Neuro Version 0.5.2
+
+https://github.com/Symbiotic-Computing-Laboratory/zero2neuro
+************************************************************
+
+Namespace(experiment_name='xor', loss='mse', metrics=['mae', 'mse'], rotation=None, epochs=10, learning_rate=0.001, clipnorm=None, results_path='./results', output_file_base='{args.experiment_name}_R{args.data_rotation:02d}', early_stopping=True, early_stopping_min_delta=0.01, early_stopping_patience=2000, early_stopping_monitor='loss', dataset_directory=None, training_mode=None, data_format='tabular', data_representation='numpy', data_split=None, data_fold_split='identity', data_set_type='fixed', n_folds=None, n_training_folds=None, data_n_folds=None, data_n_training_folds=None, data_n_validation_folds=1, data_rotation=0, data_file='xor_data.csv', data_files=None, data_inputs=['In 0', 'In 1'], data_outputs=['Out 0'], data_weights=None, data_groups=None, data_stratify=None, tabular_header_row=None, tabular_header_names=None, tabular_column_range=None, tabular_column_list=None, tabular_encoding=None, data_output_sparse_categorical=False, data_columns_categorical_to_int=None, data_columns_categorical_to_int_direct=None, data_columns_categorical_to_float_direct=None, data_seed=1138, batch=None, prefetch=None, num_parallel_calls=4, cache=None, shuffle=None, repeat=False, steps_per_epoch=None, steps_per_validation_epoch=None, nogo=False, force=True, verbose=3, debug=0, cpus_per_task=None, inter_ops=1, gpu=False, render_model=True, save_model=True, log_training_set=True, log_validation_set=False, log_testing_set=False, report=True, report_training=True, report_training_ins=True, report_validation=False, report_validation_ins=False, report_testing=False, report_testing_ins=False, wandb=False, wandb_project='Supernetwork', wandb_name='{args.experiment_name}', note=None, tokenizer=False, tokenizer_max_tokens=None, tokenizer_standardize='lower_and_strip_punctuation', tokenizer_split='whitespace', tokenizer_output_sequence_length=None, tokenizer_vocabulary=None, tokenizer_encoding='utf-8', embedding=False, embedding_dimensions=None, load_trained_model=None, optimizer=None, network_type='fully_connected', input_shape0=[2], hidden_activation='elu', number_hidden_units=[20, 10], output_shape0=[1], output_activation='sigmoid', batch_normalization=False, batch_normalization_input=False, conv_kernel_size=None, conv_number_filters=None, conv_pool_size=None, conv_pool_average_size=None, conv_padding='valid', conv_activation='elu', conv_batch_normalization=False, conv_strides=None, rnn_type=None, rnn_filters=None, rnn_filters_last=None, rnn_activation='tanh', rnn_dropout=None, rnn_L1_regularization=None, rnn_L2_regularization=None, rnn_unroll=False, rnn_pool_average_last=None, rnn_reverse_time=False, dropout=None, dropout_input=None, spatial_dropout=None, L1_regularization=None, L2_regularization=None, cartesian_arguments=None, cartesian_selection_index=None, data_save_folds=None)
+E0000 00:00:1774585275.122347  398089 cuda_executor.cc:1228] INTERNAL: CUDA Runtime error: Failed call to cudaGetRuntimeVersion: Error loading CUDA libraries. GPU will not be used.: Error loading CUDA libraries. GPU will not be used.
+W0000 00:00:1774585275.123747  398089 gpu_device.cc:2341] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+NO VISIBLE DEVICES!!!!
+GPUS: []
+NO GPU
+CSV file
+Inferred CSV type: ascii
+INPUT SHAPE [2]
+Model: "functional"
+| Layer (type)                          | Output Shape                |         Param # |
+-----------------------------------------------------------------------------------------
+| fcinput (InputLayer)                  | (None, 2)                   |               0 |
+-----------------------------------------------------------------------------------------
+| hidden_0 (Dense)                      | (None, 20)                  |              60 |
+-----------------------------------------------------------------------------------------
+| hidden_1 (Dense)                      | (None, 10)                  |             210 |
+-----------------------------------------------------------------------------------------
+| fcoutput (Dense)                      | (None, 1)                   |              11 |
+-----------------------------------------------------------------------------------------
+
+ Total params: 281 (1.10 KB)
+ Trainable params: 281 (1.10 KB)
+ Non-trainable params: 0 (0.00 B)
+None
+./results/xor_R00
+Fitting model
+Epoch 1/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 1s 572ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 2/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 27ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 3/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 22ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 4/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 22ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 5/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 22ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 6/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 30ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 7/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 24ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 8/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 21ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 9/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 22ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+Epoch 10/10
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 22ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 80ms/step - loss: 0.2500 - mae: 0.5000 - mse: 0.2500
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 29ms/step
+1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 18ms/step
+

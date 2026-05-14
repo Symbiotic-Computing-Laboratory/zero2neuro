@@ -1,0 +1,10 @@
+--data_format=pickle
+--data_columns_categorical_to_int
+Out 0:31,32,33,33
+--data_file=xor_data2.pkl
+--data_set_type=fixed
+--data_inputs
+In 0
+In 1
+--data_outputs
+Out 0

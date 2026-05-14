@@ -1,0 +1,46 @@
+--network_type=cnn
+
+# Images are 128x128x3
+--input_shape
+128
+128
+3
+
+# Convolutional modules are defined by: kernel size, padding type, 
+#  number of filters, activation function, and pooling size 
+# Kernel sizes at each of four layers.  Since the input is an image,
+#  then the true kernel sizes are 3x3, 3x3, 5x5, and 5x5, respectively
+--conv_kernel_size
+3
+3
+5
+5
+--conv_padding=valid
+# Number of filters at each layer
+--conv_number_filters
+8
+16
+16
+32
+--conv_activation=elu
+# Max pooling at each layer (0 = none; 2 = 2x2 pooling)
+--conv_pool_size
+0
+2
+0
+0
+
+# Following global max pooling, the input is encoded
+#  as a vector.  This vector is further processed using
+#  a sequence of fully-connected layers
+--number_hidden_units
+20
+10
+--hidden_activation=elu
+
+# Two classes
+--output_shape
+2
+
+# The classes are exclusive, requiring softmax
+--output_activation=softmax

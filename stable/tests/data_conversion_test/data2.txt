@@ -1,0 +1,29 @@
+--data_format=tabular
+
+# Each data table is converted from a numpy array to a tf-dataset
+--data_representation=tf-dataset
+
+# One file has two sheets - each one is a data table
+#  (xor_data and xor_data_2, respectively).  These are assigned
+#  to folds 0 and 1
+--data_files
+xor_data.xlsx,0,xor_data
+xor_data.xlsx,1,xor_data_2
+
+# Header is on row 2 (for all tables)
+--tabular_header_row=2
+
+# Use columns 3,4,5 (for all tables)
+--tabular_column_list
+3
+4
+5
+
+# Folds 0 and 1 are mapped to the training and validation data sets,
+#  respectively (no testing data set)
+--data_set_type=fixed
+--data_inputs
+In 0
+In 1
+--data_outputs
+Out 0

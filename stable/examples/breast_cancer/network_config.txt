@@ -1,0 +1,14 @@
+--network_type=fully_connected
+--input_shape
+29
+--number_hidden_units
+20
+10
+--hidden_activation=elu
+
+# Single output encodes the probability of class M
+--output_shape
+1
+
+# Use sigmoid with binary cross-entropy
+--output_activation=sigmoid

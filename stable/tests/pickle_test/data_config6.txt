@@ -1,0 +1,16 @@
+--data_representation=numpy
+--data_format=pickle
+--data_files
+parityB0.pkl,0
+parityB1.pkl,0
+parityB2.pkl,0
+parityB3.pkl,0
+parityB.pkl,1
+parityB.pkl,2
+--data_fold_split=group-by-file
+--data_set_type=holistic-cross-validation
+--data_inputs
+ins0
+ins1
+--data_outputs
+outs
