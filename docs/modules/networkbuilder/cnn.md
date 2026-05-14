@@ -8,7 +8,7 @@ has_children: true
 # Convolutional Neural Networks
 
 In many situations, the input to a model involves data that has some temporal or spatial organization.  For example:
-- Timeseries data containing environmental features, such as temperature and pressure.  In this 1-dimensiaonl case, the input data is in the shape of a matrix (T,2), where T is the number of timesteps in the example, and the two _channels_ are temperature and pressure.
+- Timeseries data containing environmental features, such as temperature and pressure.  In this 1-dimensional case, the input data is in the shape of a matrix (T,2), where T is the number of timesteps in the example, and the two _channels_ are temperature and pressure.
 - Images that have pixels organized along both height and width, with each pixel containing information about the color of the pixel in terms of red, green, and blue magnitudes.  For this 2-dimensional case, the shape of the input data is (R,C,3), where R is the number of image rows; C is the number of columns; and the 3 corresponds to the red/green/blue channels.
 - Atmospheric state can be described as small, 3D volumes of air (voxels), each of which have features of temperature, pressure, water content, and wind velocity.  The shape of the input data is (X,Y,Z,F), where X, Y, Z are the extents along the cardinal directions, and F corresponds to the number of features.
 - Whether the data are 1D, 2D, or 3D, we will refer to each time step/pixel/voxel as a _cell_.
@@ -26,9 +26,11 @@ __Convolutional Layer__: responsible for identifying spatial patterns over some 
 The output of this layer also contains temporal/spatial extent, though it may be smaller in size than the input.
 
 __Max Pooling Layer__: computes the maximum over small temporal/spatial regions.  This is defined by:
-   - The size of the region.  For images, these regions are typically 2x2
+   - The size of the region.  For images, these regions are typically 2x2.
+
+   - By reducing the temporal / spatial resolution, subsequent convolutional layers will be able to search for larger-scale patterns relative to the original size of the input.
    
-In Zero2Neuro, the max pooling layer also reduces the size of the output commensurate with the size of the pool.  So, each 2x2 pixel region will produce 1 pixel as output.  Thus, a 2x2 pool will reduce produce an output that is half the size of the input in each of the number of rows and columns.  
+In Zero2Neuro, the max pooling layer also reduces the size of the output commensurate with the size of the pool.  So, each 2x2 pixel region will produce 1 pixel as output.  Thus, a 2x2 pool will produce an output that is half the size of the input in each of the number of rows and columns.  
 
 One way to interpret the combination of these two layers is that the convolutional layer identifies patterns from the input, and then the max pooling layer asks whether the patterns _exist_ over the small region.
 

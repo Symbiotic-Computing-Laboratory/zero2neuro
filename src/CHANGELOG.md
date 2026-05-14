@@ -2,11 +2,12 @@
 
 Use inverse order
 
-## v0.6.0 2026-03-4  (current devel)
-* Added documentation
+## v0.6.0 2026-05-14  (RELEASE)
+* Added substantial documentation, including on-line documentation
 * Added --checkpoing_model: checkpointing and gracefully handling restarts
+* Added --metrics_weighted option (metrics that will take into account sample weights)
   
-2026-03-12 Luke Sewell 
+## 2026-03-12 Luke Sewell 
 * Added new example, Sentiment140
 * Demonstrates natural language processing and splitting by word
 * Has GRU and Simple RNN configuration files 

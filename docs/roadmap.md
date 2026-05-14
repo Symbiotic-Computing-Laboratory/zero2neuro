@@ -16,12 +16,11 @@ functionality inside of Zero2Neuro, including:
 data sets have been constructed
    - Custom fold-to-data-set translation
 
-- Automatic checkpointing and recovery
-   - Key for long-term training experiments on a supercomputer
-
 - Splitting data randomly with stratification
 
-- UNet schema
+- UNet schema (connection to UNet 3+)
+
+- Deep neural network clustering schema
 
 - Support for Scikit-Learn models
 
