@@ -4,13 +4,13 @@ nav_order: 40
 parent: Network Builder
 has_children: true
 ---
-TODO 
-
 # Recurrent Neural Network
+
+__UPDATES COMING SOON__
 
 ## Introduction
 
-A reccurent neural network (RNN) is designed for tasks that require the processing of sequential data. RNNs have the ability to process the sequential data by keeping a memory of previous inputs. RNNs are often used for time series problems, natural language processing, and any problem where either context or order matters to the result.
+A recurrent neural network (RNN) is designed for tasks that require the processing of sequential data. RNNs have the ability to process the sequential data by keeping a memory of previous inputs. RNNs are often used for time series problems, natural language processing, and any problem where either context or order matters to the result.
 
 ## Key Components
 

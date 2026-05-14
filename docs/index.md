@@ -54,9 +54,10 @@ including one-hot encoding
 
 
 ## Authors
-- Luke Sewell
 - Andrew H. Fagg (andrewhfagg@gmail.com): Symbiotic Computing
 Laboratory, Department of Computer Science, University of Oklahoma
+- Shayan Shafaei
+- Luke Sewell
 - Mel Wilson Reyes
 
 ## Links
