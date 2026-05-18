@@ -4,9 +4,9 @@
 --number_hidden_units
 64
 32
---hidden_activation=relu
+--hidden_activation=elu
 --output_shape
 1
---output_activation=linear
+--output_activation=elup1
 
 --dropout=0.2
