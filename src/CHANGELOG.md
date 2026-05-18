@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.6.1 2026-05-17  (RELEASE)
+* Updated several example configurations
+
 ## v0.6.0 2026-05-14  (RELEASE)
 * Added substantial documentation, including on-line documentation
 * Added --checkpoing_model: checkpointing and gracefully handling restarts
