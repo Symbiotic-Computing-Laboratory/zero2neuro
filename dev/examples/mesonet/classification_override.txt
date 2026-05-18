@@ -4,13 +4,9 @@
 #Change experiment name
 --experiment_name=mesonet_categorical
 
-
-# Switch dataset to classification one
---data_file=./data/categorical_meso_data.csv
-
 # Encodes the output labels
 --data_columns_categorical_to_int
-RAIN:NO_RAIN,RAINED
+RAIN BINARY:NO_RAIN,RAINED
 
 # Change the output activation function
 --output_activation
