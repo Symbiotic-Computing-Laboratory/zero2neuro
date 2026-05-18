@@ -4,6 +4,11 @@
 --input_shape
 1
 --rnn_reverse_time
+--tokenizer
+--tokenizer_max_tokens=5000
+--tokenizer_split=whitespace
+--tokenizer_output_sequence_length=64
+--embedding_dimensions=128
 --rnn_filters
 128
 --rnn_filters_last

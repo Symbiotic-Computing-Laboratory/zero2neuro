@@ -4,12 +4,12 @@
 --metrics
 mae
 mse
---learning_rate=0.0001
+--learning_rate=0.001
 --epochs=200
 --early_stopping
 --early_stopping_monitor=loss
 --early_stopping_patience=50
---early_stopping_min_delta=0.0001
+--early_stopping_min_delta=0.01
 --results_path=./results
 --output_file_base={args.experiment_name}_R{args.data_rotation:02d}
 --save_model

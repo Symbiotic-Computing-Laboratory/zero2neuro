@@ -118,7 +118,7 @@ class AtomicModelCheckpoint(keras.callbacks.ModelCheckpoint):
     def on_epoch_end(self, epoch, logs=None):
         '''
         Called at end of epoch.  Only do the job of the callback (saving)
-        every nepochs epocsh
+        every nepochs epochs
         '''
         if (epoch + 1) % self.nepochs == 0:
             super().on_epoch_end(epoch, logs)

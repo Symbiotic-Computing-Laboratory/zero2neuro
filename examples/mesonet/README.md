@@ -21,7 +21,7 @@ Modeling like this is popular in both meterology and agriculture where rainfall 
 
 - [Source](dataset_source.md)
 - [Regression Dataset](data/regression_meso_data.csv)
-- [Classification Dataset](data/categorical_meso_data.csv)
+- [Classification Dataset](data/meso_data.csv)
 
 The dataset includes:
 1. Time (YEAR/MONTH/DAY)
