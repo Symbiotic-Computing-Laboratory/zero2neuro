@@ -176,7 +176,7 @@ def args2wandb_name(args)->str:
 
 def args2fbase(args):
     """
-    Generate a outptu file bath for the experiment results.
+    Generate a output file path for the experiment results.
 
     If ``args.output_file_base`` is not provided create a default path
     using results directory, experiment name, and model config.
