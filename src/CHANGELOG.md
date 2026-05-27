@@ -2,6 +2,8 @@
 
 Use inverse order
 
+## v0.7.0 2026-05-27
+* Adding input/output column translation for pickle files (categorical translation)
 
 ## v0.6.3 2026-05-21  (RELEASE)
 * Fixed override config for mesonet example

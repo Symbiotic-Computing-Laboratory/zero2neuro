@@ -1124,6 +1124,7 @@ class SuperDataSet:
         if dataset_path is None:
             file_path = file_name
         else:
+            # TODO: OS neutral 
             file_path = '%s/%s'%(dataset_path, file_name)
 
         # TODO: check that file exists and that object is a dict
@@ -1164,6 +1165,7 @@ class SuperDataSet:
                         # Map the value in each cell to the corresponding int
                         # First convert the value in the table to a string, then do the mapping
                         # Map missing values to -999 (valid mapped values will be natural numbers)
+                        # TODO: use a different value for missing (None?)
                         map_func = np.vectorize(lambda x: tr_dict.get(str(x), -999))
                         d_tmp = map_func(d[var])
                         
@@ -1180,9 +1182,50 @@ class SuperDataSet:
                         # All okay - copy the updated numpy array over
                         d[var] = d_tmp
             
-            # Contatenate all of the features along the last axis
+            # Concatenate all of the features along the last axis
             # TODO: check the shapes of these numpy arrays
             ins = np.concatenate([d[key] for key in self.args.data_inputs], axis=-1)
+
+
+            # Input feature translation from categorical to float
+            #  NOTE: we assume that the columns being translated are not in input_columns
+            if self.categorical_feature_translation is not None:
+                vecs = []
+                # Loop over each translation rule
+                for col, d_tr in self.categorical_feature_translation:
+                    print_debug("Categorical feature translation: %s: %s"%(col,str(d_tr)), 4, self.args.debug)
+
+                    # Flatten to 1D for lookup, preserving original shape for reshape after
+                    col_flat = d[col].ravel()
+
+                    # Check if there are any keys that are missing and raise an error
+                    #  (i.e., are their any values in the column that are not keys in the translation table)
+                    missing = {str(x) for x in col_flat} - set(d_tr.keys())
+
+                    if missing:
+                        handle_error(f"data_columns_categorical_to_float_direct: missing key/s ({missing}) from column {col}",
+                                        self.args.verbose)
+
+                    # Translate the values, then restore the original shape
+                    vec = np.array([d_tr.get(str(x)) for x in col_flat]).reshape(d[col].shape)
+
+                    # Ensure last dimension is a feature dim of size 1 for stacking
+                    if vec.shape[-1] != 1:
+                        vec = vec[..., np.newaxis]
+
+                    # Save the vector
+                    vecs.append(vec)
+
+                # Concatenate N vecs along the last axis to get (...,N)
+                mat = np.concatenate(vecs, axis=-1)
+
+                print(ins.shape)
+                print(mat.shape)
+                # Add these new features to the standard features
+                ins = np.concatenate([ins, mat], axis=-1)
+            
+            #####
+            # Assemble the ins/outs/weights/groups
             ds = (ins,)
 
             if self.args.data_outputs is not None:
@@ -1262,6 +1305,12 @@ class SuperDataSet:
         for item in items:
             str_part, float_part = item.split("->")
             mapping[str_part.strip()] = float(float_part.strip())
+
+        # Augment with float-string versions of integer-string keys
+        # (e.g. '0' -> also add '0.0') so columns stored as floats match correctly
+        for k, v in list(mapping.items()):
+            if k.lstrip('-').isdecimal():
+                mapping[str(float(int(k)))] = v
 
         return key.strip(), mapping
 
@@ -1375,6 +1424,7 @@ class SuperDataSet:
             ins = df[input_columns].values
 
         # Input feature translation from categorical to float
+        #  NOTE: we assume that the columns being translated are not in input_columns
         if categorical_feature_translation is not None:
             vecs = []
             # Loop over each translation rule
@@ -1382,6 +1432,7 @@ class SuperDataSet:
                 print_debug("Categorical feature translation: %s: %s"%(col,str(d)), 4, debug)
 
                 # Check if there are any keys that are missing and raise an error
+                #  (i.e., are their any values in the column that are not keys in the translation table)
                 missing = set(df[col].astype(str)) - set(d.keys())
                 if missing:
                     handle_error(f"data_columns_categorical_to_float_direct: missing key/s ({missing}) from column {col}",
