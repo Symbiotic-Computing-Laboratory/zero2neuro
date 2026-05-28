@@ -1,7 +1,7 @@
 --data_format=tabular
 
 # Desired output value (Class column) is expressed as a string:
-#  translate to one of four integers (0,1,2,3)
+#  translate to one of three integers (0,1,2)
 --data_columns_categorical_to_int
 Class:Iris-setosa,Iris-versicolor,Iris-virginica
 
