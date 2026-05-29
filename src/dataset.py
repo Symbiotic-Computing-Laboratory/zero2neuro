@@ -1219,8 +1219,6 @@ class SuperDataSet:
                 # Concatenate N vecs along the last axis to get (...,N)
                 mat = np.concatenate(vecs, axis=-1)
 
-                print(ins.shape)
-                print(mat.shape)
                 # Add these new features to the standard features
                 ins = np.concatenate([ins, mat], axis=-1)
             

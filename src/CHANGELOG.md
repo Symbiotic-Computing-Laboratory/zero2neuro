@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.7.1 2026-05-29 (RELEASE)
+* Cleaned up categorical translation
+
 ## v0.7.0 2026-05-27
 * Adding input/output column translation for pickle files (categorical translation)
 
