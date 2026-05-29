@@ -367,6 +367,7 @@ def execute_exp(sds, model, args, fbase, epochs_start):
 
     results = {}
     ######
+    # TODO: should evaluation be weighted?  Probably
     # Training
     print_debug('Training eval', 4, args.debug)
     if args.data_format == 'tf-dataset':
@@ -401,6 +402,7 @@ def execute_exp(sds, model, args, fbase, epochs_start):
 
     ######
     # Training set
+
     if args.log_training_set:
         print_debug('Training predict', 4, args.debug)
         if args.data_representation == 'numpy':
