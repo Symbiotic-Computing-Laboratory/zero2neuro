@@ -6,7 +6,7 @@ has_children: false
 ---
 # Tokenization and Embedding
 
-Tokenizaiton and embedding allow our DNN models to receive text and other discrete objects as input.
+Tokenization and embedding allow our DNN models to receive text and other discrete objects as input.
 
 __Tokenization__ is the process of translating text into a sequence of integer values (specifically, natural numbers).  For example, each integer might represent a different word in an input sentence.   The tokenization process is implemented using a table that maps unique words to integers.  For our purposes, these sequences are a defined length (e.g., a maximum of 20 words).  Two special tokens address exceptional conditions: the __unknown token__ represents any word that is not recognized; the __nonexistent token__ is used to fill slots in the fixed length sequence that have no corresponding word.  
 
@@ -29,7 +29,7 @@ For example, consider the following table:
 | 12 | receive |
 | 13 | text |
 | 14 | to |
-| 15 | tokenizaiton |
+| 15 | tokenization |
 
 The first sentence of this page would be encoded using the following sequence of integers:
 
@@ -39,7 +39,7 @@ The first sentence of this page would be encoded using the following sequence of
 
 The table can be constructed automatically from a dataset or can be declared explicitly by the user.
 
-__Embedding__ is the process of translating a sequence of individual natural numbers into a corresponding seqeuence of feature vectors.  Internally, this is implemented a matrix that has the shape (N, M), where N is the maximum number of tokens, and M is a defined number of _embedding dimensions_.  For a token sequence of length K, this will yield a matrix that is of shape (K,M), with each row corresponding to the token at a particular position in the sequence.  Most typically, the values contained within the (N, M) embedding matrix are tuned as part of the full model training process.
+__Embedding__ is the process of translating a sequence of individual natural numbers into a corresponding sequence of feature vectors.  Internally, this is implemented a matrix that has the shape (N, M), where N is the maximum number of tokens, and M is a defined number of _embedding dimensions_.  For a token sequence of length K, this will yield a matrix that is of shape (K,M), with each row corresponding to the token at a particular position in the sequence.  Most typically, the values contained within the (N, M) embedding matrix are tuned as part of the full model training process.
 
 Tokenization and embedding are currently supported for Fully-Connected Neural Networks, 1D Convolutional Neural Networks, and Recurrent Neural Networks.
 ___
@@ -55,7 +55,7 @@ Notes:
 - The data must be single strings
 - This argument automatically turns on the embedding step
 
-2. __Set the maxmimum number of tokens (N)__:
+2. __Set the maximum number of tokens (N)__:
 ```
 --tokenizer_max_tokens=N
 ```

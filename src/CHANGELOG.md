@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.7.2 2026-05-29 (RELEASE)
+* Documentation fixes
+
 ## v0.7.1 2026-05-29 (RELEASE)
 * Cleaned up categorical translation
 
@@ -36,6 +39,7 @@ Use inverse order
 * Updated Amino Acid example with TF Dataset saving + created README
 
 ## V0.4.1 2026-02-20 Luke Sewell  
+
 * Updated network builder documentation
 * Increased xlsx results max rows
 
