@@ -134,6 +134,7 @@ def create_parser(description='Zero2Neuro'):
     #parser.add_argument('--data_table_merge', nargs='+', type=str, default=None, help='Table merge specification')   # removed
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
+    parser.add_argument('--data_tag_examples', nargs='+', type=str, default=None, help='Columns in the table that are to be used as example-wise tags.  These will be saved in the results pkl file.')
     parser.add_argument('--data_weights', type=str, default=None, help='Column in the table that are the sample weights')
     parser.add_argument('--data_groups', '--data_folds', type=str, default=None, help='Column in the table that correspond to the dataset group')
     parser.add_argument('--data_stratify', type=str, default=None, help='Column in the table that correspond to the stratification class')  # TODO: implement
@@ -157,7 +158,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_seed', type=int, default=1138, help='Random seed used for shuffling data into folds')
 
     # TF Dataset configuration
-    parser.add_argument('--batch', type=int, default=None, help="Training set batch size")
+    parser.add_argument('--batch', type=int, default=32, help="Training set batch size")
     parser.add_argument('--prefetch', type=int, default=None, help="Number of batches to prefetch")
     parser.add_argument('--num_parallel_calls', type=int, default=4, help="Number of threads to use during batch construction")
     parser.add_argument('--cache', type=str, default=None, help="Cache (default: none; RAM: specify empty string; else specify file")

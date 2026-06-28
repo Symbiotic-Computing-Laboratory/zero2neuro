@@ -33,7 +33,7 @@ Generated files:
 
 - parityB.pkl: all examples (total is 16)
    - ins0: first 3 columns of the input
-   - ins1: reamaining 1 column of the input
+   - ins1: remaining 1 column of the input
    - outs: output
 - parityB0.pkl: first 8 examples
    - (same structure as parityB0)

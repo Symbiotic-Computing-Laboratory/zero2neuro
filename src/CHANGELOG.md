@@ -2,6 +2,11 @@
 
 Use inverse order
 
+## v0.8.0 2026-06-28
+* Added example-wise tagging
+* Added automated_tests
+* Refactored representation for numpy data sets (including support for future random stratification)
+
 ## v0.7.2 2026-05-29 (RELEASE)
 * Documentation fixes
 

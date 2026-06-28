@@ -18,8 +18,9 @@ from keras.utils import plot_model
 
 
 
-VERSION = "0.7.2"
+VERSION = "0.8.0"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
+AI2ES = "NSF AI Institute for Research on Trustworthy AI in Weather, Climate, and Coastal Oceanography"
 
 def compatibility_checks(args):
     """
@@ -67,7 +68,7 @@ def compatibility_checks(args):
     if args.data_representation == 'numpy' and args.data_format == 'tf-dataset':
         handle_error("When --data_format='tf-dataset', --data_representation must be 'tf-dataset'", args.verbose)
 
-    if args.data_representation == 'tf-dataset' and (not args.data_format == 'tf-dataset'):
+    if args.data_format == 'tf-dataset' and (not args.data_representation == 'tf-dataset'):
         handle_error("When --data_format='tf-dataset', --data_representation must be 'tf-dataset'", args.verbose)
 
     if args.rotation is not None:
@@ -333,8 +334,8 @@ def execute_exp(sds, model, args, fbase, epochs_start):
 
     if args.epochs > 0:
         # Train model
-        if args.data_format == 'tf-dataset':
-            # TF-Datasets
+        if args.data_representation == 'tf-dataset':
+            # TF-Dataset format
             history = model.fit(sds.training,
                                 steps_per_epoch=args.steps_per_epoch,
                                 epochs=args.epochs,
@@ -343,14 +344,26 @@ def execute_exp(sds, model, args, fbase, epochs_start):
                                 callbacks=cbs,
                                 initial_epoch=epochs_start)
         else:
-            # Numpy arrays
+            # Numpy array format
+            # Assemble the validation tuple
+            if sds.ins_validation is not None:
+                if sds.outs_validation is not None:
+                    if sds.weights_validation is not None:
+                        validation = (sds.ins_validation, sds.outs_validation, sds.weights_validation)
+                    else:
+                        validation = (sds.ins_validation, sds.outs_validation)
+                else:
+                    validation = (sds.ins_validation, )
+            else:
+                validation = None
+
             history = model.fit(sds.ins_training,
                                 sds.outs_training,
                                 sample_weight=sds.weights_training,
                                 steps_per_epoch=args.steps_per_epoch,
                                 epochs=args.epochs,
                                 batch_size=args.batch,
-                                validation_data=sds.validation,
+                                validation_data=validation,
                                 verbose=args.verbose>=3,
                                 callbacks=cbs,
                                 initial_epoch=epochs_start)
@@ -370,7 +383,7 @@ def execute_exp(sds, model, args, fbase, epochs_start):
     # TODO: should evaluation be weighted?  Probably
     # Training
     print_debug('Training eval', 4, args.debug)
-    if args.data_format == 'tf-dataset':
+    if args.data_representation == 'tf-dataset':
         ev = model.evaluate(sds.training,
                             steps=args.steps_per_epoch,
                             batch_size=args.batch,
@@ -409,7 +422,8 @@ def execute_exp(sds, model, args, fbase, epochs_start):
             results['ins_training'] = sds.ins_training
             results['outs_training'] = sds.outs_training
             results['predict_training'] = model.predict(sds.ins_training)
-        elif args.data_format == 'tf-dataset':
+            results['tags_training'] = sds.tags_training
+        elif args.data_representation == 'tf-dataset':
             ins = sds.training.map(lambda x, y: x)
             ins = [features.numpy() for features in ins]
             results['ins_training'] = np.concatenate(ins, axis=0)
@@ -423,14 +437,14 @@ def execute_exp(sds, model, args, fbase, epochs_start):
             # Make a prediction dataset by removing the labels and grab predictions
             training_prediction_set = sds.training.map(lambda x, y: x)
             results['predict_training'] = model.predict(training_prediction_set)
-
+            results['tags_training'] = None
 
     
     ######
     # Validation set
     print_debug('Validation eval', 4, args.debug)
     if (sds.ins_validation is not None) or (sds.validation is not None):
-        if args.data_format == 'tf-dataset':
+        if args.data_representation == 'tf-dataset':
             ev = model.evaluate(sds.validation)
         else:
             ev = model.evaluate(sds.ins_validation,
@@ -458,7 +472,9 @@ def execute_exp(sds, model, args, fbase, epochs_start):
                 results['ins_validation'] = sds.ins_validation
                 results['outs_validation'] = sds.outs_validation
                 results['predict_validation'] = model.predict(sds.ins_validation)
-            elif args.data_format == 'tf-dataset':
+                results['tags_validation'] = sds.tags_validation
+
+            elif args.data_representation == 'tf-dataset':
                 ins = sds.validation.map(lambda x, y: x)
                 ins = [features.numpy() for features in ins]
                 results['ins_validation'] = np.concatenate(ins, axis=0)
@@ -473,12 +489,14 @@ def execute_exp(sds, model, args, fbase, epochs_start):
                 validation_prediction_set = sds.validation.map(lambda x, y: x)
                 results['predict_validation'] = model.predict(validation_prediction_set)
 
+                results['tags_validation'] = None
+                
     ######
     # Testing set
     print_debug('Testing eval', 4, args.debug)
     
     if (sds.ins_testing is not None) or (sds.testing is not None):
-        if args.data_format == 'tf-dataset':
+        if args.data_representation == 'tf-dataset':
             ev = model.evaluate(sds.testing)
         else:
             ev = model.evaluate(sds.ins_testing,
@@ -506,7 +524,9 @@ def execute_exp(sds, model, args, fbase, epochs_start):
                 results['ins_testing'] = sds.ins_testing
                 results['outs_testing'] = sds.outs_testing
                 results['predict_testing'] = model.predict(sds.ins_testing)
-            elif args.data_format == 'tf-dataset':
+                results['tags_testing'] = sds.tags_testing
+                
+            elif args.data_representation == 'tf-dataset':
                 ins = sds.testing.map(lambda x, y: x)
                 ins = [features.numpy() for features in ins]
                 results['ins_testing'] = np.concatenate(ins, axis=0)
@@ -520,6 +540,7 @@ def execute_exp(sds, model, args, fbase, epochs_start):
                 # Make a prediction dataset by removing the labels and grab predictions
                 testing_prediction_set = sds.testing.map(lambda x, y: x)
                 results['predict_testing'] = model.predict(testing_prediction_set)
+                results['tags_testing'] = None
     
     ######
     # Close WANDB
@@ -1036,7 +1057,7 @@ if __name__ == "__main__":
 
 
     # Print header
-    n = len(GITHUB)
+    n = len(AI2ES)
     ver = "This is Zero2Neuro Version " + VERSION
     print("\n"
           + "*" * n
@@ -1046,8 +1067,15 @@ if __name__ == "__main__":
           + "\n\n"
           + GITHUB
           + "\n"
+          + "\n"
+          + "Symbiotic Computing Laboratory"
+          + "\n"
+          + AI2ES
+          + "\n"
           + "*" * n
           + "\n")
+
+    print()
 
     print(args)
 

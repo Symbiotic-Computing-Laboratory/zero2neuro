@@ -13,6 +13,7 @@ After each table is loaded, it is converted to a TF-Dataset for subsequent proce
 - XOR Data: [xor_data.xlsx](xor_data.xlsx): 2 sheets
 - Data configuration: [data1.txt](data1.txt): Use a single sheet for one table
 - Data configuration: [data2.txt](data2.txt): Use two sheets: one for training, the other for validation
+- Data configuration: [data2.txt](data2.txt): Use three sheets: one each for training, validation, and testing
 
 ## Network
 - Two binary inputs
@@ -31,6 +32,10 @@ Execute from the tests/tabular_xlsx_test/ directory:
 OR
 
 ./exec2.sh
+
+OR
+
+./exec3.sh
 
 ```
 
