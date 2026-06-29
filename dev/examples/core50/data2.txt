@@ -1,6 +1,11 @@
 --data_format=tabular-indirect
 --data_set_type=fixed
---data_file=images.csv
+
+# Check that validation and test files work, too
+--data_files
+images.csv,0
+images.csv,1
+images.csv,2
 --data_inputs
 File
 --data_outputs
