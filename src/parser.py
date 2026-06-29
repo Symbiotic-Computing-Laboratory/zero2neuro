@@ -112,6 +112,7 @@ def create_parser(description='Zero2Neuro'):
 
     # Dataset details
     parser.add_argument('--dataset_directory', type=str, default=None, help='Data set location')
+    parser.add_argument('--dataset_indirect_directory', type=str, default=None, help='Indirect data set location (e.g., image location)')
     parser.add_argument('--training_mode', type=str, default=None, help='EXPIRED')
 
     parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset)')
@@ -158,6 +159,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_seed', type=int, default=1138, help='Random seed used for shuffling data into folds')
 
     # TF Dataset configuration
+    # TODO: add prefix to these args
     parser.add_argument('--batch', type=int, default=32, help="Training set batch size")
     parser.add_argument('--prefetch', type=int, default=None, help="Number of batches to prefetch")
     parser.add_argument('--num_parallel_calls', type=int, default=4, help="Number of threads to use during batch construction")

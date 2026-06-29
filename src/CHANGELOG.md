@@ -2,6 +2,10 @@
 
 Use inverse order
 
+## v0.8.1 2026-06-28
+* Tabular-indirect now supports multiple files, and weights, tags, groups and stratify
+* Added one more automated test
+
 ## v0.8.0 2026-06-28
 * Added example-wise tagging
 * Added automated_tests

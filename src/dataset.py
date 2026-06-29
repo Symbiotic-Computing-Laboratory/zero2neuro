@@ -14,9 +14,7 @@ Partitioning data sets for training and evaluation:
 
 
 TODO:
-- Tabular indirect: allow multiple input files, add weights/tags/groups/stratify, allow 
-any number of output columns, and use standard output categorical translation
-- Implement random assignment of samples to folds with stratification
+- 
 
 '''
 
@@ -347,7 +345,7 @@ class SuperDataSet:
             # Each string is a new mapping: translate all of them
             tmp = [SuperDataSet.parse_value_mapping_float(s) for s in self.args.data_columns_categorical_to_float_direct]
 
-            # Add to the categorial translation
+            # Add to the categorical translation
             if self.categorical_feature_translation is None:
                 self.categorical_feature_translation = tmp
             else:
@@ -545,11 +543,10 @@ class SuperDataSet:
                 # File-level groups are defined
                 print_debug('Data groups: ' + str(self.data_groups), 3, self.args.debug)
 
-                if self.args.data_representation == 'numpy':
+                if not self.args.data_format == 'tf-dataset':
                     self.folds = self.generate_folds_by_group_numpy()
                 
                 else:
-                    # TODO: LUKE use sample_from_dataset()
                     self.folds = self.generate_folds_by_group_tf()
 
             else:
@@ -557,7 +554,7 @@ class SuperDataSet:
                 
                 
         elif self.args.data_fold_split == 'group-by-example':
-            if self.args.data_representation == 'numpy':
+            if not self.args.data_format == 'tf-dataset':
                 self.folds = self.generate_folds_by_example_numpy()
                 
             else:
@@ -566,8 +563,8 @@ class SuperDataSet:
                     
 
         elif self.args.data_fold_split == 'random':
-            if self.args.data_representation == 'numpy':
-                self.generate_folds_random_numpy()
+            if not self.args.data_format == 'tf-dataset':
+                self.generate_folds_random_numpy(False)
                 
             else:
                 handle_error("data_fold_split random not supported for tf-dataset",
@@ -575,10 +572,8 @@ class SuperDataSet:
 
         
         elif self.args.data_fold_split == 'random-stratify':
-            if self.args.data_representation == 'numpy':
-                # TODO: LUKE.  Need to think about whether we should just stratify based on the output or an arbitrary column
-                handle_error("data_fold_split random-stratify not yet supported",
-                             self.args.verbose)
+            if not self.args.data_format == 'tf-dataset':
+                self.generate_folds_random_numpy(True)
                 
             else:
                 handle_error("data_fold_split random-stratify not supported for tf-dataset",
@@ -850,7 +845,7 @@ class SuperDataSet:
             #    self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
 
         # TF-Datasets
-        # TODO: need to rethink this.  repeat seems wrong here.
+        # TODO: need to rethink this.  repeat seems wrong here.  It should only be used for training set.
         elif self.args.data_representation == "tf-dataset":
             # TF Cache and repeating 
             if self.args.cache is not None:
@@ -1064,16 +1059,101 @@ class SuperDataSet:
 
         return tuple(result)
 
+    @staticmethod
+    def _compute_random_shuffle(n:int, n_folds:int, arr:np.array):
+        '''
+        Split arr randomly across n_folds as evenly as possible
 
-    def generate_folds_random_numpy(self):
+        :param n: Total number of samples
+        :param n_folds: Total number of folds
+        :param arr: Full list of sample indices
+
+        :return: List of n_folds.  Each is a numpy array of indices in the fold
+        '''
+        np.random.shuffle(arr)
+
+        # Compute the indices for each fold
+        # q = number within each fold, r = extras that are added to the first r folds
+        q, r = divmod(n, n_folds)
+
+        # First (n - r) chunks of size q+1, then r chunks of size q
+        sizes = [q + 1] * r + [q] * (n - r)
+    
+        # Create the list of indices
+        fold_inds = []
+        start = 0
+        for size in sizes:
+            fold_inds.append(arr[start:start + size])
+            start += size
+
+        return fold_inds
+
+    @staticmethod
+    def _compute_random_stratify_shuffle(n:int, n_folds:int, arr:np.array, stratify:np.array):
+        '''
+        Split arr randomly across n_folds as evenly as possible, while keeping
+        each stratification class balanced across the folds
+
+        :param n: Total number of samples
+        :param n_folds: Total number of folds
+        :param arr: Full list of sample indices
+        :param stratify: Numpy array with one value per example.
+           The values form a set of classes.  Each class should
+           be split evenly across the folds.  May be ints, bools, or
+           strings; floating point values are discretized by truncating
+           the fraction
+
+        :return: List of n_folds.  Each is a numpy array of the indices the fold
+        '''
+        # Floating point stratification values are discretized by truncating the fraction
+        if np.issubdtype(stratify.dtype, np.floating):
+            classes = np.trunc(stratify).astype(np.int64)
+        else:
+            classes = stratify
+
+        # Accumulate the indices assigned to each fold, one class at a time
+        fold_inds = [[] for _ in range(n_folds)]
+
+        for c in np.unique(classes):
+            # Sample indices (within arr) that belong to this class
+            class_arr = arr[classes[arr] == c]
+
+            # Randomize the order within the class
+            np.random.shuffle(class_arr)
+
+            # Evenly divide this class across the folds
+            # q = number per fold, r = extras that are added to the first r folds
+            n_class = class_arr.shape[0]
+            q, r = divmod(n_class, n_folds)
+            sizes = [q + 1] * r + [q] * (n_folds - r)
+
+            start = 0
+            for f, size in enumerate(sizes):
+                fold_inds[f].append(class_arr[start:start + size])
+                start += size
+
+        # Concatenate the per-class chunks and shuffle so classes are intermixed within each fold
+        folds = []
+        for f in range(n_folds):
+            fold = np.concatenate(fold_inds[f])
+            np.random.shuffle(fold)
+            folds.append(fold)
+
+        return folds
+    
+    def generate_folds_random_numpy(self, stratify_samples=False):
         '''
         Translate the set of data tables into a set of folds with
         random sampling.  Specifically: self.data -> self.folds
 
         
         '''
+        # Checks
+        if stratify_samples and (self.args.data_stratify is None):
+            handle_error('--data_fold_split=random-stratify requires --data_stratify', self.args.verbose)
+
         # Combine all of the data tables together into one
-        ins, outs, weights, tags, _, _ = self.combine_all_data_tables()
+        ins, outs, weights, tags, _, stratify = self.combine_all_data_tables()
 
         # Number of folds
         nfolds = self.args.data_n_folds
@@ -1086,22 +1166,12 @@ class SuperDataSet:
 
         # Shuffle these indices
         np.random.seed(self.args.data_seed)
-        np.random.shuffle(arr)
 
-        # Compute the indices for each fold
-        # q = number within each fold, r = extras that are added to the first r folds
-        q, r = divmod(n, nfolds)
-
-        # First (n - r) chunks of size q+1, then r chunks of size q
-        sizes = [q + 1] * r + [q] * (n - r)
-    
-        # Create the list of indices
-        fold_inds = []
-        start = 0
-        for size in sizes:
-            fold_inds.append(arr[start:start + size])
-            start += size
-
+        if stratify_samples:
+            fold_inds = SuperDataSet._compute_random_stratify_shuffle(n, nfolds, arr, stratify)
+        else:
+            fold_inds = SuperDataSet._compute_random_shuffle(n, nfolds, arr)
+        
         # Now slice the data
         ins_folds = [ins[inds,...] for inds in fold_inds]
 
@@ -1114,11 +1184,6 @@ class SuperDataSet:
             weights_folds = [None] * nfolds
         else:
             weights_folds = [weights[inds,...] for inds in fold_inds]
-
-        #if groups is None:
-        #    groups_folds = [None] * nfolds
-        #else:
-        #    groups_folds = [groups[inds,...] for inds in fold_inds]
 
         if tags is None:
             tags_folds = [None] * nfolds
@@ -1595,13 +1660,14 @@ class SuperDataSet:
         file_list = zip(self.args.data_files,
                         self.data_xlsx_sheet_names if self.data_xlsx_sheet_names is not None else [None]*len(self.args.data_files))
         
-        for f, sn in file_list: #self.args.data_files:
+        for f, sn in file_list: 
             ins, outs, weights, tags, groups, stratify = self.load_table(self.args.dataset_directory,
                                                          f,
                                                          self.args.data_inputs,
                                                          self.args.data_outputs,
                                                          self.args.data_weights,
                                                          self.args.data_groups,
+                                                         self.args.data_tag_examples,
                                                          self.args.data_stratify,
                                                          categorical_translation=self.categorical_translation,
                                                          categorical_feature_translation=self.categorical_feature_translation,
@@ -1617,6 +1683,39 @@ class SuperDataSet:
         
         return data
 
+
+    @staticmethod
+    def _translate_categorical_variables(df:pd.DataFrame, categorical_translation:list[(str, dict)]):
+        '''
+        Translate the defined categorical variables in the df into the 
+        corresponding integer values
+
+        :param df: DataFrame containing a csv or xlsx-derived table
+        :param categorical_translation: List of tuples that describe the categorical translation rules for each column
+
+        Note: df is destructively modified
+        '''
+        # Translate dataframe columns for categorical variables
+        if categorical_translation is not None:
+            for col, d in categorical_translation:
+                if col in df.columns:
+                    # col is a column in the DataFrame
+                    # Keep a copy of the original values for this col:
+                    original_values = df[col].copy()
+                    
+                    # Map the value in each cell to the corresponding int
+                    #df[col] = df[col].map(d)
+                    # First convert the value in the table to a string, then do the mapping
+                    df[col] = df[col].map(lambda x: d.get(str(x)))
+                
+                    # Check to make sure there were not any extraneous categorical values
+                    unmapped = df[df[col].isna()][col].index
+                    if len(unmapped) > 0:
+                        # There are some unrecognized categorical values
+                        failed_values = original_values.loc[unmapped]
+                        handle_error(f"data_columns_categorical_to_int error: unmapped values in column '{col}': {failed_values.unique().tolist()}",
+                                     verbose_level)
+                    
 
 
     @staticmethod
@@ -1660,28 +1759,7 @@ class SuperDataSet:
                                             sheet_name=tabular_xlsx_sheet_name,
                                             encoding=tabular_encoding)
 
-        ##
-        # Translate dataframe columns for categorical variables
-        if categorical_translation is not None:
-            for col, d in categorical_translation:
-                if col in df.columns:
-                    # col is a column in the DataFrame
-                    # Keep a copy of the original values for this col:
-                    original_values = df[col].copy()
-                    
-                    # Map the value in each cell to the corresponding int
-                    #df[col] = df[col].map(d)
-                    # First convert the value in the table to a string, then do the mapping
-                    df[col] = df[col].map(lambda x: d.get(str(x)))
-                
-                    # Check to make sure there were not any extraneous categorical values
-                    unmapped = df[df[col].isna()][col].index
-                    if len(unmapped) > 0:
-                        # There are some unrecognized categorical values
-                        failed_values = original_values.loc[unmapped]
-                        handle_error(f"data_columns_categorical_to_int error: unmapped values in column '{col}': {failed_values.unique().tolist()}",
-                                     verbose_level)
-                    
+        SuperDataSet._translate_categorical_variables(df, categorical_translation)
                     
         ##
         ins = None
@@ -1774,87 +1852,217 @@ class SuperDataSet:
         # Stratification column
         if data_stratify is not None:
             # Check that this column exists in the table
-            if not data_stratify in df.input_columns:
+            if not data_stratify in df.columns:
                 handle_error("Data stratify column %s not in %s"%(data_stratify, file_name), verbose_level)
 
             # Extract the values
-            stratify = df[stratify].values
+            stratify = df[data_stratify].values
 
 
         return ins, outs, weights, tags, groups, stratify
 
     def load_table_indirect_set(self):
         '''
-        TODO: 
-        - update to import weights, tags, groups, stratify
-        - Support more than one indirect file
-        - Allow any number of output columns + use standard categorical translation
+        Load a set of indirect tabular files.
+
+        :return: List of tuples of the form (ins, outs, weights, tags, groups, stratify)
+
+        Checks: input_columns must be exactly one
+            categorical_feature_translation is None
 
         '''
-        # Right now, can only have one tabular file
-        #assert len(self.args.data_files) == 1, "Only support loading single tabular-indirect files"
-        if len(self.args.data_files) != 1:
-            handle_error('Zero2Neuro only supports loading of a single tabular-indirect file', self.args.verbose)
+        # Allow only one input column
+        if len(self.args.data_inputs) != 1:
+            handle_error('Tabular-indirect file: can only have one input column', self.args.verbose)
 
-        ins, outs, output_mapping = self.load_table_indirect_images(self.args.dataset_directory,
-                                                                    self.args.data_file,
+        # Input feature translation does not make sense with only a single input that contains a file
+        if not self.categorical_feature_translation is None:
+            handle_error('Tabular-indirect file: categorical_feature_translation is not supported', self.args.verbose)
+
+        # Return value (accumulated)
+        data = []
+
+        # List of file name, sheet name pairs (Sheet name is None if not specified)
+        file_list = zip(self.args.data_files,
+                        self.data_xlsx_sheet_names if self.data_xlsx_sheet_names is not None else [None]*len(self.args.data_files))
+        
+        for f, sn in file_list:
+            data_single = self.load_table_indirect_images(self.args.dataset_directory,
+                                                          self.args.dataset_indirect_directory,
+                                                                    f,
                                                                     self.args.data_inputs,
                                                                     self.args.data_outputs,
-                                                                    self.args.data_output_sparse_categorical,
+                                                                    data_weights=self.args.data_weights,
+                                                                    data_groups=self.args.data_groups,
+                                                                    data_tags=self.args.data_tag_examples,
+                                                                    data_stratify=self.args.data_stratify,
+                                                                    #categorical_translation=self.categorical_translation,
+                                                                    #categorical_feature_translation=self.categorical_feature_translation,
+                                                                    verbose_level=self.args.verbose,
                                                                     tabular_column_range=self.args.tabular_column_range,
                                                                     tabular_column_list=self.args.tabular_column_list,
+                                                                    tabular_sheet_name=sn,
                                                                     tabular_header_row=self.args.tabular_header_row,
-                                                                    tabular_encoding=self.args.tabular_encoding)
-        self.output_mapping = output_mapping
-        return [(ins, outs, None, None, None, None)] # TODO: add sample weights, group, tags
+                                                                    tabular_encoding=self.args.tabular_encoding,
+                                                                    debug=self.args.debug)
+            
+            data.append(data_single)
+
+        # Return the full set of files
+        return(data)
+    
+        # Right now, can only have one tabular file
+        #assert len(self.args.data_files) == 1, "Only support loading single tabular-indirect files"
+        #if len(self.args.data_files) != 1:
+        #    handle_error('Zero2Neuro only supports loading of a single tabular-indirect file', self.args.verbose)
+
+        #ins, outs, output_mapping = self.load_table_indirect_images(self.args.dataset_directory,
+        #                                                            self.args.data_file,
+        #                                                            self.args.data_inputs,
+        #                                                            self.args.data_outputs,
+        #                                                            data_weights=self.args.data_weights,
+        #                                                            data_tags=self.args.data_tag_examples,
+        #                                                            data_stratify=self.args.data_stratify,
+        #                                                            categorical_translation=self.categorical_translation,
+        #
+        #                                                             categorical_feature_translation=self.categorical_feature_translation,
+        #                                                            verbose_level=self.args.verbose,
+        #                                                            tabular_column_range=self.args.tabular_column_range,
+        #                                                            tabular_column_list=self.args.tabular_column_list,
+        #                                                            tabular_sheet_name=self.args.tabular_xlsx_sheet_name,
+        #                                                            tabular_header_row=self.args.tabular_header_row,
+        #                                                            tabular_encoding=self.args.tabular_encoding,
+        #                                                            debug=self.args.debug)
+        #self.output_mapping = output_mapping
+        #return [(ins, outs, None, None, None, None)] # TODO: add sample weights, group, tags
 
         
     @staticmethod
     def load_table_indirect_images(dataset_path:str,
+                                   dataset_indirect_path:str,
                                    file_name:str,
                                    input_columns:[str],
                                    output_columns:[str],
-                                   output_sparse_categorical:bool=False,
-                                   tabular_column_range=None,
-                                   tabular_column_list=None,
-                                   tabular_header_row=None,
-                                   tabular_header_names=None,
-                                   tabular_encoding:str=None):
+                                   data_weights:str=None,
+                                   data_groups:str=None,
+                                   data_tags:list[str]=None,
+                                   data_stratify:str=None,
+                                   #categorical_translation:list[tuple[str, dict]]=None,
+                                   #categorical_feature_translation:list[tuple[str, dict]]=None,
+                                   verbose_level:int=0,
+                                   tabular_column_range:[int]=None,
+                                   tabular_column_list:[int]=None,
+                                   tabular_header_row:int=None,
+                                   tabular_sheet_name:str=None,
+                                   tabular_header_names:[str]=None,
+                                   tabular_encoding:str=None,
+                                   debug:int=0):
+        '''
+        Load a table and interpret the input column as containing an image file name.
+        Load each of these images as part of the inputs.
+
+        :return: a numpy dataset of the form (ins, outs, weights, tags, groups, stratify)
+
+        '''
+
+        # TODO: assume that file_name is absolute path if it is needed
+        if dataset_path is None:
+            file_path = file_name
+        else:
+            # Fix path construction for any OS
+            file_path = '%s/%s'%(dataset_path, file_name)
+        
 
         # Load the table
-        df = SuperDataSet.load_tabular_file(file_name,
+        df = SuperDataSet.load_tabular_file(file_path,
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
-                                            header_names=tabular_header_names,
                                             skiprows=tabular_header_row,
+                                            sheet_name=tabular_sheet_name,
+                                            header_names=tabular_header_names,
                                             encoding=tabular_encoding)
         
-        #print(df['File'][0])
-
-        ins = None
+        # TODO: do we need this?
+        # Default values
         outs = None
+        weights = None
+        groups = None
+        tags = None
+        stratify = None
 
-        output_mapping = None
+        #        output_mapping = None
         
-        if len(input_columns) > 0:
-            assert len(input_columns) == 1, "Dataset only supports a single input column containing file names"
+        #   if len(input_columns) > 0:
+        #    assert len(input_columns) == 1, "Dataset only supports a single input column containing file names"
             
-            ins = SuperDataSet.load_image_set_np(dataset_path, df[input_columns].values[:,0])
+        ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_columns].values[:,0])
 
-        if len(output_columns) > 0:
-            assert len(output_columns) == 1, "Dataset only supports a single output column"
+        #if len(output_columns) > 0:
+        #    assert len(output_columns) == 1, "Dataset only supports a single output column"
             
-            if output_sparse_categorical:
-                # Interpret the column as sparse categorical
-                categories = df[output_columns[0]].astype(pd.CategoricalDtype()).cat
-                output_mapping = dict(enumerate(categories.categories))
-                outs = categories.codes.astype(pd.SparseDtype("int", fill_value=-1)).values
+        #    if output_sparse_categorical:
+        #        # Interpret the column as sparse categorical
+        #        categories = df[output_columns[0]].astype(pd.CategoricalDtype()).cat
+        #        output_mapping = dict(enumerate(categories.categories))
+        #        outs = categories.codes.astype(pd.SparseDtype("int", fill_value=-1)).values
                 
-            else:
-                # Interpret as ints or floats
-                outs = df[output_columns].values
+        #    else:
+        #        # Interpret as ints or floats
+        #        outs = df[output_columns].values
 
-        return ins, outs, output_mapping
+        #######
+        # Outputs
+        if len(output_columns) > 0:
+            # Interpret as ints or floats
+            print_debug("Table dataframe columns: %s"%(df.columns), 4, debug)
+
+            # Check that the output columns are all in the table
+            diff = set(output_columns) - set(df.columns)
+            if len(diff) > 0:
+                handle_error("Columns %s not in %s"%(str(diff), file_name), verbose_level)
+            
+            outs = df[output_columns].values
+
+        # Some datasets will have weights associated with each example
+        if data_weights is not None:
+            # Check that the column exists
+            if not data_weights in df.columns:
+                handle_error("Column %s not in %s"%(data_weights, file_name), verbose_level)
+
+            # Get the data
+            weights = df[data_weights].values
+
+        # Dataset groups
+        if data_groups is not None:
+            # Check that the column exists
+            if not data_groups in df.columns:
+                handle_error("Column %s not in %s"%(data_weights, file_name), verbose_level)
+
+            # Get the data
+            groups = df[data_groups].values
+
+        # Dataset tags
+        if data_tags is not None:
+            # Check that the tag columns are all in the table
+            diff = set(data_tags) - set(df.columns)
+            if len(diff) > 0:
+                handle_error("Data tag columns %s not in %s"%(str(diff), file_name), verbose_level)
+
+            # Create a dict: one key per data tag; associate each key with the corresponding table column values
+            tags = {c:df[c].values for c in data_tags}
+            
+        # Stratification column
+        if data_stratify is not None:
+            # Check that this column exists in the table
+            if not data_stratify in df.columns:
+                handle_error("Data stratify column %s not in %s"%(data_stratify, file_name), verbose_level)
+
+            # Extract the values
+            stratify = df[data_stratify].values
+
+        # Return all tables as a 6=tuple
+        return ins, outs, weights, tags, groups, stratify
+
 
     def load_tf_set(self):
         # TODO: Add a path to the file names, check to make sure it exists.

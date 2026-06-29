@@ -116,6 +116,16 @@ classification using the
 python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt @classification_override.txt -vvv --force
 ```
 
+## Classification Problem with Stratification
+We can change the classification problem into one that randomly
+assigns samples to folds using stratification using 
+[classification_override2.txt](classification_override2.txt) as follows:
+
+```
+python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt @classification_override2.txt -vvv --force
+```
+
+
 ## References
 - [Paper: Improved methods for predicting peptide binding affinity to MHC class II molecules](https://onlinelibrary.wiley.com/doi/10.1111/imm.12889)
 - [Original Data Set](https://services.healthtech.dtu.dk/services/NetMHCII-2.3/)
@@ -147,7 +157,7 @@ mkdir ds
 2. Generate the folded data without performing an experiment
 
 ```
-python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt  -vvv --data_save_folds ds/amino --nogo
+python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt  -vvv --data_save_folds ds/amino --data_representation tf-dataset --nogo
 ```
 
 Notes:
