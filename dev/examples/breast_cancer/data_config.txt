@@ -48,4 +48,4 @@ fractal_dimension3
 Diagnosis
 
 # Training batch size
---batch=32
+--data_batch=32
