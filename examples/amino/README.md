@@ -172,7 +172,14 @@ performed during this extraction
 ### Use the TF-Dataset files instead of the raw amino acid file
 
 The key difference is that we now use an alternative data
-configuration file: [data_tf.txt](data_tf.txt):
+configuration file: 
+- [data_tf.txt](data_tf.txt): 10 files, 10 folds, n-fold-cross-validation
+- [data_tf2.txt](data_tf2.txt): 3 files, 3 folds, fixed assignment
+- [data_tf3.txt](data_tf3.txt): 10 files, 5 folds, n-fold-cross-validation; each pair of files is combined to create a single fold
+
+
+
+Example:
 
 ```
 python $ZERO2NEURO_PATH/zero2neuro.py @data_tf.txt @experiment.txt @network.txt -vvv

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test use of tf-datasets for amino acid case
+# Test use of tf-datasets for amino acid case: 10 files, 10 folds, n-fold cross-validation
 #  These tf-datasets are created by testH
 
 set -euo pipefail

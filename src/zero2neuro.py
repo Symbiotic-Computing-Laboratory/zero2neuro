@@ -71,6 +71,9 @@ def compatibility_checks(args):
     if args.data_format == 'tf-dataset' and (not args.data_representation == 'tf-dataset'):
         handle_error("When --data_format='tf-dataset', --data_representation must be 'tf-dataset'", args.verbose)
 
+    if args.data_tf_repeat and args.data_steps_per_epoch is None:
+        handle_error("--repeat requires --steps_per_epoch to be set", args.verbose)
+
     if args.rotation is not None:
         handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
 
@@ -337,7 +340,7 @@ def execute_exp(sds, model, args, fbase, epochs_start):
         if args.data_representation == 'tf-dataset':
             # TF-Dataset format
             history = model.fit(sds.training,
-                                steps_per_epoch=args.steps_per_epoch,
+                                steps_per_epoch=args.data_steps_per_epoch,
                                 epochs=args.epochs,
                                 validation_data=sds.validation,
                                 verbose=args.verbose>=3,
@@ -360,9 +363,9 @@ def execute_exp(sds, model, args, fbase, epochs_start):
             history = model.fit(sds.ins_training,
                                 sds.outs_training,
                                 sample_weight=sds.weights_training,
-                                steps_per_epoch=args.steps_per_epoch,
+                                steps_per_epoch=args.data_steps_per_epoch,
                                 epochs=args.epochs,
-                                batch_size=args.batch,
+                                batch_size=args.data_batch,
                                 validation_data=validation,
                                 verbose=args.verbose>=3,
                                 callbacks=cbs,
@@ -384,15 +387,14 @@ def execute_exp(sds, model, args, fbase, epochs_start):
     # Training
     print_debug('Training eval', 4, args.debug)
     if args.data_representation == 'tf-dataset':
-        ev = model.evaluate(sds.training,
-                            steps=args.steps_per_epoch,
-                            batch_size=args.batch,
+        ev = model.evaluate(sds.training_pre_repeat,
+                            #steps=args.data_steps_per_epoch,
                             )
     else:
         ev = model.evaluate(sds.ins_training,
                             sds.outs_training,
-                            steps=args.steps_per_epoch,
-                            batch_size=args.batch,
+                            #steps=args.data_steps_per_epoch,
+                            batch_size=args.data_batch,
                             )
 
     # Create dictionaries that match name with value from ev
@@ -424,19 +426,18 @@ def execute_exp(sds, model, args, fbase, epochs_start):
             results['predict_training'] = model.predict(sds.ins_training)
             results['tags_training'] = sds.tags_training
         elif args.data_representation == 'tf-dataset':
-            ins = sds.training.map(lambda x, y: x)
-            ins = [features.numpy() for features in ins]
+            # Single pass over the dataset, capturing ins and outs together
+            ins = []
+            outs = []
+            preds = []
+            for features, label in sds.training_pre_repeat:
+                ins.append(features.numpy())
+                outs.append(label.numpy())
+                preds.append(model.predict(features))
+
             results['ins_training'] = np.concatenate(ins, axis=0)
-            
-            # Makes a tf dataset with only the labels
-            outs = sds.training.map(lambda x, y: y)
-            # Grabs each label and converts it to numpy
-            outs = [label.numpy() for label in outs]
             results['outs_training'] = np.concatenate(outs, axis=0)
-    
-            # Make a prediction dataset by removing the labels and grab predictions
-            training_prediction_set = sds.training.map(lambda x, y: x)
-            results['predict_training'] = model.predict(training_prediction_set)
+            results['predict_training'] = np.concatenate(preds, axis=0)
             results['tags_training'] = None
 
     
@@ -970,8 +971,8 @@ def prepare_and_execute_experiment(args):
                 model_text_vectorization.adapt(sds.ins_training)
             else:
                 # TF dataset
-                # Frst strip out ins from the DS (first element of the tuple)
-                ds = sds.training.map(lambda x, *rest: x)
+                # First strip out ins from the DS (first element of the tuple)
+                ds = sds.training_pre_repeat.map(lambda x, *rest: x)
                 # Then adapt
                 model_text_vectorization.adapt(ds)
                 
@@ -984,6 +985,7 @@ def prepare_and_execute_experiment(args):
         
     else:
         model = models  
+    print('MODEL CREATED')
 
     ######
     # Execute the experiment

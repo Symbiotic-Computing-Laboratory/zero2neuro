@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.8.2 2026-06-30
+* Cleaned up tf-dataset handling
+
 ## v0.8.1 2026-06-28
 * Tabular-indirect now supports multiple files, and weights, tags, groups and stratify
 * Added one more automated test

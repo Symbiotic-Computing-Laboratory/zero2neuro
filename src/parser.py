@@ -159,17 +159,16 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--data_seed', type=int, default=1138, help='Random seed used for shuffling data into folds')
 
     # TF Dataset configuration
-    # TODO: add prefix to these args
-    parser.add_argument('--batch', type=int, default=32, help="Training set batch size")
-    parser.add_argument('--prefetch', type=int, default=None, help="Number of batches to prefetch")
-    parser.add_argument('--num_parallel_calls', type=int, default=4, help="Number of threads to use during batch construction")
-    parser.add_argument('--cache', type=str, default=None, help="Cache (default: none; RAM: specify empty string; else specify file")
-    parser.add_argument('--shuffle', type=int, default=None, help="Size of the shuffle buffer")
-    
+    parser.add_argument('--data_batch', type=int, default=32, help="Training set batch size")
+    parser.add_argument('--data_tf_prefetch', type=int, default=None, help="Number of batches to prefetch")
+    parser.add_argument('--data_tf_num_parallel_calls', type=int, default=4, help="Number of threads to use during batch construction")
+    parser.add_argument('--data_tf_cache', type=str, default=None, help="Cache (default: none; RAM: specify empty string; else specify file")
+    parser.add_argument('--data_tf_shuffle', type=int, default=None, help="Size of the shuffle buffer")
+
     #parser.add_argument('--generator_seed', type=int, default=42, help="Seed used for generator configuration")
-    parser.add_argument('--repeat', action='store_true', help='Continually repeat training set')
-    parser.add_argument('--steps_per_epoch', type=int, default=None, help="Number of training batches per epoch (must use --repeat if you are using this)")
-    parser.add_argument('--steps_per_validation_epoch', type=int, default=None, help="Number of validation batches per epoch (must use --repeat_validation if you are using this)")
+    parser.add_argument('--data_tf_repeat', action='store_true', help='Continually repeat training set')
+    parser.add_argument('--data_steps_per_epoch', type=int, default=None, help="Number of training batches per epoch (must use --data_tf_repeat if you are using this)")
+    parser.add_argument('--data_steps_per_validation_epoch', type=int, default=None, help="Number of validation batches per epoch (must use --repeat_validation if you are using this)")
     
 
 

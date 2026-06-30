@@ -77,6 +77,7 @@ class SuperDataSet:
         self.tags_training = None
         # TF-Dataset only
         self.training = None
+        self.training_pre_repeat = None
 
         # Validation
         self.ins_validation = None
@@ -847,16 +848,14 @@ class SuperDataSet:
         # TF-Datasets
         # TODO: need to rethink this.  repeat seems wrong here.  It should only be used for training set.
         elif self.args.data_representation == "tf-dataset":
-            # TF Cache and repeating 
-            if self.args.cache is not None:
-                if self.args.cache == '':
+            # TF Cache
+            if self.args.data_tf_cache is not None:
+                if self.args.data_tf_cache == '':
                     self.folds = [ds.cache() for ds in self.folds]
-                elif self.args.cache != '':
+                elif self.args.data_tf_cache != '':
                     # TODO: Add error checking to make sure cache directory exists
-                    self.folds = [ds.cache(os.path.join(self.args.cache, 'fold_{i}')) for i, ds in enumerate(self.folds)]
-            if self.args.repeat:
-                self.folds = [ds.repeat() for ds in self.folds]
-                    
+                    self.folds = [ds.cache(os.path.join(self.args.data_tf_cache, 'fold_{i}')) for i, ds in enumerate(self.folds)]
+
             if self.args.data_set_type == "fixed":
                 self.tf_split_fixed()
             elif self.args.data_set_type == "holistic-cross-validation":
@@ -874,37 +873,41 @@ class SuperDataSet:
             
             #####
             # Handle final pipeline elements of training/validation/testing data sets
-            if self.args.shuffle is not None:
-                self.training = self.training.shuffle(self.args.shuffle)
 
-            self.training = self.training.batch(self.args.batch, num_parallel_calls=tf.data.AUTOTUNE)
+            # Remember the handle to the training set without repeating
+            self.training_pre_repeat = self.training
+            self.training_pre_repeat = self.training_pre_repeat.batch(self.args.data_batch, num_parallel_calls=tf.data.AUTOTUNE)
 
-            if self.args.prefetch is None:
+            if self.args.data_tf_repeat:
+                self.training = self.training.repeat()
+
+            self.training = self.training.batch(self.args.data_batch, num_parallel_calls=tf.data.AUTOTUNE)
+
+            if self.args.data_tf_prefetch is None:
                 self.training = self.training.prefetch(tf.data.AUTOTUNE)
-            elif self.args.prefetch > 0:
-                self.training = self.training.prefetch(self.args.prefetch)
+            elif self.args.data_tf_prefetch > 0:
+                self.training = self.training.prefetch(self.args.data_tf_prefetch)
 
             #####
             if self.validation is not None:
-                self.validation = self.validation.batch(self.args.batch, num_parallel_calls=tf.data.AUTOTUNE)
+                self.validation = self.validation.batch(self.args.data_batch, num_parallel_calls=tf.data.AUTOTUNE)
 
-                if self.args.prefetch is None:
+                if self.args.data_tf_prefetch is None:
                     self.validation = self.validation.prefetch(tf.data.AUTOTUNE)
-                elif self.args.prefetch > 0:
-                    self.validation = self.validation.prefetch(self.args.prefetch)
+                elif self.args.data_tf_prefetch > 0:
+                    self.validation = self.validation.prefetch(self.args.data_tf_prefetch)
             #####
             if self.testing is not None:
-                self.testing = self.testing.batch(self.args.batch, num_parallel_calls=tf.data.AUTOTUNE)
+                self.testing = self.testing.batch(self.args.data_batch, num_parallel_calls=tf.data.AUTOTUNE)
 
-                if self.args.prefetch is None:
+                if self.args.data_tf_prefetch is None:
                     self.testing = self.testing.prefetch(tf.data.AUTOTUNE)
-                elif self.args.prefetch > 0:
-                    self.testing = self.testing.prefetch(self.args.prefetch)
+                elif self.args.data_tf_prefetch > 0:
+                    self.testing = self.testing.prefetch(self.args.data_tf_prefetch)
             
         else:
             handle_error("Unrecognized data_representation (%s)"%self.args.data_representation,
                          self.args.verbose)
-
 
     def dataset_split_fixed(self):
         '''
@@ -982,10 +985,9 @@ class SuperDataSet:
 
         # Training set
         self.training = self.folds[0]
-        #for v in self.training:
-        #    print(v)
-        #print(self.training)
-            
+        if self.args.data_tf_shuffle is not None:
+            self.training = self.training.shuffle(self.args.data_tf_shuffle, reshuffle_each_iteration=True)
+
         if data_len >= 2:
             # Validation set
             self.validation=self.folds[1]
@@ -999,6 +1001,9 @@ class SuperDataSet:
         self.folds -> training/validation/testing datasets
         
         For TF Datasets
+
+        We assume that we will consume all of the validation and testing datasets on a single evaluation.  
+        But, for the training set, we have the option of shuffling
         
         '''
         # Assign fold indices to data sets
@@ -1009,17 +1014,20 @@ class SuperDataSet:
         tr_ds = [self.folds[i] for i in tr_folds]
         val_ds = [self.folds[i] for i in val_folds]
         
-        #SuperDataSet._describe_object('FOLDS', tr_folds)
         # Training and validation potentially have more than one fold
         if len(tr_ds) > 1:
-            #self.training = tf.data.Dataset.sample_from_datasets(tr_ds)
-            self.training = reduce(lambda a, b: a.concatenate(b), tr_ds)
+            if self.args.data_tf_shuffle is not None:
+                # Shuffle individually
+                tr_ds = [ds.shuffle(self.args.data_tf_shuffle, reshuffle_each_iteration=True) for ds in tr_ds]
+
+            # Now combine the folds together
+            self.training = tf.data.Dataset.sample_from_datasets(tr_ds)
         else:
             self.training = tr_ds[0]
 
         if len(val_ds) > 1:
-            #self.validation = tf.data.Dataset.sample_from_datasets(val_ds)
-            self.validation = reduce(lambda a, b: a.concatenate(b), val_ds)
+            self.validation = tf.data.Dataset.sample_from_datasets(val_ds)
+            #self.validation = reduce(lambda a, b: a.concatenate(b), val_ds)
         else:
             self.validation = val_ds[0]
         
