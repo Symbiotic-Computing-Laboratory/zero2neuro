@@ -1,13 +1,21 @@
---data_format=tabular-indirect
---data_set_type=fixed
+# Now using tabular format (used to be tabular-indirect)
+--data_format=tabular
 
 # Check that validation and test files work, too
 --data_files
 images.csv,0
 images.csv,1
 images.csv,2
---data_inputs
+
+--data_set_type=fixed
+
+# Column specifies input file name
+--data_inputs_file_name
 File
+
+# Output
 --data_outputs
 Class
+
+# Location of the image files
 --dataset_indirect_directory=/home/fagg/datasets/core50/core50_128x128

@@ -369,15 +369,16 @@ class SuperDataSet:
         # Error checks
 
         if not self.args.data_format == 'tf-dataset':
+            # TODO: do we need these error checks here?
             # TF-Datasets already have well defined ins/outs/weights
             
             # Must at least be a set of features for inputs
-            if self.args.data_inputs is None:
-                handle_error('Must specify data_inputs', self.args.verbose)
+            if ((self.args.data_inputs is None) and (self.args.data_inputs_file_name is None)) :
+                handle_error('Must specify --data_inputs or --data_inputs_file_name', self.args.verbose)
 
             # If there are weights, then there must also be outputs
-            if (self.args.data_outputs is None) and (self.args.data_weights is not None):
-                handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
+            #if (self.args.data_outputs is None) and (self.args.data_weights is not None):
+            #    handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
 
         ####
         # Individual file strings could have: just file_name or file_name, data_group
@@ -1677,6 +1678,9 @@ class SuperDataSet:
                                                          self.args.data_groups,
                                                          self.args.data_tag_examples,
                                                          self.args.data_stratify,
+                                                         input_column_file_name=self.args.data_inputs_file_name,
+                                                         output_column_file_name=self.args.data_outputs_file_name,
+                                                         dataset_indirect_path=self.args.dataset_indirect_directory,
                                                          categorical_translation=self.categorical_translation,
                                                          categorical_feature_translation=self.categorical_feature_translation,
                                                          verbose_level=self.args.verbose,
@@ -1735,6 +1739,9 @@ class SuperDataSet:
                    data_groups:str,
                    data_tags:list[str]=None,
                    data_stratify:str=None,
+                   input_column_file_name:str=None,
+                   output_column_file_name:str=None,
+                   dataset_indirect_path:str=None,
                    categorical_translation:list[tuple[str, dict]]=None,
                    categorical_feature_translation:list[tuple[str, dict]]=None,
                    verbose_level:int=0,
@@ -1747,6 +1754,10 @@ class SuperDataSet:
                    debug=0):   
         '''
         Load a table.
+
+        Assumptions:
+        - input_columns and input_column_file_name are not simultaneously set
+        - output_columns and output_column_file_name are not simultaneously set
 
         :return: is a tuple of the form (ins, outs, weights, tags, groups, stratify).  All are
            numpy arrays, except tags is a dict with numpy array values
@@ -1779,7 +1790,7 @@ class SuperDataSet:
 
         #output_mapping = None
         
-        if len(input_columns) > 0:
+        if input_columns is not None and len(input_columns) > 0:
             # Check that all of the input columns are in the table
             diff = set(input_columns) - set(df.columns)
             
@@ -1788,6 +1799,17 @@ class SuperDataSet:
 
             # Extract their values
             ins = df[input_columns].values
+        else:
+            if input_column_file_name is not None:
+                # Alternative path: the a file name has been specified for inputs
+
+                # Check to make sure that the column exists
+                if input_column_file_name in df.columns:
+                    # It does: load the specified set of files
+                    ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_column_file_name].values)
+                else:
+                    # Column is missing
+                    handle_error("Column %s not in table %s"%(input_column_file_name, file_name), verbose_level)
 
         # Input feature translation from categorical to float
         #  NOTE: we assume that the columns being translated are not in input_columns
@@ -1828,6 +1850,19 @@ class SuperDataSet:
                 handle_error("Columns %s not in %s"%(str(diff), file_name), verbose_level)
             
             outs = df[output_columns].values
+
+        else:
+            if output_column_file_name is not None:
+                # Alternative path: the a file name has been specified for outputs
+
+                # Check to make sure that the column exists
+                if output_column_file_name in df.columns:
+                    # It does: load the specified set of files
+                    outs = SuperDataSet.load_image_set_np(dataset_indirect_path, df[output_column_file_name].values)
+                else:
+                    # Column is missing
+                    handle_error("Column %s not in table %s"%(output_column_file_name, file_name), verbose_level)
+
 
         # Some datasets will have weights associated with each example
         if data_weights is not None:

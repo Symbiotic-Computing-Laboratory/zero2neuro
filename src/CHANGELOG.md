@@ -2,6 +2,10 @@
 
 Use inverse order
 
+## v0.9.1 2026-07-02
+* Introduced --data_inputs_file_name and --data_outputs_file_name into tabular format.  This allows us to get away from the tabular-indirect data format
+* Additional testing
+
 ## v0.9.0 2026-07-01
 * Introduced the Scikit-Learn family of models
 

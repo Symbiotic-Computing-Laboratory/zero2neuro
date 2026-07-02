@@ -19,7 +19,7 @@ from keras.utils import plot_model
 
 
 
-VERSION = "0.9.0"
+VERSION = "0.9.1"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 AI2ES = "NSF AI Institute for Research on Trustworthy AI in Weather, Climate, and Coastal Oceanography"
 
@@ -74,6 +74,12 @@ def compatibility_checks(args):
 
     if args.data_tf_repeat and args.data_steps_per_epoch is None:
         handle_error("--repeat requires --steps_per_epoch to be set", args.verbose)
+
+    if args.data_inputs is not None and args.data_inputs_file_name is not None:
+        handle_error("Cannot specify both --data_inputs and --data_inputs_file_name", args.verbose)
+
+    if args.data_outputs is not None and args.data_outputs_file_name is not None:
+        handle_error("Cannot specify both --data_outputs and --data_outputs_file_name", args.verbose)
 
     if args.rotation is not None:
         handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
