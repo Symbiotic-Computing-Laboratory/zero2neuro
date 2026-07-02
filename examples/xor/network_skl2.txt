@@ -1,0 +1,6 @@
+# Scikit-learn test: polyomial features + linear regression 
+--network_type=sklearn
+--skl_pipeline
+polynomial
+linear_regression
+--skl_poly_degree=2

@@ -2,8 +2,12 @@
 
 Use inverse order
 
+## v0.9.0 2026-07-01
+* Introduced the Scikit-Learn family of models
+
 ## v0.8.2 2026-06-30
 * Cleaned up tf-dataset handling
+* Added supporting tests
 
 ## v0.8.1 2026-06-28
 * Tabular-indirect now supports multiple files, and weights, tags, groups and stratify

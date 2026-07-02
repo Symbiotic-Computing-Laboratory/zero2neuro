@@ -12,13 +12,14 @@ import socket
 from parser import *
 from dataset import *
 from network_builder import *
+from sklearn_builder import *
 
 import wandb
 from keras.utils import plot_model
 
 
 
-VERSION = "0.8.1"
+VERSION = "0.9.0"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 AI2ES = "NSF AI Institute for Research on Trustworthy AI in Weather, Climate, and Coastal Oceanography"
 
@@ -332,6 +333,9 @@ def execute_exp(sds, model, args, fbase, epochs_start):
     #  steps_per_epoch: how many batches from the training set do we use for training in one epoch?
     #          Note that if you use this, then you must repeat the training set
     #  validation_steps=None means that ALL validation samples will be used
+    # NOTES: 
+    #  - we are consuming all of the validation data set per step
+    #  - during the evaluation, we are consuming all of the training set, too
 
     print_debug('Starting epoch: %d'%epochs_start, 1, args.debug)
 
@@ -951,47 +955,59 @@ def prepare_and_execute_experiment(args):
     
     ######
     # Fetch the dataset
-    #if not args.network_test:
     sds = SuperDataSet(args)
 
     ######
     # Create the model
-    models, epochs_start = NetworkBuilder.args2model(args, fbase)
+    if args.network_type == 'sklearn':
+        # Scikit-learn models
+        if args.data_representation == 'numpy':
+            # Sklearn style mode
+            # Construct model
+            model = SklearnModeler(args, fbase)
 
-    if isinstance(models, tuple):
-        # TODO: probably need to do modularization here
-        # We created a text vectorization model, too - split these out
-        model, model_text_vectorization = models
-
-        # If not already initialized, then use the training inputs to initialize
-        #  the text vectorization model
-        if args.tokenizer_vocabulary is None:
-            if args.data_representation == 'numpy':
-                # Numpy array
-                model_text_vectorization.adapt(sds.ins_training)
-            else:
-                # TF dataset
-                # First strip out ins from the DS (first element of the tuple)
-                ds = sds.training_pre_repeat.map(lambda x, *rest: x)
-                # Then adapt
-                model_text_vectorization.adapt(ds)
-                
+            # Perform the full experiment
+            model.execute_exp(sds)
         else:
-            # Fixed vocabulary already used
-            pass
-            
-        vocab = model_text_vectorization.get_vocabulary()
-        print_debug('Vocabulary (%d):%s'%(len(vocab), str(vocab)), 2, args.debug)
-        
+            handle_error('--network_type=sklearn requires --data_representation=numpy (e.g., tabular or pickle formatted files)', self.args.verbose)
     else:
-        model = models  
-    print('MODEL CREATED')
+        # Deep Neural Network
+        models, epochs_start = NetworkBuilder.args2model(args, fbase)
 
-    ######
-    # Execute the experiment
-    execute_exp(sds, model, args, fbase, epochs_start)
+        if isinstance(models, tuple):
+            # TODO: probably need to do modularization here
+            # We created a text vectorization model, too - split these out
+            model, model_text_vectorization = models
 
-    return models
+            # If not already initialized, then use the training inputs to initialize
+            #  the text vectorization model
+            if args.tokenizer_vocabulary is None:
+                if args.data_representation == 'numpy':
+                    # Numpy array
+                    model_text_vectorization.adapt(sds.ins_training)
+                else:
+                    # TF dataset
+                    # First strip out ins from the DS (first element of the tuple)
+                    ds = sds.training_pre_repeat.map(lambda x, *rest: x)
+                    # Then adapt
+                    model_text_vectorization.adapt(ds)
+                    
+            else:
+                # Fixed vocabulary already used
+                pass
+                
+            vocab = model_text_vectorization.get_vocabulary()
+            print_debug('Vocabulary (%d):%s'%(len(vocab), str(vocab)), 2, args.debug)
+            
+        else:
+            model = models  
+        #print('MODEL CREATED')
+
+        ######
+        # Execute the experiment
+        execute_exp(sds, model, args, fbase, epochs_start)
+
+    #return models
 
 def cartesian_override_args(parser, args):
     '''

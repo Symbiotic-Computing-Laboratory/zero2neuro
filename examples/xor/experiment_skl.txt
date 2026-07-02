@@ -1,0 +1,21 @@
+# Name used for files and wandb
+--experiment_name=xor_skl
+
+
+
+# Where to place trained networks, reports, and stored results
+--results_path=./results
+
+# Expanded file name
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+
+# Save the trained model to a file
+--save_model
+
+# Save the training set results
+--log_training_set
+
+# Report the results to a XLSX file
+--report
+--report_training
+--report_training_ins

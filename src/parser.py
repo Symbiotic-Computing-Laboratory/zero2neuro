@@ -79,7 +79,6 @@ def create_parser(description='Zero2Neuro'):
     Create argument parser
     '''
     # Parse the command-line arguments
-    #parser = argparse.ArgumentParser(description=description, fromfile_prefix_chars='@')
     parser = CommentedArgumentParser(description=description, fromfile_prefix_chars='@')
 
     # Experiment details
@@ -288,7 +287,14 @@ def create_parser(description='Zero2Neuro'):
     # Data processing only
     parser.add_argument('--data_save_folds', type=str, default=None, help='Define the directory/base name for saving the folds to TF Datasets')
 
+    # Scikit-Learn
+    parser.add_argument('--skl_pipeline', nargs='+', type=str, default=None, help='List of Scikit-Learn elements that make up the processing pipeline')
+    parser.add_argument('--skl_include_bias', type=bool, default=True, help='If true (default), solve for a linear intercept')
 
+    parser.add_argument('--skl_poly_degree', type=int, default=None, help='Degree of polynomial features (default = None; must be defined)')
+    parser.add_argument('--skl_poly_interaction_only', type=bool, default=False, help='If true, only interaction features are produced (no powers of a single feature)')
+    parser.add_argument('--skl_solver', type=str, default='auto', help='Solver to be used for the scikit-learn model.')
+    parser.add_argument('--skl_max_iter', type=int, default=None, help='Maximum number of solver iterations.')
     return parser
 
 
