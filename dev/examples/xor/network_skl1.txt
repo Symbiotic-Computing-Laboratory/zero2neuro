@@ -1,0 +1,4 @@
+# Scikit-learn test: linear regression (should not work)
+--network_type=sklearn
+--skl_pipeline
+linear_regression
