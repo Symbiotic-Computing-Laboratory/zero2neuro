@@ -295,8 +295,80 @@ def create_parser(description='Zero2Neuro'):
 
     parser.add_argument('--skl_poly_degree', type=int, default=None, help='Degree of polynomial features (default = None; must be defined)')
     parser.add_argument('--skl_poly_interaction_only', type=bool, default=False, help='If true, only interaction features are produced (no powers of a single feature)')
-    parser.add_argument('--skl_solver', type=str, default='auto', help='Solver to be used for the scikit-learn model.')
-    parser.add_argument('--skl_max_iter', type=int, default=None, help='Maximum number of solver iterations.')
+    parser.add_argument('--skl_solver', type=str, default=None, help='Solver (default: None = use sklearn default for each model)')
+    parser.add_argument('--skl_max_iter', type=int, default=None, help='Maximum number of solver iterations')
+    parser.add_argument('--skl_tol', type=float, default=None, help='Convergence tolerance for iterative solvers')
+    parser.add_argument('--skl_C', type=float, default=None, help='Inverse regularization parameter (LogisticRegression, PassiveAggressiveRegressor)')
+    parser.add_argument('--skl_l1_ratio', type=float, default=None, help='L1 to L2 ratio (0 ... 1; ElasticNet, SGD, LogisticRegression)')
+    parser.add_argument('--skl_penalty', type=str, default=None, help='Regularization penalty type (LogisticRegression, SGD, Perceptron)')
+    parser.add_argument('--skl_loss', type=str, default=None, help='Loss function (SGDClassifier, SGDRegressor)')
+    parser.add_argument('--skl_eta0', type=float, default=None, help='Initial learning rate (SGD, Perceptron)')
+    parser.add_argument('--skl_learning_rate', type=str, default=None, help='Learning rate schedule (SGD: constant, optimal, invscaling, adaptive)')
+    parser.add_argument('--skl_criterion', type=str, default=None, help='Split quality criterion (LassoLarsIC: aic/bic; trees: gini, entropy, log_loss, squared_error, friedman_mse, absolute_error, poisson)')
+    parser.add_argument('--skl_n_nonzero_coefs', type=int, default=None, help='Target number of non-zero coefficients (OrthogonalMatchingPursuit)')
+    parser.add_argument('--skl_epsilon', type=float, default=None, help='Epsilon for the epsilon-insensitive loss (HuberRegressor)')
+    parser.add_argument('--skl_quantile', type=float, default=None, help='Quantile to estimate (QuantileRegressor; 0 ... 1)')
+    parser.add_argument('--skl_tweedie_power', type=float, default=None, help='Tweedie power parameter (TweedieRegressor)')
+
+    # Preprocessing transformers
+    parser.add_argument('--skl_norm', type=str, default=None, help='Norm to use for Normalizer (l1, l2, max)')
+    parser.add_argument('--skl_method', type=str, default=None, help='Transform method for PowerTransformer (yeo-johnson, box-cox)')
+    parser.add_argument('--skl_standardize', type=bool, default=None, help='Whether PowerTransformer should zero-mean/unit-variance the output')
+    parser.add_argument('--skl_n_quantiles', type=int, default=None, help='Number of quantiles for QuantileTransformer')
+    parser.add_argument('--skl_output_distribution', type=str, default=None, help='Output distribution for QuantileTransformer (uniform, normal)')
+    parser.add_argument('--skl_with_centering', type=bool, default=None, help='Whether RobustScaler should center the data')
+    parser.add_argument('--skl_with_scaling', type=bool, default=None, help='Whether RobustScaler should scale the data')
+    parser.add_argument('--skl_n_knots', type=int, default=None, help='Number of knots for SplineTransformer')
+
+    # Clustering
+    parser.add_argument('--skl_n_clusters', type=int, default=None, help='Number of clusters')
+    parser.add_argument('--skl_n_init', type=int, default=None, help='Number of initializations (KMeans, Spectral, etc.)')
+    parser.add_argument('--skl_n_components', type=int, default=None, help='Number of components (SpectralClustering, SpectralBiclustering)')
+    parser.add_argument('--skl_metric', type=str, default=None, help='Distance metric (AgglomerativeClustering, DBSCAN, HDBSCAN, FeatureAgglomeration)')
+    parser.add_argument('--skl_linkage', type=str, default=None, help='Linkage criterion (AgglomerativeClustering, FeatureAgglomeration: ward, complete, average, single)')
+    parser.add_argument('--skl_damping', type=float, default=None, help='Damping factor for AffinityPropagation (0.5 ... 1.0)')
+    parser.add_argument('--skl_threshold', type=float, default=None, help='Radius threshold for Birch subclusters')
+    parser.add_argument('--skl_branching_factor', type=int, default=None, help='Maximum number of subclusters per node for Birch')
+    parser.add_argument('--skl_eps', type=float, default=None, help='Maximum neighborhood distance for DBSCAN')
+    parser.add_argument('--skl_min_samples', type=int, default=None, help='Minimum samples in a neighborhood (DBSCAN, HDBSCAN)')
+    parser.add_argument('--skl_min_cluster_size', type=int, default=None, help='Minimum cluster size for HDBSCAN')
+    parser.add_argument('--skl_bandwidth', type=float, default=None, help='Bandwidth for MeanShift kernel')
+    parser.add_argument('--skl_batch_size', type=int, default=None, help='Batch size for MiniBatchKMeans')
+
+    # ---- decision trees / ensembles ----
+    parser.add_argument('--skl_max_depth', type=int, default=None, help='Maximum tree depth (decision trees, ensembles)')
+    parser.add_argument('--skl_min_samples_split', type=int, default=None, help='Minimum samples to split an internal node')
+    parser.add_argument('--skl_min_samples_leaf', type=int, default=None, help='Minimum samples at a leaf node')
+    parser.add_argument('--skl_max_features', type=str, default=None, help='Features to consider per split (sqrt, log2; decision trees, ensembles)')
+    parser.add_argument('--skl_n_estimators', type=int, default=None, help='Number of trees/estimators in ensemble methods')
+    parser.add_argument('--skl_subsample', type=float, default=None, help='Fraction of samples used per base learner (GradientBoosting)')
+    parser.add_argument('--skl_max_samples', type=float, default=None, help='Fraction of samples per base estimator (Bagging, IsolationForest)')
+    parser.add_argument('--skl_contamination', type=float, default=None, help='Expected fraction of outliers (IsolationForest; 0 to 0.5)')
+    parser.add_argument('--skl_shrinkage', type=float, default=None, help='Learning rate / shrinkage for boosting and TSNE (AdaBoost, GradientBoosting, HistGradientBoosting)')
+    parser.add_argument('--skl_random_state', type=int, default=None, help='Random seed for sklearn estimators')
+
+    # ---- imputers ----
+    parser.add_argument('--skl_n_neighbors', type=int, default=None, help='Number of neighbors (KNNImputer, Isomap, LocallyLinearEmbedding)')
+    parser.add_argument('--skl_weights', type=str, default=None, help='Weight function for KNNImputer (uniform, distance)')
+    parser.add_argument('--skl_features', type=str, default=None, help='Which features to indicate (MissingIndicator: missing-only, all)')
+    parser.add_argument('--skl_strategy', type=str, default=None, help='Imputation strategy (SimpleImputer: mean, median, most_frequent, constant)')
+    parser.add_argument('--skl_fill_value', type=str, default=None, help='Fill value when SimpleImputer strategy=constant')
+
+    # ---- mixture models / manifold ----
+    parser.add_argument('--skl_covariance_type', type=str, default=None, help='Covariance type (GaussianMixture: full, tied, diag, spherical)')
+    parser.add_argument('--skl_perplexity', type=float, default=None, help='Perplexity for TSNE (related to number of nearest neighbors)')
+
+    # ---- Naive Bayes ----
+    parser.add_argument('--skl_alpha', type=float, default=None, help='Laplace/Lidstone smoothing parameter (BernoulliNB, CategoricalNB, ComplementNB, MultinomialNB)')
+    parser.add_argument('--skl_var_smoothing', type=float, default=None, help='Variance smoothing for GaussianNB')
+    parser.add_argument('--skl_fit_prior', type=bool, default=None, help='Whether to learn class prior probabilities (Naive Bayes)')
+
+    # ---- SVMs ----
+    parser.add_argument('--skl_nu', type=float, default=None, help='Upper bound on margin/training errors (NuSVC, NuSVR, OneClassSVM)')
+    parser.add_argument('--skl_kernel', type=str, default=None, help='Kernel type for SVMs (linear, poly, rbf, sigmoid)')
+    parser.add_argument('--skl_gamma', type=str, default=None, help='Kernel coefficient for SVMs (scale, auto, or numeric string converted to float)')
+    parser.add_argument('--skl_coef0', type=float, default=None, help='Independent term in poly/sigmoid kernel function')
+
     return parser
 
 

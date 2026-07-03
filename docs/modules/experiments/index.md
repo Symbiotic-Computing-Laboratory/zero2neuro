@@ -1,6 +1,6 @@
 ---
 title: Advanced Experiments
-nav_order: 50
+nav_order: 60
 parent: Zero2Neuro Modules
 has_children: true
 ---

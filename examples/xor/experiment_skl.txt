@@ -1,8 +1,6 @@
 # Name used for files and wandb
 --experiment_name=xor_skl
 
-
-
 # Where to place trained networks, reports, and stored results
 --results_path=./results
 
