@@ -1953,4 +1953,6 @@ a.skip-to-main:focus, a.skip-to-main:active { color: #5ea1fb; background-color: 
 
 div.opaque { background-color: #27262b; }
 
+table, th, td { border: 1px solid black; border-collapse: collapse; padding: 6px 10px; }
+
 /*# sourceMappingURL=just-the-docs-dark.css.map */
