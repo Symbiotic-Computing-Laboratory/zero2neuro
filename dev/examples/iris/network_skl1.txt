@@ -1,0 +1,13 @@
+# Scikit-learn test: feature scaling + polyomial features + SGDClassifier
+--network_type=sklearn
+
+--skl_y_pipeline
+TransformOutputRavel
+
+--skl_pipeline
+StandardScaler
+PolynomialFeatures
+SGDClassifier
+
+--skl_poly_degree=2
+
