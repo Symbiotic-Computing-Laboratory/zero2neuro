@@ -291,6 +291,7 @@ def create_parser(description='Zero2Neuro'):
 
     # Scikit-Learn
     parser.add_argument('--skl_pipeline', nargs='+', type=str, default=None, help='List of Scikit-Learn elements that make up the processing pipeline')
+    parser.add_argument('--skl_y_pipeline', nargs='+', type=str, default=None, help='List of Scikit-Learn elements that transform y before fitting (drawn from Y_PIPELINE_REGISTRY)')
     parser.add_argument('--skl_include_bias', type=bool, default=True, help='If true (default), solve for a linear intercept')
 
     parser.add_argument('--skl_poly_degree', type=int, default=None, help='Degree of polynomial features (default = None; must be defined)')

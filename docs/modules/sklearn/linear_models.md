@@ -44,6 +44,7 @@ ___
 Scikit-Learn module documentation: [ARDRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ARDRegression.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -57,6 +58,7 @@ ___
 Scikit-Learn module documentation: [BayesianRidge](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.BayesianRidge.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -70,6 +72,7 @@ ___
 Scikit-Learn module documentation: [ElasticNet](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.ElasticNet.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | L1 regularization strength | `--L1_regularization` | Float ≥ 0 | Required | `alpha` |
@@ -85,6 +88,7 @@ ___
 Scikit-Learn module documentation: [GammaRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.GammaRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -100,6 +104,7 @@ ___
 Scikit-Learn module documentation: [HuberRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.HuberRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -115,6 +120,7 @@ ___
 Scikit-Learn module documentation: [Lars](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lars.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -127,6 +133,7 @@ ___
 Scikit-Learn module documentation: [Lasso](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Lasso.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | L1 regularization strength | `--L1_regularization` | Float ≥ 0 | Required | `alpha` |
@@ -141,6 +148,7 @@ ___
 Scikit-Learn module documentation: [LassoLars](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoLars.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | L1 regularization strength | `--L1_regularization` | Float ≥ 0 | Required | `alpha` |
@@ -154,6 +162,7 @@ ___
 Scikit-Learn module documentation: [LassoLarsIC](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoLarsIC.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -167,6 +176,7 @@ ___
 Scikit-Learn module documentation: [LinearRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | Required | `fit_intercept` |
@@ -179,6 +189,7 @@ ___
 Scikit-Learn module documentation: [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -197,6 +208,7 @@ ___
 Scikit-Learn module documentation: [MultiTaskElasticNet](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.MultiTaskElasticNet.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | L1 regularization strength | `--L1_regularization` | Float ≥ 0 | Required | `alpha` |
@@ -212,6 +224,7 @@ ___
 Scikit-Learn module documentation: [MultiTaskLasso](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.MultiTaskLasso.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | L1 regularization strength | `--L1_regularization` | Float ≥ 0 | Required | `alpha` |
@@ -226,6 +239,7 @@ ___
 Scikit-Learn module documentation: [OrthogonalMatchingPursuit](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.OrthogonalMatchingPursuit.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -239,6 +253,7 @@ ___
 Scikit-Learn module documentation: [PassiveAggressiveRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PassiveAggressiveRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -253,6 +268,7 @@ ___
 Scikit-Learn module documentation: [Perceptron](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Perceptron.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -269,6 +285,7 @@ ___
 Scikit-Learn module documentation: [PoissonRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PoissonRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -284,6 +301,7 @@ ___
 Scikit-Learn module documentation: [QuantileRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.QuantileRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -298,6 +316,7 @@ ___
 Scikit-Learn module documentation: [RANSACRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RANSACRegressor.html)
 
 ### Arguments
+
 No Zero2Neuro arguments are currently mapped for this model; all parameters use Scikit-Learn defaults.
 
 ___
@@ -307,6 +326,7 @@ ___
 Scikit-Learn module documentation: [Ridge](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | L2 regularization strength | `--L2_regularization` | Float ≥ 0 | Required | `alpha` |
@@ -321,6 +341,7 @@ ___
 Scikit-Learn module documentation: [RidgeClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.RidgeClassifier.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -336,6 +357,7 @@ ___
 Scikit-Learn module documentation: [SGDClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -357,6 +379,7 @@ ___
 Scikit-Learn module documentation: [SGDRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -376,6 +399,7 @@ ___
 Scikit-Learn module documentation: [TheilSenRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.TheilSenRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |
@@ -390,6 +414,7 @@ ___
 Scikit-Learn module documentation: [TweedieRegressor](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.TweedieRegressor.html)
 
 ### Arguments
+
 | Description | Zero2Neuro Argument | Possible Values | Default Value | Scikit-Learn Parameter |
 |---|---|---|---|---|
 | Whether to fit a bias/intercept term | `--skl_include_bias` | `True` \| `False` | `True` | `fit_intercept` |

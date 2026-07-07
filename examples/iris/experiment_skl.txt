@@ -1,0 +1,8 @@
+--experiment_name=iris_skl
+--data_rotation=0
+--results_path=./results
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+--save_model
+#--log_training_set
+--log_validation_set
+--log_testing_set

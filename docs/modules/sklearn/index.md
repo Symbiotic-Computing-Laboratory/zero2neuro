@@ -64,6 +64,36 @@ Ridge
 --L2_regularization=0.01
 ```
 
+## Example 4: Decision Tree Classifier
+
+Using a single decision tree to solve the problem
+
+
+```	
+--network_type=sklearn
+--skl_pipeline
+DecisionTreeClassifier
+
+```
+
+## Example 5: Random Forest Classifier
+
+Here, we are using a forest of decision trees to solve the problem.  Each tree can have a depth of at most 2.
+
+Note: the _RandomForestClassifier_ expects the desired outputs to be a vector (the base representation for tabular data uses a Nx1 matrix).  _TransformOutputRavel_ transforms the desired outputs so that they are in a format that is acceptable to this classifier.
+
+```
+--network_type=sklearn
+
+--skl_y_pipeline
+TransformOutputRavel
+--skl_pipeline
+RandomForestClassifier
+
+--skl_n_estimators=100
+--skl_max_depth=2
+```
+
 
 ## Details
 - All pipeline elements in Zero2Neuro use the same name as the corresponding Scikit-Learn class constructors (e.g., LinearRegression, Ridge, PolynomialFeatures). 
@@ -95,6 +125,10 @@ Zero2Neuro:
 - [Manifold Methods](manifold.md): non-linear dimensionality reduction
 - [Naive Bayes](naive_bayes.md): probabilistic classifiers based on Bayes' theorem
 - [Support Vector Machines](svms.md): kernel-based classification and regression
+
+- [Desired Output Preprocessing](output_preprocessing.md): a separate Pipeline for implementing transformations of the desired outputs.
+
+
 
 ## Scikit-Learn Notes
 - Scikit-Learn models can only be trained and evaluated using data

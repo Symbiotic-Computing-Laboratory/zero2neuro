@@ -19,7 +19,7 @@ from keras.utils import plot_model
 
 
 
-VERSION = "0.9.2"
+VERSION = "0.9.3"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 AI2ES = "NSF AI Institute for Research on Trustworthy AI in Weather, Climate, and Coastal Oceanography"
 

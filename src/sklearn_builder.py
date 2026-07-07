@@ -11,8 +11,10 @@ Because `args` is a callable, the `ns.<attr>` lookups inside it are deferred
 until build time -- they are not evaluated when the registry is defined.
 """
 
+import numpy as np
 from argparse import ArgumentParser, Namespace
 
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import (
     LinearRegression, Ridge, RidgeClassifier,
     Lasso, ElasticNet, LassoLarsIC,
@@ -70,6 +72,17 @@ from sklearn.pipeline import Pipeline
 
 from dataset import *
 from zero2neuro_debug import *
+
+
+class TransformOutputRavel(BaseEstimator, TransformerMixin):
+    """Ravel the input array to 1-D; used in the y-pipeline to flatten (N,1) targets."""
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return np.ravel(X)
+
 
 class SklearnModeler:
     PIPELINE_REGISTRY = {
@@ -143,6 +156,12 @@ class SklearnModeler:
                 **({} if ns.skl_n_knots is None else {"n_knots": ns.skl_n_knots}),
                 **({} if ns.skl_poly_degree is None else {"degree": ns.skl_poly_degree}),
             },
+            "checks": {},
+        },
+
+        "TransformOutputRavel": {
+            "constructor": TransformOutputRavel,
+            "args": lambda ns: {},
             "checks": {},
         },
 
@@ -1143,12 +1162,21 @@ class SklearnModeler:
         },
     }
 
+    Y_PIPELINE_REGISTRY = {
+        "TransformOutputRavel": {
+            "constructor": TransformOutputRavel,
+            "args": lambda ns: {},
+            "checks": {},
+        },
+    }
+
     def __init__(self, args:ArgumentParser, fbase:str):
         '''
         '''
         self.args = args
         self.fbase = fbase
         self.pipeline = self.build_pipeline(args)
+        self.y_pipeline = self.build_y_pipeline(args)
 
     def execute_exp(self, sds:SuperDataSet):
         
@@ -1178,46 +1206,59 @@ class SklearnModeler:
         if self.args.verbose >= 1:
             print('Fitting model')
 
+        # Apply y pipeline (fit on training, transform on val/test)
+        if self.y_pipeline is not None:
+            self.y_pipeline.fit(sds.outs_training)
+            outs_training   = self.y_pipeline.transform(sds.outs_training)
+            outs_validation = (self.y_pipeline.transform(sds.outs_validation)
+                               if sds.ins_validation is not None else None)
+            outs_testing    = (self.y_pipeline.transform(sds.outs_testing)
+                               if sds.ins_testing is not None else None)
+        else:
+            # No y-pipeline
+            outs_training   = sds.outs_training
+            outs_validation = sds.outs_validation
+            outs_testing    = sds.outs_testing
+
         # Train the model
-        self.pipeline.fit(sds.ins_training, sds.outs_training)
+        self.pipeline.fit(sds.ins_training, outs_training)
 
         # Log the results
         results = {}
 
         # Training
-        ev = self.pipeline.score(X=sds.ins_training, y=sds.outs_training)
+        ev = self.pipeline.score(X=sds.ins_training, y=outs_training)
         results['score_training'] = ev
 
         # Log the details?
         if self.args.log_training_set:
             print_debug('Training predict', 4, self.args.debug)
             results['ins_training'] = sds.ins_training
-            results['outs_training'] = sds.outs_training
+            results['outs_training'] = outs_training
             results['predict_training'] = self.pipeline.predict(sds.ins_training)
 
         # Validation Data Set
         if sds.ins_validation is not None:
-            ev = self.pipeline.score(X=sds.ins_validation, y=sds.outs_validation)
+            ev = self.pipeline.score(X=sds.ins_validation, y=outs_validation)
             results['score_validation'] = ev
 
             # Log the details?
             if self.args.log_validation_set:
                 print_debug('Validation predict', 4, self.args.debug)
                 results['ins_validation'] = sds.ins_validation
-                results['outs_validation'] = sds.outs_validation
+                results['outs_validation'] = outs_validation
                 results['predict_validation'] = self.pipeline.predict(sds.ins_validation)
-                
 
         # Testing Data Set
         if sds.ins_testing is not None:
-            ev = self.pipeline.score(X=sds.ins_testing, y=sds.outs_testing)
+            ev = self.pipeline.score(X=sds.ins_testing, y=outs_testing)
             results['score_testing'] = ev
 
             # Log the details?
             if self.args.log_testing_set:
                 print_debug('Testing predict', 4, self.args.debug)
                 results['ins_testing'] = sds.ins_testing
-                results['outs_testing'] = sds.outs_testing
+                results['outs_testing'] = outs_testing
                 results['predict_testing'] = self.pipeline.predict(sds.ins_testing)
                 
         # Save description of dataset
@@ -1236,35 +1277,44 @@ class SklearnModeler:
         # Save model
         if self.args.save_model:
             with open("%s_model.pkl"%(self.fbase), "wb") as fp:
-                model = {'model': self.pipeline}
+                model = {'model': self.pipeline,
+                         'y_preprocessor': self.y_pipeline,
+                         }
                 pickle.dump(model, fp)
 
 
-    def build_step(self, name: str, ns: Namespace):
+    def build_step(self, name: str, ns: Namespace, registry: dict) -> object:
         '''
-        Instantiate a single pipeline element from the namespace.
+        Instantiate a single pipeline element from the given registry.
 
         Existence checks run first; constructor args are evaluated only afterward,
         at the moment the constructor is called.
         '''
 
-        # name -> details of the sklearn component
-        entry = SklearnModeler.PIPELINE_REGISTRY[name]
+        if name not in registry:
+            handle_error('Pipeline element %s does not exist' % name, self.args.verbose)
 
-        # Check for missing args
+        entry = registry[name]
+
         missing = {a for a in entry.get("checks", set()) if (not hasattr(ns, a)) or (getattr(ns, a) is None)}
         if missing:
             handle_error(f"pipeline element {name!r}: missing argument(s) {sorted(missing)}", self.args.verbose)
 
-        # Get the arguments for the constructor
-        kwargs = entry["args"](ns)          # <-- lazy: ns.<attr> read only here
-
-        # Create and return the pipeline element
+        kwargs = entry["args"](ns)
         return entry["constructor"](**kwargs)
 
     def build_pipeline(self, ns: Namespace) -> Pipeline:
         '''
-        Build a Pipeline from ns.pipeline (an ordered list of element names).
+        Build the X Pipeline from ns.skl_pipeline.
         '''
+        return Pipeline([(name, self.build_step(name, ns, SklearnModeler.PIPELINE_REGISTRY))
+                         for name in ns.skl_pipeline])
 
-        return Pipeline([(name, self.build_step(name, ns)) for name in ns.skl_pipeline])
+    def build_y_pipeline(self, ns: Namespace):
+        '''
+        Build the y Pipeline from ns.skl_y_pipeline, or return None if unset.
+        '''
+        if not hasattr(ns, 'skl_y_pipeline') or ns.skl_y_pipeline is None:
+            return None
+        return Pipeline([(name, self.build_step(name, ns, SklearnModeler.Y_PIPELINE_REGISTRY))
+                         for name in ns.skl_y_pipeline])

@@ -1,0 +1,6 @@
+# Scikit-learn test: feature scaling + polyomial features + decision tree
+--network_type=sklearn
+
+--skl_pipeline
+DecisionTreeClassifier
+

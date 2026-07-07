@@ -2,8 +2,13 @@
 
 Use inverse order
 
-## v0.9.2 2026-07-02
-* Full implementation + documentation ffor Scikit-Learn modules
+## v0.9.2 2026-07-07
+* Added desired output preprocessing + added documentation
+* Fixed the linear_models documentation
+* Added corresponding tests
+
+## v0.9.3 2026-07-02
+* Full implementation + documentation for Scikit-Learn modules
 
 ## v0.9.1 2026-07-02
 * Introduced --data_inputs_file_name and --data_outputs_file_name into tabular format.  This allows us to get away from the tabular-indirect data format
