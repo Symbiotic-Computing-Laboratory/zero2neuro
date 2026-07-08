@@ -29,3 +29,9 @@ string to a natural number)
 Try changing the hidden layers and numbers of units to see if the accuracy
 changes
 
+## Scikit-Learn Models
+- For these models, use [experiment_skl.txt](experiment_skl.txt)
+- [network_skl1.txt](network_skl1.txt): SGDClassifier with Polynomial Feature preprocessing
+- [network_skl2.txt](network_skl2.txt): Decision tree classifier
+- [network_skl3.txt](network_skl3.txt): Random forest classifier
+
