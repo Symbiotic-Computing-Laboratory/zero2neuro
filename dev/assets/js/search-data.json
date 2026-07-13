@@ -1758,7 +1758,7 @@
   },"251": {
     "doc": "Scikit-Learn Models",
     "title": "Details",
-    "content": ". | All pipeline elements in Zero2Neuro use the same name as the corresponding Scikit-Learn class constructors (e.g., LinearRegression, Ridge, PolynomialFeatures). | --save_model will save the trained Pipeline model into a pickle file named XXX_model.pkl. | The pickle file contains a single dictionary. | The dictionary contains a single key (‘model’), whose value is the model. | . | Following training, a results file will be created. This file is named XXX_results.pkl and contains many of the same keys as the deep neural network results files, including: . | scores for the training, validation, and testing data sets | the inputs, outputs, and predictiosn for the training (--log_training_set), validation (--log_validation_set), and testing (--log_testing_set) data sets. | . | . ",
+    "content": ". | All pipeline elements in Zero2Neuro use the same name as the corresponding Scikit-Learn class constructors (e.g., LinearRegression, Ridge, PolynomialFeatures). | --save_model will save the trained Pipeline model into a pickle file named XXX_model.pkl. | The pickle file contains a single dictionary. | The dictionary contains the keys: . | ‘model’: the trained Pipeline model | ‘y_preprocessor_pipeline’: output preprocessor Pipeline (None if no preprocessing) | . | . | Following training, a results file will be created. This file is named XXX_results.pkl and contains many of the same keys as the deep neural network results files, including: . | scores for the training, validation, and testing data sets | the inputs, outputs, and predictiosn for the training (--log_training_set), validation (--log_validation_set), and testing (--log_testing_set) data sets. | . | . ",
     "url": "/zero2neuro/dev/docs/modules/sklearn/#details",
     
     "relUrl": "/docs/modules/sklearn/#details"
@@ -2311,7 +2311,7 @@
   },"330": {
     "doc": "Desired Output Preprocessing",
     "title": "TransformOutputRavel",
-    "content": "This module translates desired outputs of an arbitrary shape to a single vector. Typically, this is used to translate a matrix of desired values of shape (N,1) (N examples and one value for each example) to a vector that has a shape (N,) (still N examples) . Arguments . There are no arguments for this preprocessing module. ___ . ",
+    "content": "This module translates desired outputs of an arbitrary shape to a single vector. Typically, this is used to translate a matrix of desired values of shape (N,1) (N examples and one value for each example) to a vector that has a shape (N,) (still N examples) . Arguments . There are no arguments for this preprocessing module. ",
     "url": "/zero2neuro/dev/docs/modules/sklearn/output_preprocessing.html#transformoutputravel",
     
     "relUrl": "/docs/modules/sklearn/output_preprocessing.html#transformoutputravel"
@@ -2695,75 +2695,82 @@
     "relUrl": "/docs/whats_new.html#whats-new-with-zero2neuro"
   },"385": {
     "doc": "What's New?",
+    "title": "2026-07-07: Version 0.9.3",
+    "content": ". | Added support for Scikit-Learn model pipelines | Tabular files now support file name columns for both inputs and desired outputs | . ",
+    "url": "/zero2neuro/dev/docs/whats_new.html#2026-07-07-version-093",
+    
+    "relUrl": "/docs/whats_new.html#2026-07-07-version-093"
+  },"386": {
+    "doc": "What's New?",
     "title": "2026-04-10: Version 0.6.0",
     "content": ". | Extensive online documentation | . ",
     "url": "/zero2neuro/dev/docs/whats_new.html#2026-04-10-version-060",
     
     "relUrl": "/docs/whats_new.html#2026-04-10-version-060"
-  },"386": {
+  },"387": {
     "doc": "What's New?",
     "title": "What's New?",
     "content": " ",
     "url": "/zero2neuro/dev/docs/whats_new.html",
     
     "relUrl": "/docs/whats_new.html"
-  },"387": {
+  },"388": {
     "doc": "Why Zero2Neuro?",
     "title": "Why Zero2Neuro?",
     "content": "Our goals in developing Zero2Neuro are to: . | Provide a low barrier-to-entry for new users to access deep learning tools in building predictive models using their own data and experimental questions . | Provide a range of common model types that can be easily configured for use . | Codify a set of best (good?) practices for performing machine learning experiments . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html",
     
     "relUrl": "/docs/why_zero2neuro.html"
-  },"388": {
+  },"389": {
     "doc": "Why Zero2Neuro?",
     "title": "How to Use this Documentation",
     "content": "This documentation is written for users with a range of knowledge. Top level material provides general introduction to the different topics. Deeper material is often tagged with anticipated knowledge level: . | Tutorial: detailed introduction to key concepts | Beginner: what a new user needs to know to get started | Intermediate: useful additions as a user begins to gain some experience with using Zero2Neuro | Advanced: the powerful tools and options | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#how-to-use-this-documentation",
     
     "relUrl": "/docs/why_zero2neuro.html#how-to-use-this-documentation"
-  },"389": {
+  },"390": {
     "doc": "Why Zero2Neuro?",
     "title": "What Zero2Neuro is Not",
     "content": "While our goal is for Zero2Neuro to have practical use in research pipelines, we do not pretend that this is a solution to all problems. Some users will find that Zero2Neuro does everything they need. Other users will find that with experience, they will grow out of Zero2Neuro and “strike out” on their own by writing their own Python code (either by creating code that plugs in to Zero2Neuro, using only some Zero2Neuro components, or developing entirely new code bases). All options are fine and encouraged! . We do not anticipate Zero2Neuro to solve problems in the areas of: . | Large Language Models (though we support data involving sequences of tokens!) . | Reinforcement Learning . | . ",
     "url": "/zero2neuro/dev/docs/why_zero2neuro.html#what-zero2neuro-is-not",
     
     "relUrl": "/docs/why_zero2neuro.html#what-zero2neuro-is-not"
-  },"390": {
+  },"391": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing Configuring Zero2Neuro",
     "content": " ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#installing-configuring-zero2neuro"
-  },"391": {
+  },"392": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "1. Create a directory (folder) that will hold copies of the needed",
     "content": "repositories . Bash shell: . mkdir z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#1-create-a-directory-folder-that-will-hold-copies-of-the-needed"
-  },"392": {
+  },"393": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "2. Change your working directory:",
     "content": "Bash shell: . cd z2n . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#2-change-your-working-directory"
-  },"393": {
+  },"394": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "3. Clone the needed repositories",
     "content": "Clone both the Zero2Neuro and Keras3_Tools repositories. | Zero2Neuro | Keras 3 Tools | . Bash shell: . git clone git@github.com:Symbiotic-Computing-Laboratory/zero2neuro.git git clone git@github.com:Symbiotic-Computing-Laboratory/keras3_tools.git . ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#3-clone-the-needed-repositories"
-  },"394": {
+  },"395": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "4. Set the NEURO_REPOSITORY_PATH environment variable",
     "content": "Bash shell: . export NEURO_REPOSITORY_PATH=/path/to/z2n . You can type this command by hand every time you use Zero2Neuro or you can add the export command to your .bashrc file. ",
     "url": "/zero2neuro/dev/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable",
     
     "relUrl": "/docs/getting_started/zero2neuro_config.html#4-set-the-neuro_repository_path-environment-variable"
-  },"395": {
+  },"396": {
     "doc": "Installing and Configuring Zero2Neuro",
     "title": "Installing and Configuring Zero2Neuro",
     "content": " ",
