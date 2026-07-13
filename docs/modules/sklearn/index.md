@@ -100,7 +100,9 @@ RandomForestClassifier
 - ```--save_model``` will save the trained Pipeline model into a
 pickle file named XXX_model.pkl.  
    - The pickle file contains a single dictionary.  
-   - The dictionary contains a single key ('model'), whose value is the model.
+   - The dictionary contains the keys:
+      - 'model': the trained Pipeline model
+      - 'y_preprocessor_pipeline': output preprocessor Pipeline (None if no preprocessing)
 - Following training, a results file will be created.  This file is
 named XXX_results.pkl and contains many of the same keys as the deep
 neural network results files, including:

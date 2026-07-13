@@ -27,6 +27,7 @@ This module translates desired outputs of an arbitrary shape to a single vector.
 ### Arguments
 
 There are no arguments for this preprocessing module.
+
 ___
 
 

@@ -1278,7 +1278,7 @@ class SklearnModeler:
         if self.args.save_model:
             with open("%s_model.pkl"%(self.fbase), "wb") as fp:
                 model = {'model': self.pipeline,
-                         'y_preprocessor': self.y_pipeline,
+                         'y_preprocessor_pipeline': self.y_pipeline,
                          }
                 pickle.dump(model, fp)
 

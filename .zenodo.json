@@ -1,0 +1,54 @@
+{
+  "title": "Zero2Neuro: a No-Code Deep Neural Network Toolbox for Constructing, Training, and Evaluating Deep Neural Network Models",
+  "description": "Zero2Neuro is a no-code toolbox for constructing, training and evaluating Deep Neural Network (DNN) models for a wide range of modeling problems. This package provides easy-to-use solutions for loading data in a variety of formats, creating DNN models from flexible schemata (fully-connected networks, convolutional neural networks, and U-Nets), and a standard training and evaluation engine with support for Weights and Biases reporting.",
+  "notes": "Copyright (2026). Andrew H. Fagg, Luke Sewell, Shayan Shafaei, and Mel Wilson Reyes",
+  "creators": [
+    {
+      "name": "Fagg, Andrew H.",
+      "affiliation": "University of Oklahoma",
+      "orcid": "0000-0002-5636-9697"
+    },
+    {
+      "name": "Sewell, Luke",
+      "affiliation": "University of Oklahoma",
+      "orcid": "0009-0000-0359-4148"
+    },
+    {
+      "name": "Shafaei, Shayan",
+      "affiliation": "University of Oklahoma",
+      "orcid": "0009-0003-0792-5495"
+    },
+    {
+      "name": "Wilson Reyes, Mel",
+      "affiliation": "Symbiotic Computing Laboratory"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Fagg, Andrew H.",
+      "affiliation": "University of Oklahoma",
+      "orcid": "0000-0002-5636-9697",
+      "type": "ContactPerson"
+    },
+    {
+      "name": "Symbiotic Computing Laboratory",
+      "type": "ResearchGroup"
+    }
+  ],
+  "keywords": [
+    "deep neural networks",
+    "machine learning",
+    "keras3",
+    "tensorflow",
+    "scikit-learn",
+    "no-code deep neural networks toolbox"
+  ],
+  "license": "cc-by-4.0",
+  "upload_type": "software",
+  "grants": [
+    { "id": "021nxhr62::2019758" }
+  ],
+  "communities": [
+    { "identifier": "ai2es" }
+  ]
+}
