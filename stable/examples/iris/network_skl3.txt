@@ -1,0 +1,14 @@
+# Scikit-learn test: feature scaling + random forest 
+--network_type=sklearn
+
+# RandomForestClassifier requires this transformation
+--skl_y_pipeline
+TransformOutputRavel
+
+--skl_pipeline
+RandomForestClassifier
+
+--skl_n_estimators=100
+--skl_max_depth=2
+
+

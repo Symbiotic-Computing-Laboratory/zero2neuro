@@ -1,7 +1,7 @@
 # Alternative data configuration that demonstrates the use
 #  of TF Dataset files instead of tabular data
 # The files can be created by executing the following:
-#  python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt --data_save_folds ds/amino --nogo 
+#  python $ZERO2NEURO_PATH/zero2neuro.py @data.txt @experiment.txt @network.txt --data_save_folds ds/amino --data_representation tf-dataset --nogo 
 
 # Must explicitly define tf-dataset as the incoming data format and
 #  the internal representation
@@ -24,6 +24,13 @@ ds/amino_fold_06.ds
 ds/amino_fold_07.ds
 ds/amino_fold_08.ds
 ds/amino_fold_09.ds
+
+# TF training/evaluation arguments
+--data_tf_shuffle=32
+--data_tf_repeat
+--data_steps_per_epoch=2
+--data_tf_prefetch=4
+
 
 # Preprocessing
 # We are using a tokenizer to translate the strings into lists of

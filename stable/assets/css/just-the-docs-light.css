@@ -1703,4 +1703,6 @@ a.skip-to-main:focus, a.skip-to-main:active { color: #7253ed; background-color: 
 
 div.opaque { background-color: #fff; }
 
+table, th, td { border: 1px solid black; border-collapse: collapse; padding: 6px 10px; }
+
 /*# sourceMappingURL=just-the-docs-light.css.map */
