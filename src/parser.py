@@ -275,6 +275,14 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--rnn_pool_average_last', type=int, default=None, help='Average pool size before last (return_sequences=False) RNN layer')
     parser.add_argument('--rnn_reverse_time', action='store_true', help='Reverse the time dimension of the input data.')
 
+    # U-Net network parameters
+    parser.add_argument('--unet_activation', type=str, default='elu', help='Activation function for U-Net')
+    parser.add_argument('--unet_kernel_size', nargs='+', type=int, default=None, help='Convolution filter sizer per later for U-Net (sequence of ints)')
+    parser.add_argument('--unet_padding', type=str, default='same', help='Padding type for U-Net')
+    parser.add_argument('--unet_number_filters', nargs='+', type=int, default=None, help='Filters for U-Net')
+    parser.add_argument('--unet_pool_size', nargs='+', type=int, default=None, help='Max pooling size for UNet (default=None)')
+    parser.add_argument('--skip_type', type=str, default=None, help='Type of skip connection (add, concat)')
+
     # Regularization parameters
     parser.add_argument('--dropout', type=float, default=None, help='Dropout rate')
     parser.add_argument('--dropout_input', type=float, default=None, help='Dropout rate for inputs')

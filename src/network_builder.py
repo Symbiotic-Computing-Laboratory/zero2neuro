@@ -9,6 +9,7 @@ assert neuro_path is not None, "Environment variable NEURO_REPOSITORY_PATH must 
 sys.path.append(neuro_path + '/keras3_tools/src/')
 from fully_connected_tools import *
 from cnn_tools import *
+from unet_tools import *
 from keras.models import load_model
 from zero2neuro_debug import *
 
@@ -24,6 +25,18 @@ class NetworkBuilder:
         sh = args.input_shape0
         if len(sh) > 2:
             handle_error('RNN: input_shape must be one or two dimensional', args.verbose)
+
+    @staticmethod
+    def check_args_unet(args):
+        if len(args.input_shape0) not in (2, 3, 4):
+            handle_error("UNet input must be 2D, 3D, or 4D (including channels).", args.verbose)
+
+        if len(args.unet_number_filters) != len(args.unet_pool_size):
+            handle_error("unet_number_filters and unet_pool_size must have the same length.", args.verbose)
+
+        if isinstance(args.unet_kernel_size, list):
+            if len(args.unet_kernel_size) != len(args.unet_number_filters):
+                handle_error("unet_kernel_size and unet_number_filters must have the same length.", args.verbose)
             
 
     @staticmethod
@@ -173,6 +186,44 @@ class NetworkBuilder:
                                                                        tokenizer_encoding=args.tokenizer_encoding,
                                                                        embedding_dimensions=args.embedding_dimensions,
                                                                        )
+            elif args.network_type == 'unet':
+                NetworkBuilder.check_args_unet(args)
+                models = UNet.create_unet(input_shape=args.input_shape0,
+
+                                         # Encoder/Decoder
+                                         unet_kernel_size=args.unet_kernel_size,
+                                         unet_padding=args.unet_padding,
+                                         unet_number_filters=args.unet_number_filters,
+                                         unet_pool_size=args.unet_pool_size,
+                                         unet_activation=args.unet_activation,
+                    
+                                         # Optional CNN
+                                         conv_kernel_size=args.conv_kernel_size,
+                                         conv_padding=args.conv_padding,
+                                         conv_number_filters=args.conv_number_filters,
+                                         conv_pool_size=args.conv_pool_size,
+                                         conv_activation=args.conv_activation,
+                    
+                                         spatial_dropout=args.spatial_dropout,
+                                         conv_batch_normalization=args.conv_batch_normalization,
+                                        
+                                         skip_type=args.skip_type,
+                                        
+                                         output_shape=args.output_shape0,
+                                        
+                                         name_base='unet',
+                                         name_last='output',
+                    
+                                         lambda1=args.L1_regularization,
+                                         lambda2=args.L2_regularization,
+                                        
+                                         activation_last=args.output_activation,
+                                        
+                                         learning_rate=args.learning_rate,
+                                         loss=args.loss,
+                                         metrics=args.metrics,
+                                         metrics_weighted=args.metrics_weighted,
+                                         opt=args.optimizer)
 
 
             elif args.network_type == 'plugin':
