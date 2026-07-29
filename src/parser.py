@@ -79,7 +79,6 @@ def create_parser(description='Zero2Neuro'):
     Create argument parser
     '''
     # Parse the command-line arguments
-    #parser = argparse.ArgumentParser(description=description, fromfile_prefix_chars='@')
     parser = CommentedArgumentParser(description=description, fromfile_prefix_chars='@')
 
     # Experiment details
@@ -221,20 +220,6 @@ def create_parser(description='Zero2Neuro'):
 
     # Network specification
     
-    # Extensible Plugins
-    parser.add_argument('--plugin_list', nargs='+', type=str, default=[],
-                        help='Plugins to load, as consecutive name-role / args pairs. '
-                             'name is either a bare Z2N built-in name (e.g. normalization) '
-                             'or an explicit path to a user-defined plugin file '
-                             '(e.g. /home/user/plugins/my_plugin). '
-                             'role is the segment after the last dash (e.g. preprocess). '
-                             'args is a comma-separated key=value string or none.')
-    parser.add_argument('--plugin_path', nargs='+', type=str, default=['plugins'],
-                        help='Additional directories to search for bare-name plugins, '
-                             'checked before the built-in src/plugins/ directory. '
-                             'Use this to make a folder of user-defined plugins '
-                             'available by bare name without specifying the full path.')
-
     # Tokenizer
     parser.add_argument('--tokenizer', action='store_true', help='Enable the tokenizer')
     parser.add_argument('--tokenizer_max_tokens', type=int, default=None, help ='Tokenizer maximumn number of unique tokens')

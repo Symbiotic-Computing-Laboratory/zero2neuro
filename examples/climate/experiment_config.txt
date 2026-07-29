@@ -1,9 +1,0 @@
---experiment_name=climate_4d
---data_rotation=0
---loss=mse
---metrics
-mae
---learning_rate=0.001
---epochs=10
---results_path=./results
---output_file_base={args.experiment_name}

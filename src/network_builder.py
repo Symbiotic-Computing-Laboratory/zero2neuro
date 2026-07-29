@@ -40,11 +40,7 @@ class NetworkBuilder:
             
 
     @staticmethod
-    def args2model(args, fbase:str, plugin_manager=None):
-        # [ADDED] plugin_manager is now an optional argument (default: None).
-        # When network_type='plugin', this manager is used to dispatch
-        # model construction to a user-supplied plugin at runtime.
-        # All other network types (fully_connected, cnn, rnn) are unaffected.
+    def args2model(args, fbase:str):
         model_text_vectorization = None
 
         # Starting epoch is typically 0
@@ -190,7 +186,6 @@ class NetworkBuilder:
                                                                        tokenizer_encoding=args.tokenizer_encoding,
                                                                        embedding_dimensions=args.embedding_dimensions,
                                                                        )
-
             elif args.network_type == 'unet':
                 NetworkBuilder.check_args_unet(args)
                 models = UNet.create_unet(input_shape=args.input_shape0,
@@ -230,51 +225,30 @@ class NetworkBuilder:
                                          metrics_weighted=args.metrics_weighted,
                                          opt=args.optimizer)
 
+
             elif args.network_type == 'plugin':
-                # Plugin-based custom network builder.
-                # Delegates model construction to a user-supplied plugin
-                # registered with role 'custom_network_builder'.
-                # The plugin must return a dict with key 'model'.
-                if plugin_manager is None:
-                    handle_error("network_type='plugin' requires a PluginManager instance.", args.verbose)
-                result = plugin_manager.apply_plugins(
+                # TODO
+                models = plugin_manager.apply_plugins(
                     'custom_network_builder',
-                    debug_level=getattr(args, 'debug', 0),
-                    args=args,
-                )
-                models = result.get('model', None)
-                if models is None:
-                    handle_error(
-                        "network_type='plugin': the custom_network_builder plugin did not return a 'model' key.",
-                        args.verbose
-                    )
+                    chaining = False,
+                    args = args,
+                )    
 
             else:
                 handle_error('Unsupported network type (%s)'%args.network_type, args.verbose)
 
-        # -------------------------------------------------------------------------
-        # UNPACKING TEXT MODELS FOR DEBUGGING
-        # -------------------------------------------------------------------------
-        # For standard numerical datasets (like images/tabular), 'models' is just a 
-        # pure Keras neural network.
-        # However, for text datasets (like amino acids), 'models' is a tuple containing 
-        # TWO things: (1) The Neural Network, and (2) The TextVectorization translator.
-        #
-        # If we pass a tuple directly to recursive_summary() below, the program will crash 
-        # because a tuple does not have layers. Therefore, we must safely extract just 
-        # the neural network ('model') and set the text translator aside.
+        # Deal with variable number of returns
         if isinstance(models, tuple):
             model, model_text_vectorization = models
+                    
         else:
             model = models
                     
 
-        # Now that we safely extracted just the pure network, we can run the debugger
         if args.debug >= 4:
             NetworkBuilder.recursive_summary(model)
 
-        # We return the FULL 'models' package (which could be the tuple) back to the 
-        # main pipeline, so that Zero2Neuro can adapt the TextVectorization layer if needed.
+        # Return both models
         return models, epoch_start
 
 #         if model_text_vectorization is not None:
