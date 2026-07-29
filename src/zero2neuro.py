@@ -19,7 +19,7 @@ from keras.utils import plot_model
 
 
 
-VERSION = "0.9.3"
+VERSION = "0.10.5"
 GITHUB = "https://github.com/Symbiotic-Computing-Laboratory/zero2neuro"
 AI2ES = "NSF AI Institute for Research on Trustworthy AI in Weather, Climate, and Coastal Oceanography"
 
@@ -80,6 +80,13 @@ def compatibility_checks(args):
 
     if args.data_outputs is not None and args.data_outputs_file_name is not None:
         handle_error("Cannot specify both --data_outputs and --data_outputs_file_name", args.verbose)
+
+    if args.data_format == 'plugin' and args.data_representation != 'numpy':
+        handle_error(
+            "--data_format='plugin' requires --data_representation=numpy.\n"
+            "Data-loader plugins (e.g. netcdf_loader) return numpy arrays.",
+            args.verbose
+        )
 
     if args.rotation is not None:
         handle_error("rotation is expired.  Use data_rotation instead", args.verbose)
@@ -339,9 +346,6 @@ def execute_exp(sds, model, args, fbase, epochs_start):
     #  steps_per_epoch: how many batches from the training set do we use for training in one epoch?
     #          Note that if you use this, then you must repeat the training set
     #  validation_steps=None means that ALL validation samples will be used
-    # NOTES: 
-    #  - we are consuming all of the validation data set per step
-    #  - during the evaluation, we are consuming all of the training set, too
 
     print_debug('Starting epoch: %d'%epochs_start, 1, args.debug)
 
@@ -427,7 +431,6 @@ def execute_exp(sds, model, args, fbase, epochs_start):
 
     ######
     # Training set
-
     if args.log_training_set:
         print_debug('Training predict', 4, args.debug)
         if args.data_representation == 'numpy':
@@ -450,12 +453,13 @@ def execute_exp(sds, model, args, fbase, epochs_start):
             results['predict_training'] = np.concatenate(preds, axis=0)
             results['tags_training'] = None
 
+
     
     ######
     # Validation set
     print_debug('Validation eval', 4, args.debug)
     if (sds.ins_validation is not None) or (sds.validation is not None):
-        if args.data_representation == 'tf-dataset':
+        if args.data_format == 'tf-dataset':
             ev = model.evaluate(sds.validation)
         else:
             ev = model.evaluate(sds.ins_validation,
@@ -501,13 +505,13 @@ def execute_exp(sds, model, args, fbase, epochs_start):
                 results['predict_validation'] = model.predict(validation_prediction_set)
 
                 results['tags_validation'] = None
-                
+
     ######
     # Testing set
     print_debug('Testing eval', 4, args.debug)
     
     if (sds.ins_testing is not None) or (sds.testing is not None):
-        if args.data_representation == 'tf-dataset':
+        if args.data_format == 'tf-dataset':
             ev = model.evaluate(sds.testing)
         else:
             ev = model.evaluate(sds.ins_testing,
@@ -960,8 +964,14 @@ def prepare_and_execute_experiment(args):
     print(fbase)
     
     ######
+    # Initialize Plugin Manager
+    from plugin_manager import PluginManager
+    plugin_manager = PluginManager(getattr(args, 'plugin_path', ['plugins']))
+    plugin_manager.load_plugins(getattr(args, 'plugin_list', []), args.debug)
+
+    ######
     # Fetch the dataset
-    sds = SuperDataSet(args)
+    sds = SuperDataSet(args, plugin_manager=plugin_manager)
 
     ######
     # Create the model
@@ -975,10 +985,10 @@ def prepare_and_execute_experiment(args):
             # Perform the full experiment
             model.execute_exp(sds)
         else:
-            handle_error('--network_type=sklearn requires --data_representation=numpy (e.g., tabular or pickle formatted files)', self.args.verbose)
+            handle_error('--network_type=sklearn requires --data_representation=numpy (e.g., tabular or pickle formatted files)', args.verbose)
     else:
         # Deep Neural Network
-        models, epochs_start = NetworkBuilder.args2model(args, fbase)
+        models, epochs_start = NetworkBuilder.args2model(args, fbase, plugin_manager)
 
         if isinstance(models, tuple):
             # TODO: probably need to do modularization here
@@ -1007,13 +1017,23 @@ def prepare_and_execute_experiment(args):
             
         else:
             model = models  
-        #print('MODEL CREATED')
+
+        ######
+        # Apply Extensible Plugins (e.g. Model Wrappers)
+        wrapper_results = plugin_manager.apply_plugins(
+            'model-wrapper', 
+            debug_level=args.debug, 
+            base_model=model
+        )
+        
+        # Retrieve the transformed Keras graph from the kwargs dict
+        model = wrapper_results.get('base_model', model)
 
         ######
         # Execute the experiment
         execute_exp(sds, model, args, fbase, epochs_start)
 
-    #return models
+    return models
 
 def cartesian_override_args(parser, args):
     '''

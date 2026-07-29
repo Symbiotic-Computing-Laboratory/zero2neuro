@@ -1,0 +1,11 @@
+--network_type=plugin
+--input_shape
+24
+5
+5
+2
+--output_shape
+24
+5
+5
+1

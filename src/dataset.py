@@ -13,9 +13,6 @@ Partitioning data sets for training and evaluation:
 - N-fold cross-validation
 
 
-TODO:
-- 
-
 '''
 
 
@@ -37,27 +34,40 @@ from functools import reduce
 
 class SuperDataSet:
     # Valid file formats, as specified by --data_format
-    FORMATS = ['tabular', 'tabular-indirect', 'pickle', 'tf-dataset']
+    FORMATS = ['tabular', 'tabular-indirect', 'pickle', 'tf-dataset', 'plugin']
 
-    def __init__(self, args):
+    def __init__(self, args, plugin_manager=None):
         '''
         Constructor
         
         '''
+        self.dataset_type = None
+        self.ins_training = None
+        self.outs_training = None
+        self.weights_training = None
+        self.tags_training = None
+
+        self.ins_validation = None
+        self.outs_validation = None
+        self.weights_validation = None
+        self.tags_validation = None
+        self.validation = None
         
+        self.ins_testing = None
+        self.outs_testing = None
+        self.weights_testing = None
+        self.tags_testing = None
+        self.testing = None
+        
+        #self.rotation = None
+        #self.output_mapping = None
         self.args = args
-
+        self.plugin_manager = plugin_manager
         # Data table list
-        # For numpy format, individual data elements are organized as tuples: (ins, outs, weights, tags, groups, stratify)
-        # For tf-dataset format, individual data elements are effectively also tuples: (ins, outs, weights)
         self.data = []   
-
-        # What group (fold) does each file belong to (if provided)
         self.data_groups = None
 
         # Fold list
-        # For numpy format, individual folds are organized as tuples: (ins, outs, weights, tags)
-        # For tf-dataset format, individual data elements are effectively also tuples: (ins, outs, weights)
         self.folds = []
         self.nfolds = 0
         self.n_train_folds = None
@@ -65,62 +75,22 @@ class SuperDataSet:
         # Categorical input value to float mapping
         self.categorical_feature_translation = None  
 
-        # training/validation/testing data sets
-        # For numpy format, individual data sets include: ins, outs, weights, tags
-        # For tf-dataset format, individual data sets are effectively also tuples: (ins, outs, weights)
-        self.dataset_type = None
-
-        # Training
-        self.ins_training = None
-        self.outs_training = None
-        self.weights_training = None
-        self.tags_training = None
-        # TF-Dataset only
-        self.training = None
-        self.training_pre_repeat = None
-
-        # Validation
-        self.ins_validation = None
-        self.outs_validation = None
-        self.weights_validation = None
-        self.tags_validation = None
-
-        # TF-Dataset only: this is a tuple that includes (ins,outs,weights)
-        # TODO (DONE?): remove this dependence For numpy format, 
-        self.validation = None
-        
-        # Testing
-        self.ins_testing = None
-        self.outs_testing = None
-        self.weights_testing = None
-        self.tags_testing = None
-        # TF-Dataset only
-        self.testing = None
-
-
         # XLSX files
-        # Which sheet to access from each XLSX file
         self.data_xlsx_sheet_names = None
 
         #####################
         # Staged processing of the data
-        # Load data into self.data
+        # Load data
         self.load_data()
         
-        # Organize the data into folds (into self.folds)
+        # Combine some tables together
         self.generate_folds()
-
-        # Optional cross-over from numpy to tf-dataset format
-        if (self.args.data_representation == "tf-dataset") and (not (self.args.data_format == "tf-dataset")):
-            # Target data representation is tf-dataset, but loaded representation is numpy
-            self.folds_numpy_to_tf_dataset()
-
 
         # Optionally save datasets to TF Dataset files
         if self.args.data_save_folds:
             self.save_folds()
 
-        # Translate folds to training/validation/testing
+        # Translate tables to training/validation/testing
         self.generate_datasets()
 
         # Preprocess datasets
@@ -146,38 +116,7 @@ class SuperDataSet:
             except Exception:
                 print(f"  value={v!r}")
 
-    def folds_numpy_to_tf_dataset(self):
-        '''
-        self.folds: 
-            Each fold is a tuple of numpy arrays.  Replace each with a corresponding tf-dataset
-            Each fold is as much as the tuple (ins, outs, weights)
-        
-        '''
-        # Replacement list of fold representations
-        newfolds = []
-
-        for i, f in enumerate(self.folds):
-            # Strip out Nones
-            f2 = [d for d in f if d is not None]
-
-            # Deal with case where we have strings (and dtype is 'object'):
-            for j in range(len(f2)):
-                if f2[j].dtype == 'object':
-                    # Convert to a tensor with a dtype 'str'
-                    f2[j] = keras.ops.convert_to_tensor(f2[j].astype('U').tolist(), dtype='string')
-
-                
-            # Convert from numpy to TF Dataset
-            ds = tf.data.Dataset.from_tensor_slices(tuple(f2))
-
-            # Add this to the accumulating list of folds
-            newfolds.append(ds)
-
-        # Replace numpy folds with tf-dataset folds
-        self.folds = newfolds
-
-
-    def save_folds_deprecated(self):
+    def save_folds(self):
         '''
         For numpy arrays, format the folds as TF Datasets and save to files
         
@@ -222,24 +161,6 @@ class SuperDataSet:
             handle_error('--data_save_folds only valid for numpy-based data', self.args.verbose)
             
             
-    def save_folds(self):
-        '''
-        Save the folds into tf-dataset files
-        
-        '''
-        if self.args.data_representation == 'tf-dataset':
-            for i, ds in enumerate(self.folds):
-                print_debug('Writing fold %d'%i, 1, self.args.debug)
-
-                # Construct file name
-                fname = '%s_fold_%02d.ds'%(self.args.data_save_folds, i)
-                
-                # Write to disk
-                ds.save(fname)
-
-        else:
-            handle_error('--data_save_folds only valid for data_representation = tf-dataset', self.args.verbose)
-            
 
         
     def preprocess_datasets(self):
@@ -249,6 +170,28 @@ class SuperDataSet:
         '''
         if self.args.data_representation == 'numpy':
             self.preprocess_datasets_strings_numpy()
+
+            ######
+            # Apply Plugin Preprocessors (Raw Numpy Math Only)
+            if getattr(self, 'plugin_manager', None) is not None:
+                preprocess_results = self.plugin_manager.apply_plugins(
+                    'preprocess', 
+                    debug_level=self.args.debug,
+                    ins_train=self.ins_training,    
+                    outs_train=self.outs_training,
+                    ins_val=getattr(self, 'ins_validation', None),   
+                    outs_val=getattr(self, 'outs_validation', None),
+                    ins_test=getattr(self, 'ins_testing', None),  
+                    outs_test=getattr(self, 'outs_testing', None)
+                )
+                
+                # Merge mathematically scaled numpy arrays back into the dataset properties natively
+                self.ins_training    = preprocess_results.get('ins_train',  self.ins_training)
+                self.outs_training   = preprocess_results.get('outs_train', self.outs_training)
+                self.ins_validation  = preprocess_results.get('ins_val',    getattr(self, 'ins_validation', None))
+                self.outs_validation = preprocess_results.get('outs_val',   getattr(self, 'outs_validation', None))
+                self.ins_testing     = preprocess_results.get('ins_test',   getattr(self, 'ins_testing', None))
+                self.outs_testing    = preprocess_results.get('outs_test',  getattr(self, 'outs_testing', None))
 
     def preprocess_datasets_strings_numpy(self):
         '''
@@ -270,13 +213,13 @@ class SuperDataSet:
             # Validation inputs are generic objects (presume string)
             self.ins_validation = keras.ops.convert_to_tensor(self.ins_validation.astype(str).tolist(), dtype='string')
             # Re-assemble the tuple
-            #if self.outs_validation is not None:
-            #    if self.weights_validation is not None:
-            #        self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
-            #    else:
-            #        self.validation = (self.ins_validation, self.outs_validation)
-            #else:
-            #    self.validation = (self.ins_validation, )
+            if self.outs_validation is not None:
+                if self.weights_validation is not None:
+                    self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
+                else:
+                    self.validation = (self.ins_validation, self.outs_validation)
+            else:
+                self.validation = (self.ins_validation, )
 
         # Testing set
         if self.ins_testing is not None and (self.ins_testing.dtype == 'object'):
@@ -346,7 +289,7 @@ class SuperDataSet:
             # Each string is a new mapping: translate all of them
             tmp = [SuperDataSet.parse_value_mapping_float(s) for s in self.args.data_columns_categorical_to_float_direct]
 
-            # Add to the categorical translation
+            # Add to the categorial translation
             if self.categorical_feature_translation is None:
                 self.categorical_feature_translation = tmp
             else:
@@ -369,16 +312,15 @@ class SuperDataSet:
         # Error checks
 
         if not self.args.data_format == 'tf-dataset':
-            # TODO: do we need these error checks here?
             # TF-Datasets already have well defined ins/outs/weights
             
             # Must at least be a set of features for inputs
-            if ((self.args.data_inputs is None) and (self.args.data_inputs_file_name is None)) :
-                handle_error('Must specify --data_inputs or --data_inputs_file_name', self.args.verbose)
+            if self.args.data_inputs is None:
+                handle_error('Must specify data_inputs', self.args.verbose)
 
             # If there are weights, then there must also be outputs
-            #if (self.args.data_outputs is None) and (self.args.data_weights is not None):
-            #    handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
+            if (self.args.data_outputs is None) and (self.args.data_weights is not None):
+                handle_error("Must specify data_outputs if there are also data_weights", self.args.verbose)
 
         ####
         # Individual file strings could have: just file_name or file_name, data_group
@@ -397,7 +339,6 @@ class SuperDataSet:
         columns = list(map(list, zip(*split_rows)))
         if len(columns) > 3:
             handle_error("Each string in data_files must either be just 'file name' or a 'file name, data group or a 'file name, data group, sheet name''", self.args.verbose)
-
 
         # Replace args.files with just the file names
         self.args.data_files = columns[0]
@@ -441,7 +382,6 @@ class SuperDataSet:
             self.data = self.load_tf_set()
             
         elif self.args.data_format == 'plugin':
-            # TODO: Shayan to implement
             self.data = self.load_via_plugin()
 
         else:
@@ -476,13 +416,12 @@ class SuperDataSet:
         '''
         Check in self.data that:
         - For each numpy array, we must have equal numbers of examples in
-        ins, outs, weights, tags, groups, stratify
+        ins, outs, weights, groups
         
         
         '''
 
-        if self.args.data_format == 'numpy':
-            # Numpy format
+        if self.args.data_format != 'tf-dataset':
             # Loop over each data table
             for i, dt in enumerate(self.data):
                 n_examples = dt[0].shape[0]
@@ -504,25 +443,10 @@ class SuperDataSet:
                     handle_error('Data table %d: weights has a different number of examples from inputs (%d vs %d)'%(i,dt[2].shape[0], n_examples),
                                  self.args.verbose)
                     
-                # Check tags
-                if dt[3] is not None:
-                    # Loop over all keys
-                    for k,v in dt[3].items():
-                        if v.shape[0] != n_examples:
-                            handle_error('Data table %d: tags has a different number of examples from inputs (%d vs %d)'%(i,vshape[0], n_examples),
-                                 self.args.verbose)
-
                 # Check groups
-                if (dt[4] is not None) and (not (dt[4].shape[0] == n_examples)):
-                    handle_error('Data table %d: groups has a different number of examples from inputs (%d vs %d)'%(i,dt[4].shape[0], n_examples),
+                if (dt[3] is not None) and (not (dt[3].shape[0] == n_examples)):
+                    handle_error('Data table %d: groups has a different number of examples from inputs (%d vs %d)'%(i,dt[3].shape[0], n_examples),
                                  self.args.verbose)
-                    
-                # Check stratify
-                if (dt[5] is not None) and (not (dt[5].shape[0] == n_examples)):
-                    handle_error('Data table %d: stratify has a different number of examples from inputs (%d vs %d)'%(i,dt[5].shape[0], n_examples),
-                                 self.args.verbose)
-                    
-                
                     
 
 
@@ -545,10 +469,11 @@ class SuperDataSet:
                 # File-level groups are defined
                 print_debug('Data groups: ' + str(self.data_groups), 3, self.args.debug)
 
-                if not self.args.data_format == 'tf-dataset':
+                if self.args.data_representation == 'numpy':
                     self.folds = self.generate_folds_by_group_numpy()
                 
                 else:
+                    # TODO: LUKE use sample_from_dataset()
                     self.folds = self.generate_folds_by_group_tf()
 
             else:
@@ -556,7 +481,7 @@ class SuperDataSet:
                 
                 
         elif self.args.data_fold_split == 'group-by-example':
-            if not self.args.data_format == 'tf-dataset':
+            if self.args.data_representation == 'numpy':
                 self.folds = self.generate_folds_by_example_numpy()
                 
             else:
@@ -565,8 +490,8 @@ class SuperDataSet:
                     
 
         elif self.args.data_fold_split == 'random':
-            if not self.args.data_format == 'tf-dataset':
-                self.generate_folds_random_numpy(False)
+            if self.args.data_representation == 'numpy':
+                self.generate_folds_random_numpy()
                 
             else:
                 handle_error("data_fold_split random not supported for tf-dataset",
@@ -574,8 +499,10 @@ class SuperDataSet:
 
         
         elif self.args.data_fold_split == 'random-stratify':
-            if not self.args.data_format == 'tf-dataset':
-                self.generate_folds_random_numpy(True)
+            if self.args.data_representation == 'numpy':
+                # TODO: LUKE.  Need to think about whether we should just stratify based on the output or an arbitrary column
+                handle_error("data_fold_split random-stratify not yet supported",
+                             self.args.verbose)
                 
             else:
                 handle_error("data_fold_split random-stratify not supported for tf-dataset",
@@ -588,83 +515,50 @@ class SuperDataSet:
         self.nfolds = len(self.folds)
         print_debug("TOTAL DATA FOLDS: %d"%len(self.folds), 1, self.args.debug)
 
-    @staticmethod
-    def concatenate_data(dat:list[np.ndarray]|list[dict[str, np.ndarray]]):
-        '''
-        Concatenate lists of data together along axis=0.
-        :param dat: is either a list of numpy arrays or a list of dicts of numpy arrays
-        :return: a single numpy array or a dict of numpy arrays
-
-        If a list of numpy arrays, then return the concatenation of them along axis 0.
-        If a list of dictionaries, then return a single dictionary in which each key is the 
-           concatenation of the corresponding numpy arrays in the dictionaries
-
-        '''
-        if isinstance(dat[0], dict):
-            return {k: np.concatenate([d[k] for d in dat], axis=0) for k in dat[0]}
-        else:
-            return np.concatenate(dat, axis=0)
-
     def generate_folds_by_group_numpy(self):
         '''
         Folds by file group for numpy case
-
-        Each data table is organized as a tuple: (ins, outs, weights, tags, groups, stratify)
-        Each data fold is organized as a tuple: (ins, outs, weights, tags)
         '''
         # Numpy array case
         data_out = []
                 
-        # Number of pieces of information in (ins,outs,weights,tags, groups, stratify)
+        # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights) vs (ins,outs,weights,groups)
         # Some of the elements of the tuple can be None - so deal with this case
-        data_size = len(self.data[0])
-        if data_size != 6:
-            handle_error("generate_folds_by_group_numpy(): all data tables must have 6 entries (got %d)"%data_size, 1)
-
-        # Compute the number of folds        
+        data_size = sum(d is not None for d in self.data[0])
+        data_size_extra = 4-data_size
+        
+        # Loop over every fold: 0 ... K-1
         ngroups = max(self.data_groups)+1
-        print_debug("Number of folds: %d"%ngroups, 2, self.args.debug)
+        print_debug("Number of fold groups: %d"%ngroups, 2, self.args.debug)
         print_debug("data_size: %d"%data_size, 2, self.args.debug)
 
-        # Loop over every fold: 0 ... K-1
         for grp in range(ngroups):
             # Accumulate all of the elements into a new list (which will become a tuple)
             data_in_group = []
             print_debug("\tFold %d"%grp, 3, self.args.debug)
             
-            # Loop over every element in each data tuple (ins, outs, weights, tags)
-            for i in range(4):
+            # Loop over every element in each data tuple (ins, outs, weights, groups)
+            for i in range(data_size):
                 print_debug("\t\tData %d"%i, 3, self.args.debug)
                 
-                # Bind the data and the group together
-                data_and_group = zip(self.data, self.data_groups)
-
                 # Grab the numpy arrays for this element and every matching group
+                # Connect the rest of the data with the group number
+                data_and_group = zip(self.data, self.data_groups)
                 datas = [d[i] for d, g in data_and_group if g == grp]
-
-                # Assemble debugging info                
+                
+                # Concatenate these together along the rows
                 strg = ''
                 for d in datas:
                     if d is None:
-                        # None
                         strg = strg + 'None, '
-                    elif isinstance(d, dict):
-                        # A dict: don't worry about internal structure
-                        strg = strg + 'Dict, '
                     else:
-                        # Numpy array shape
                         strg = strg + str(d.shape)
                 print_debug('Data shape: ' + strg, 3, self.args.debug)
                 
-                # Concatenate these together along the rows
-                # If the first element is None, then assume that all are
-                if datas[0] is None:
-                    data_in_group.append(None)
-                else:
-                    data_in_group.append(SuperDataSet.concatenate_data(datas))
+                data_in_group.append(np.concatenate(datas, axis=0))
 
-            # Add this data group to the growing list
-            fold_tuple = tuple(data_in_group)
+            # Add this data group to the growing list, with extra None's if necessary
+            fold_tuple = tuple(data_in_group) + (None,) * data_size_extra
             data_out.append(fold_tuple) 
 
             
@@ -672,42 +566,30 @@ class SuperDataSet:
 
     def generate_folds_by_example_numpy(self):
         '''
-
         Each example has a column that indicates which fold it belongs to
-
-        1. Concatenate all data tables together, leaving one tuple (ins, outs, weights, tags, groups, stratify)
-        2. For each fold: 
-           a. For each of (ins, outs, weights, tags), extract just 
-           the examples where their group matches the fold number
 
         '''
         # Combine all of the data tables together into one
         #ins, outs, weights, groups = self.combine_all_data_tables()
         data_all = self.combine_all_data_tables()
 
-        # The group must be specified
-        if data_all[4] is None:
+        if data_all[3] is None:
             # No fold data
             handle_error("No group assignment specified by --data_groups", self.args.verbose)
             
         # Number of folds
         #nfolds = self.args.data_n_folds
         
-        # Growing list of (ins, outs, weights, tags, groups, stratify)
+        # Numpy array case
         data_out = []
                 
         # Number of pieces of information for each file (ins,) vs (ins,outs) vs (int,outs,weights) vs (ins,outs,weights,groups)
         # Some of the elements of the tuple can be None - so deal with this case
         data_size = len(data_all) #sum(d is not None for d in data_all)
-        if data_size != 6:
-            handle_error("Each data table must be of the form (ins, outs, weights, tags, groups, stratify)",
-                         self.args.verbose)
-
-        # Deprecated   
-        #data_size_extra = 4-data_size
+        data_size_extra = 4-data_size
         
         # Loop over every fold: 0 ... K-1
-        nfolds = max(data_all[4])+1
+        nfolds = max(data_all[3])+1
         print_debug("Number of folds: %d"%nfolds, 2, self.args.debug)
         print_debug("data_size: %d"%data_size, 2, self.args.debug)
 
@@ -716,14 +598,14 @@ class SuperDataSet:
             data_in_group = []
             print_debug("\tFold %d"%fold, 3, self.args.debug)
 
-            # Identify the matching rows for this fold.  Element 4 is the group ID from the table
-            rows = np.where(data_all[4] == fold)[0]
+            # Identify the matching rows for this fold
+            rows = np.where(data_all[3] == fold)[0]
             if rows.shape[0] == 0:
                 # No rows in this fold
                 handle_error("No examples assigned to fold %d"%fold, self.args.verbose)
                 
-            # Loop over every element in each data tuple (ins, outs, weights, tags)
-            for i in range(4):
+            # Loop over every element in each data tuple (ins, outs, weights, groups)
+            for i in range(data_size):
                 print_debug("\t\tData %d"%i, 3, self.args.debug)
 
                 if data_all[i] is None:
@@ -731,17 +613,18 @@ class SuperDataSet:
                     data_in_group.append(None)
                 else:
                     # extract the rows of this data
-                    if isinstance(data_all[i], np.ndarray):
-                        # Numpy array: indexing along axis 0 works for any number of dimensions
+                    if len(data_all[i].shape) > 1:
+                        # 2D
+                        data_in_group.append(data_all[i][rows,:])
+                    else:
+                        # 1D
                         data_in_group.append(data_all[i][rows])
-                    elif isinstance(data_all[i], dict):
-                        # Dictionary
-                        data_in_group.append({k: data_all[i][k][rows] for k in data_all[i]})
 
-            # Add this data group to the growing list
-            fold_tuple = tuple(data_in_group)
+            # Add this data group to the growing list, with extra None's if necessary
+            fold_tuple = tuple(data_in_group) + (None,) * data_size_extra
             data_out.append(fold_tuple) 
 
+        print(len(data_out))
         return data_out
 
 
@@ -836,27 +719,31 @@ class SuperDataSet:
 
             # TODO: what happens if there are no outs?
             # Create self.validation for model.fit
-            #if self.ins_validation is None:
-            #    # There is no validation data
-            #    self.validation = None
-            #elif self.weights_validation is None:
-            #    # Ins/Outs only
-            #    self.validation = (self.ins_validation, self.outs_validation)
-            #else:
-            #    # Ins/Outs/Weights
-            #    self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
+            if self.ins_validation is None:
+                # There is no validation data
+                self.validation = None
+            elif self.weights_validation is None:
+                # Ins/Outs only
+                self.validation = (self.ins_validation, self.outs_validation)
+            else:
+                # Ins/Outs/Weights
+                self.validation = (self.ins_validation, self.outs_validation, self.weights_validation)
+
+            # OLD IMPL
+            #self.validation = (self.ins_validation, self.outs_validation) if self.ins_validation is not None else None
 
         # TF-Datasets
-        # TODO: need to rethink this.  repeat seems wrong here.  It should only be used for training set.
         elif self.args.data_representation == "tf-dataset":
-            # TF Cache
+            # TF Cache and repeating 
             if self.args.data_tf_cache is not None:
                 if self.args.data_tf_cache == '':
                     self.folds = [ds.cache() for ds in self.folds]
                 elif self.args.data_tf_cache != '':
                     # TODO: Add error checking to make sure cache directory exists
                     self.folds = [ds.cache(os.path.join(self.args.data_tf_cache, 'fold_{i}')) for i, ds in enumerate(self.folds)]
-
+            if self.args.data_tf_repeat:
+                self.folds = [ds.repeat() for ds in self.folds]
+                    
             if self.args.data_set_type == "fixed":
                 self.tf_split_fixed()
             elif self.args.data_set_type == "holistic-cross-validation":
@@ -874,13 +761,8 @@ class SuperDataSet:
             
             #####
             # Handle final pipeline elements of training/validation/testing data sets
-
-            # Remember the handle to the training set without repeating
-            self.training_pre_repeat = self.training
-            self.training_pre_repeat = self.training_pre_repeat.batch(self.args.data_batch, num_parallel_calls=tf.data.AUTOTUNE)
-
-            if self.args.data_tf_repeat:
-                self.training = self.training.repeat()
+            if self.args.data_tf_shuffle is not None:
+                self.training = self.training.shuffle(self.args.data_tf_shuffle)
 
             self.training = self.training.batch(self.args.data_batch, num_parallel_calls=tf.data.AUTOTUNE)
 
@@ -910,11 +792,10 @@ class SuperDataSet:
             handle_error("Unrecognized data_representation (%s)"%self.args.data_representation,
                          self.args.verbose)
 
+
     def dataset_split_fixed(self):
         '''
-        Assign one fold to each of training, validation, testing
-
-        Each fold has the form: (ins, outs, weights, tags) (always 4 values)
+        Assign one data group to each of training, validation, testing
 
         '''
         # Number of data sets we have
@@ -929,34 +810,27 @@ class SuperDataSet:
         self.ins_training = self.folds[0][0]
 
         # Outs
-        #if len(self.data[0]) >= 2:
-        self.outs_training = self.folds[0][1]
+        if len(self.data[0]) >= 2:
+            self.outs_training = self.folds[0][1]
 
         # Weights
-        #if len(self.data[0]) >= 3:
-        self.weights_training = self.folds[0][2]
-
-        # Tags
-        self.tags_training = self.folds[0][3]
+        if len(self.data[0]) >= 3:
+            self.weights_training = self.folds[0][2]
 
         # Validation set
         if data_len >= 2:
             # Validation set is fold #1
-            #self.validation=self.folds[1]
-
+            self.validation=self.folds[1]
             # Ins
-            self.ins_validation = self.folds[1][0]
+            self.ins_validation = self.validation[0]
 
             # Outs
-            #if len(self.validation) >= 2:
-            self.outs_validation = self.folds[1][1]
+            if len(self.validation) >= 2:
+                self.outs_validation = self.validation[1]
 
             # Weights
-            #if len(self.validation) >= 3:
-            self.weights_validation = self.folds[1][2]
-
-            # Tags
-            self.tags_validation = self.folds[1][3]
+            if len(self.validation) >= 3:
+                self.weights_validation = self.validation[2]
 
         # Test set
         if data_len == 3:
@@ -965,20 +839,15 @@ class SuperDataSet:
             self.ins_testing = self.folds[2][0]
 
             # Outs
-            #if len(self.folds[2]) >= 2:
-            self.outs_testing = self.folds[2][1]
+            if len(self.folds[2]) >= 2:
+                self.outs_testing = self.folds[2][1]
 
             # Weights
-            #if len(self.folds[2]) >= 3:
-            self.weights_testing = self.folds[2][2]
-
-            # Tags
-            self.tags_testing = self.folds[2][3]
+            if len(self.folds[2]) >= 3:
+                self.weights_testing = self.folds[2][2]
     
     def tf_split_fixed(self):
         data_len = len(self.folds)
-
-        print("SPLIT %d"%data_len)
 
         if data_len > 3:
             handle_error("Cannot exceed 3 data groups for split=fixed (we have %d)"%(len(self.data)),
@@ -986,9 +855,7 @@ class SuperDataSet:
 
         # Training set
         self.training = self.folds[0]
-        if self.args.data_tf_shuffle is not None:
-            self.training = self.training.shuffle(self.args.data_tf_shuffle, reshuffle_each_iteration=True)
-
+            
         if data_len >= 2:
             # Validation set
             self.validation=self.folds[1]
@@ -1002,9 +869,6 @@ class SuperDataSet:
         self.folds -> training/validation/testing datasets
         
         For TF Datasets
-
-        We assume that we will consume all of the validation and testing datasets on a single evaluation.  
-        But, for the training set, we have the option of shuffling
         
         '''
         # Assign fold indices to data sets
@@ -1015,20 +879,17 @@ class SuperDataSet:
         tr_ds = [self.folds[i] for i in tr_folds]
         val_ds = [self.folds[i] for i in val_folds]
         
+        #SuperDataSet._describe_object('FOLDS', tr_folds)
         # Training and validation potentially have more than one fold
         if len(tr_ds) > 1:
-            if self.args.data_tf_shuffle is not None:
-                # Shuffle individually
-                tr_ds = [ds.shuffle(self.args.data_tf_shuffle, reshuffle_each_iteration=True) for ds in tr_ds]
-
-            # Now combine the folds together
-            self.training = tf.data.Dataset.sample_from_datasets(tr_ds)
+            #self.training = tf.data.Dataset.sample_from_datasets(tr_ds)
+            self.training = reduce(lambda a, b: a.concatenate(b), tr_ds)
         else:
             self.training = tr_ds[0]
 
         if len(val_ds) > 1:
-            self.validation = tf.data.Dataset.sample_from_datasets(val_ds)
-            #self.validation = reduce(lambda a, b: a.concatenate(b), val_ds)
+            #self.validation = tf.data.Dataset.sample_from_datasets(val_ds)
+            self.validation = reduce(lambda a, b: a.concatenate(b), val_ds)
         else:
             self.validation = val_ds[0]
         
@@ -1037,12 +898,11 @@ class SuperDataSet:
 
     def combine_all_data_tables(self):
         '''
-        Combine all data tables into a single ins, outs, weights, tags, groups, stratify
+        Combine all data tables into a single ins, outs, weights, groups
 
         With help from ChatGPT
 
-        :return: Single tuple (ins, outs, weights, tags, groups, stratify).  
-            All elements are numpy arrays; except tags is a dict
+        :return: Single tuple (ins, outs, weights, groups)
         
         '''
         
@@ -1052,117 +912,30 @@ class SuperDataSet:
         
         result = []
         
-        # Iterate over the ins, outs, weights, tags, groups, stratify
+        # Iterate over the ins, outs, weights and groups
         for group in grouped:
             # Filter out None values
             arrays = [x for x in group if x is not None]
 
             if arrays:
-                # There are some values to combine
-                combined = SuperDataSet.concatenate_data(arrays) # np.concatenate(arrays, axis=0)
+                combined = np.concatenate(arrays, axis=0)
             else:
-                # No values to combine, so leave as None
                 combined = None
 
             result.append(combined)
 
         return tuple(result)
 
-    @staticmethod
-    def _compute_random_shuffle(n:int, n_folds:int, arr:np.array):
-        '''
-        Split arr randomly across n_folds as evenly as possible
 
-        :param n: Total number of samples
-        :param n_folds: Total number of folds
-        :param arr: Full list of sample indices
-
-        :return: List of n_folds.  Each is a numpy array of indices in the fold
-        '''
-        np.random.shuffle(arr)
-
-        # Compute the indices for each fold
-        # q = number within each fold, r = extras that are added to the first r folds
-        q, r = divmod(n, n_folds)
-
-        # First (n - r) chunks of size q+1, then r chunks of size q
-        sizes = [q + 1] * r + [q] * (n - r)
-    
-        # Create the list of indices
-        fold_inds = []
-        start = 0
-        for size in sizes:
-            fold_inds.append(arr[start:start + size])
-            start += size
-
-        return fold_inds
-
-    @staticmethod
-    def _compute_random_stratify_shuffle(n:int, n_folds:int, arr:np.array, stratify:np.array):
-        '''
-        Split arr randomly across n_folds as evenly as possible, while keeping
-        each stratification class balanced across the folds
-
-        :param n: Total number of samples
-        :param n_folds: Total number of folds
-        :param arr: Full list of sample indices
-        :param stratify: Numpy array with one value per example.
-           The values form a set of classes.  Each class should
-           be split evenly across the folds.  May be ints, bools, or
-           strings; floating point values are discretized by truncating
-           the fraction
-
-        :return: List of n_folds.  Each is a numpy array of the indices the fold
-        '''
-        # Floating point stratification values are discretized by truncating the fraction
-        if np.issubdtype(stratify.dtype, np.floating):
-            classes = np.trunc(stratify).astype(np.int64)
-        else:
-            classes = stratify
-
-        # Accumulate the indices assigned to each fold, one class at a time
-        fold_inds = [[] for _ in range(n_folds)]
-
-        for c in np.unique(classes):
-            # Sample indices (within arr) that belong to this class
-            class_arr = arr[classes[arr] == c]
-
-            # Randomize the order within the class
-            np.random.shuffle(class_arr)
-
-            # Evenly divide this class across the folds
-            # q = number per fold, r = extras that are added to the first r folds
-            n_class = class_arr.shape[0]
-            q, r = divmod(n_class, n_folds)
-            sizes = [q + 1] * r + [q] * (n_folds - r)
-
-            start = 0
-            for f, size in enumerate(sizes):
-                fold_inds[f].append(class_arr[start:start + size])
-                start += size
-
-        # Concatenate the per-class chunks and shuffle so classes are intermixed within each fold
-        folds = []
-        for f in range(n_folds):
-            fold = np.concatenate(fold_inds[f])
-            np.random.shuffle(fold)
-            folds.append(fold)
-
-        return folds
-    
-    def generate_folds_random_numpy(self, stratify_samples=False):
+    def generate_folds_random_numpy(self):
         '''
         Translate the set of data tables into a set of folds with
         random sampling.  Specifically: self.data -> self.folds
 
         
         '''
-        # Checks
-        if stratify_samples and (self.args.data_stratify is None):
-            handle_error('--data_fold_split=random-stratify requires --data_stratify', self.args.verbose)
-
         # Combine all of the data tables together into one
-        ins, outs, weights, tags, _, stratify = self.combine_all_data_tables()
+        ins, outs, weights, groups = self.combine_all_data_tables()
 
         # Number of folds
         nfolds = self.args.data_n_folds
@@ -1175,12 +948,21 @@ class SuperDataSet:
 
         # Shuffle these indices
         np.random.seed(self.args.data_seed)
+        np.random.shuffle(arr)
 
-        if stratify_samples:
-            fold_inds = SuperDataSet._compute_random_stratify_shuffle(n, nfolds, arr, stratify)
-        else:
-            fold_inds = SuperDataSet._compute_random_shuffle(n, nfolds, arr)
-        
+        # Compute the indices for each fold
+        # q = number within each fold, r = extras that are added to the first r folds
+        q, r = divmod(n, nfolds)
+
+        # First (n - r) chunks of size q+1, then r chunks of size q
+        sizes = [q + 1] * r + [q] * (n - r)
+    
+        fold_inds = []
+        start = 0
+        for size in sizes:
+            fold_inds.append(arr[start:start + size])
+            start += size
+
         # Now slice the data
         ins_folds = [ins[inds,...] for inds in fold_inds]
 
@@ -1194,15 +976,13 @@ class SuperDataSet:
         else:
             weights_folds = [weights[inds,...] for inds in fold_inds]
 
-        if tags is None:
-            tags_folds = [None] * nfolds
+        if groups is None:
+            groups_folds = [None] * nfolds
         else:
-            # Must split each dictionary value
-            tags_folds = [{k: v[inds,...] for k,v in tags.items()} for inds in fold_inds]
-
+            groups_folds = [outs[inds,...] for inds in fold_inds]
 
         # Create a list of tuples, one for each fold
-        self.folds = list(zip(ins_folds, outs_folds, weights_folds, tags_folds))
+        self.folds = list(zip(ins_folds, outs_folds, weights_folds, groups_folds))
 
     def _compute_fold_indices(self):
         '''
@@ -1247,9 +1027,7 @@ class SuperDataSet:
         '''
         self.folds -> training/validation/testing datasets
         
-        For numpy arrays.
-
-        Each fold and dataset has the form (ins, outs, weights, tags) (at this stage, groups is irrelevant)
+        For numpy arrays
         
         '''
         nfolds, n_train_folds, rotation, tr_folds, val_folds, test_fold = self._compute_fold_indices()
@@ -1265,11 +1043,7 @@ class SuperDataSet:
         # Weights
         if self.folds[tr_folds[0]][2] is not None:
             self.weights_training = np.concatenate([self.folds[f][2] for f in tr_folds], axis=0)
-
-        # Tags
-        if self.folds[tr_folds[0]][3] is not None:
-            self.tags_training = SuperDataSet.concatenate_data([self.folds[f][3] for f in tr_folds])
-
+            
         ## Validation
         #self.ins_validation, self.outs_validation, self.weights_validation, _ = self.folds[val_fold]
 
@@ -1284,12 +1058,8 @@ class SuperDataSet:
         if self.folds[val_folds[0]][2] is not None:
             self.weights_validation = np.concatenate([self.folds[f][2] for f in val_folds], axis=0)
 
-        # Tags
-        if self.folds[val_folds[0]][3] is not None:
-            self.tags_validation = SuperDataSet.concatenate_data([self.folds[f][3] for f in val_folds])
-
-        ## Testing: take only the first 4 elements (ins, outs, weights, tags)
-        self.ins_testing, self.outs_testing, self.weights_testing, self.tags_testing = self.folds[test_fold]
+        ## Testing
+        self.ins_testing, self.outs_testing, self.weights_testing, _ = self.folds[test_fold]
 
     def describe(self):
         return {'dataset_type': self.dataset_type,
@@ -1308,9 +1078,6 @@ class SuperDataSet:
                           encoding:str=None):
         '''
         Load a CSV or XLSX file
-
-        :return: Dataframe of the table
-
         '''
         if file_name[-3:] == 'csv':
             print("CSV file")
@@ -1382,7 +1149,6 @@ class SuperDataSet:
         if dataset_path is None:
             file_path = file_name
         else:
-            # TODO: OS neutral 
             file_path = '%s/%s'%(dataset_path, file_name)
 
         # TODO: check that file exists and that object is a dict
@@ -1393,7 +1159,7 @@ class SuperDataSet:
         
     def load_pickle_set(self):
         '''
-        Load a set of pickle data files and create a set of (ins, outs, weights, tags, groups, stratify) for each one.
+        Load a set of pickle data files and create a set of (ins, outs, weights) for each one.
 
         Notes:
         - Pickle file includes one dict object
@@ -1402,7 +1168,6 @@ class SuperDataSet:
         -- Among all the inputs, the shapes are identical except in the last dimension
         -- Among all the outputs, the shapes are identical except in the last dimension
         -- The number of rows in the inputs, outputs, and weights must be the same
-
         '''
 
         data = []
@@ -1413,56 +1178,7 @@ class SuperDataSet:
         print_debug("Data files: " + str(self.args.data_files), 2, self.args.debug)
 
         # Iterate over all of these data sets: each is a dict
-        for i,d in enumerate(d_all):
-            ####
-            # Error checking
-
-            # Check that data_outputs columns exist
-            if self.args.data_outputs is not None:
-                diff = set(self.args.data_outputs) - set(d.keys())
-                if len(diff) > 0:
-                    # Something is missing
-                    handle_error("data_outputs %s are missing from pickle file %s"%(diff, self.args.data_files[i]), 
-                                 self.args.verbose)
-
-            # Check that data_outputs columns exist
-            if self.args.data_inputs is not None:
-                diff = set(self.args.data_inputs) - set(d.keys())
-                if len(diff) > 0:
-                    # Something is missing
-                    handle_error("data_inputs %s are missing from pickle file %s"%(diff, self.args.data_files[i]), 
-                                 self.args.verbose)
-                    
-            # Weight column
-            if self.args.data_weights is not None:
-                if not self.args.data_weights in d.keys():
-                    handle_error("data_weights %s is missing from pickle file %s"%(self.args.data_weights, 
-                                                                                    self.args.data_files[i]), 
-                                 self.args.verbose)
-            
-            # Check that data_tags columns exist
-            if self.args.data_tag_examples is not None:
-                diff = set(self.args.data_tag_examples) - set(d.keys())
-                if len(diff) > 0:
-                    # Something is missing
-                    handle_error("data_tag_examples %s are missing from pickle file %s"%(diff, self.args.data_files[i]), 
-                                 self.args.verbose)
-            
-            # Group column
-            if self.args.data_groups is not None:
-                if not self.args.data_groups in d.keys():
-                    handle_error("data_groups %s is missing from pickle file %s"%(self.args.data_groups, 
-                                                                                    self.args.data_files[i]), 
-                                 self.args.verbose)
-
-            # Stratify column
-            if self.args.data_stratify is not None:
-                if not self.args.data_stratify in d.keys():
-                    handle_error("data_stratify %s is missing from pickle file %s"%(self.args.data_weights, 
-                                                                                    self.args.data_files[i]), 
-                                 self.args.verbose)
-
-            ####
+        for d in d_all:
             # Translate numpy fields for categorical variables
             if self.categorical_translation is not None:
                 # Iterate over the variable/translation table pairs 
@@ -1473,7 +1189,6 @@ class SuperDataSet:
                         # Map the value in each cell to the corresponding int
                         # First convert the value in the table to a string, then do the mapping
                         # Map missing values to -999 (valid mapped values will be natural numbers)
-                        # TODO: use a different value for missing (None?)
                         map_func = np.vectorize(lambda x: tr_dict.get(str(x), -999))
                         d_tmp = map_func(d[var])
                         
@@ -1490,102 +1205,26 @@ class SuperDataSet:
                         # All okay - copy the updated numpy array over
                         d[var] = d_tmp
             
-            # Concatenate all of the features along the last axis
+            # Contatenate all of the features along the last axis
             # TODO: check the shapes of these numpy arrays
             ins = np.concatenate([d[key] for key in self.args.data_inputs], axis=-1)
-
-
-            # Input feature translation from categorical to float
-            #  NOTE: we assume that the columns being translated are not in input_columns
-            if self.categorical_feature_translation is not None:
-                vecs = []
-                # Loop over each translation rule
-                for col, d_tr in self.categorical_feature_translation:
-                    print_debug("Categorical feature translation: %s: %s"%(col,str(d_tr)), 4, self.args.debug)
-
-                    # Flatten to 1D for lookup, preserving original shape for reshape after
-                    col_flat = d[col].ravel()
-
-                    # Check if there are any keys that are missing and raise an error
-                    #  (i.e., are their any values in the column that are not keys in the translation table)
-                    missing = {str(x) for x in col_flat} - set(d_tr.keys())
-
-                    if missing:
-                        handle_error(f"data_columns_categorical_to_float_direct: missing key/s ({missing}) from column {col}",
-                                        self.args.verbose)
-
-                    # Translate the values, then restore the original shape
-                    vec = np.array([d_tr.get(str(x)) for x in col_flat]).reshape(d[col].shape)
-
-                    # Ensure last dimension is a feature dim of size 1 for stacking
-                    if vec.shape[-1] != 1:
-                        vec = vec[..., np.newaxis]
-
-                    # Save the vector
-                    vecs.append(vec)
-
-                # Concatenate N vecs along the last axis to get (...,N)
-                mat = np.concatenate(vecs, axis=-1)
-
-                # Add these new features to the standard features
-                ins = np.concatenate([ins, mat], axis=-1)
-            
-            #####
-            # Assemble the ins, outs, weights, tags, groups
             ds = (ins,)
 
             if self.args.data_outputs is not None:
-             
                 # TODO: check the shapes of these numpy arrays
                 # Concatenate all of the features along the last axis
                 outs = np.concatenate([d[key] for key in self.args.data_outputs], axis=-1)
                 ds = ds + (outs,)
-            else:
-                ds = ds + (None,)
             
             if self.args.data_weights is not None:
                 # There is only one weight feature
                 weights = d[self.args.data_weights]
                 ds = ds + (weights,)
-            else:
-                ds = ds + (None,)
 
-            # Tags
-            if self.args.data_tag_examples is not None:
-                # Check that the tag columns are all in the table
-                diff = set(self.args.data_tag_examples) - d.keys()
-                if len(diff) > 0:
-                    handle_error("Data tag columns %s not in pickle file"%(str(diff)), self.args.verbose)
+            # TODO: check the shapes of the resulting tuples
 
-                # Create a dict: one key per data tag; associate each key with the corresponding table column values
-                tags = {c:d[c] for c in self.args.data_tag_examples}
-                
-                ds = ds + (tags,)
-            else:
-                ds = ds + (None,)
+            # TODO: add group loading
 
-            # Groups
-            if self.args.data_groups is not None:
-                # There is only one group feature
-                groups = d[self.args.data_groups]
-                ds = ds + (groups,)
-            else:
-                ds = ds + (None,)
-            
-            # Stratify
-            if self.args.data_stratify is not None:
-                # There is only one stratify feature
-                stratify = d[self.args.data_stratify]
-                ds = ds + (stratify,)
-            else:
-                ds = ds + (None,)
-            
-
-
-
-            # TODO: check that each key actually exists
-
-            
             # Append this tuple to the datasets list
             data.append(ds)
         
@@ -1649,12 +1288,6 @@ class SuperDataSet:
             str_part, float_part = item.split("->")
             mapping[str_part.strip()] = float(float_part.strip())
 
-        # Augment with float-string versions of integer-string keys
-        # (e.g. '0' -> also add '0.0') so columns stored as floats match correctly
-        for k, v in list(mapping.items()):
-            if k.lstrip('-').isdecimal():
-                mapping[str(float(int(k)))] = v
-
         return key.strip(), mapping
 
     def load_table_set(self):
@@ -1669,18 +1302,13 @@ class SuperDataSet:
         file_list = zip(self.args.data_files,
                         self.data_xlsx_sheet_names if self.data_xlsx_sheet_names is not None else [None]*len(self.args.data_files))
         
-        for f, sn in file_list: 
-            ins, outs, weights, tags, groups, stratify = self.load_table(self.args.dataset_directory,
+        for f, sn in file_list: #self.args.data_files:
+            ins, outs, weights, groups = self.load_table(self.args.dataset_directory,
                                                          f,
                                                          self.args.data_inputs,
                                                          self.args.data_outputs,
                                                          self.args.data_weights,
                                                          self.args.data_groups,
-                                                         self.args.data_tag_examples,
-                                                         self.args.data_stratify,
-                                                         input_column_file_name=self.args.data_inputs_file_name,
-                                                         output_column_file_name=self.args.data_outputs_file_name,
-                                                         dataset_indirect_path=self.args.dataset_indirect_directory,
                                                          categorical_translation=self.categorical_translation,
                                                          categorical_feature_translation=self.categorical_feature_translation,
                                                          verbose_level=self.args.verbose,
@@ -1691,22 +1319,46 @@ class SuperDataSet:
                                                          tabular_header_names=self.args.tabular_header_names,
                                                          tabular_encoding=self.args.tabular_encoding,
                                                          debug=self.args.debug)
-            data.append((ins, outs, weights, tags, groups, stratify))
+            data.append((ins, outs, weights, groups))
         
         return data
 
 
+
     @staticmethod
-    def _translate_categorical_variables(df:pd.DataFrame, categorical_translation:list[(str, dict)]):
-        '''
-        Translate the defined categorical variables in the df into the 
-        corresponding integer values
+    def load_table(dataset_path:str,
+                   file_name:str,
+                   input_columns:[str],
+                   output_columns:[str],
+                   data_weights:str,
+                   data_groups:str,
+                   categorical_translation:list[tuple[str, dict]]=None,
+                   categorical_feature_translation:list[tuple[str, dict]]=None,
+                   verbose_level:int=0,
+                   tabular_xlsx_sheet_name:str=None,
+                   tabular_column_range=None,
+                   tabular_column_list=None,
+                   tabular_header_row=None,
+                   tabular_header_names=None,
+                   tabular_encoding:str=None,
+                   debug=0):   
 
-        :param df: DataFrame containing a csv or xlsx-derived table
-        :param categorical_translation: List of tuples that describe the categorical translation rules for each column
+        # TODO: assume that file_name is absolute path if it is needed
+        if dataset_path is None:
+            file_path = file_name
+        else:
+            # Fix path construction for any OS
+            file_path = '%s/%s'%(dataset_path, file_name)
+            
+        df = SuperDataSet.load_tabular_file(file_path,
+                                            col_range=tabular_column_range,
+                                            col_list=tabular_column_list,
+                                            skiprows=tabular_header_row,
+                                            header_names=tabular_header_names,
+                                            sheet_name=tabular_xlsx_sheet_name,
+                                            encoding=tabular_encoding)
 
-        Note: df is destructively modified
-        '''
+        ##
         # Translate dataframe columns for categorical variables
         if categorical_translation is not None:
             for col, d in categorical_translation:
@@ -1728,69 +1380,16 @@ class SuperDataSet:
                         handle_error(f"data_columns_categorical_to_int error: unmapped values in column '{col}': {failed_values.unique().tolist()}",
                                      verbose_level)
                     
-
-
-    @staticmethod
-    def load_table(dataset_path:str,
-                   file_name:str,
-                   input_columns:[str],
-                   output_columns:[str],
-                   data_weights:str,
-                   data_groups:str,
-                   data_tags:list[str]=None,
-                   data_stratify:str=None,
-                   input_column_file_name:str=None,
-                   output_column_file_name:str=None,
-                   dataset_indirect_path:str=None,
-                   categorical_translation:list[tuple[str, dict]]=None,
-                   categorical_feature_translation:list[tuple[str, dict]]=None,
-                   verbose_level:int=0,
-                   tabular_xlsx_sheet_name:str=None,
-                   tabular_column_range=None,
-                   tabular_column_list=None,
-                   tabular_header_row=None,
-                   tabular_header_names=None,
-                   tabular_encoding:str=None,
-                   debug=0):   
-        '''
-        Load a table.
-
-        Assumptions:
-        - input_columns and input_column_file_name are not simultaneously set
-        - output_columns and output_column_file_name are not simultaneously set
-
-        :return: is a tuple of the form (ins, outs, weights, tags, groups, stratify).  All are
-           numpy arrays, except tags is a dict with numpy array values
-        '''
-
-        # TODO: assume that file_name is absolute path if it is needed
-        if dataset_path is None:
-            file_path = file_name
-        else:
-            # Fix path construction for any OS
-            file_path = '%s/%s'%(dataset_path, file_name)
-            
-        df = SuperDataSet.load_tabular_file(file_path,
-                                            col_range=tabular_column_range,
-                                            col_list=tabular_column_list,
-                                            skiprows=tabular_header_row,
-                                            header_names=tabular_header_names,
-                                            sheet_name=tabular_xlsx_sheet_name,
-                                            encoding=tabular_encoding)
-
-        SuperDataSet._translate_categorical_variables(df, categorical_translation)
                     
         ##
         ins = None
         outs = None
         weights = None
         groups = None
-        tags = None
-        stratify = None
 
-        #output_mapping = None
+        output_mapping = None
         
-        if input_columns is not None and len(input_columns) > 0:
+        if len(input_columns) > 0:
             # Check that all of the input columns are in the table
             diff = set(input_columns) - set(df.columns)
             
@@ -1799,20 +1398,8 @@ class SuperDataSet:
 
             # Extract their values
             ins = df[input_columns].values
-        else:
-            if input_column_file_name is not None:
-                # Alternative path: the a file name has been specified for inputs
-
-                # Check to make sure that the column exists
-                if input_column_file_name in df.columns:
-                    # It does: load the specified set of files
-                    ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_column_file_name].values)
-                else:
-                    # Column is missing
-                    handle_error("Column %s not in table %s"%(input_column_file_name, file_name), verbose_level)
 
         # Input feature translation from categorical to float
-        #  NOTE: we assume that the columns being translated are not in input_columns
         if categorical_feature_translation is not None:
             vecs = []
             # Loop over each translation rule
@@ -1820,7 +1407,6 @@ class SuperDataSet:
                 print_debug("Categorical feature translation: %s: %s"%(col,str(d)), 4, debug)
 
                 # Check if there are any keys that are missing and raise an error
-                #  (i.e., are their any values in the column that are not keys in the translation table)
                 missing = set(df[col].astype(str)) - set(d.keys())
                 if missing:
                     handle_error(f"data_columns_categorical_to_float_direct: missing key/s ({missing}) from column {col}",
@@ -1851,19 +1437,6 @@ class SuperDataSet:
             
             outs = df[output_columns].values
 
-        else:
-            if output_column_file_name is not None:
-                # Alternative path: the a file name has been specified for outputs
-
-                # Check to make sure that the column exists
-                if output_column_file_name in df.columns:
-                    # It does: load the specified set of files
-                    outs = SuperDataSet.load_image_set_np(dataset_indirect_path, df[output_column_file_name].values)
-                else:
-                    # Column is missing
-                    handle_error("Column %s not in table %s"%(output_column_file_name, file_name), verbose_level)
-
-
         # Some datasets will have weights associated with each example
         if data_weights is not None:
             # Check that the column exists
@@ -1882,230 +1455,71 @@ class SuperDataSet:
             # Get the data
             groups = df[data_groups].values
 
-        # Dataset tags
-        if data_tags is not None:
-            # Check that the tag columns are all in the table
-            diff = set(data_tags) - set(df.columns)
-            if len(diff) > 0:
-                handle_error("Data tag columns %s not in %s"%(str(diff), file_name), verbose_level)
-
-            # Create a dict: one key per data tag; associate each key with the corresponding table column values
-            tags = {c:df[c].values for c in data_tags}
-            
-        # Stratification column
-        if data_stratify is not None:
-            # Check that this column exists in the table
-            if not data_stratify in df.columns:
-                handle_error("Data stratify column %s not in %s"%(data_stratify, file_name), verbose_level)
-
-            # Extract the values
-            stratify = df[data_stratify].values
-
-
-        return ins, outs, weights, tags, groups, stratify
+        return ins, outs, weights, groups
 
     def load_table_indirect_set(self):
-        '''
-        Load a set of indirect tabular files.
+        # Right now, can only have one tabular file
+        assert len(self.args.data_files) == 1, "Only support loading single tabular-indirect files"
 
-        :return: List of tuples of the form (ins, outs, weights, tags, groups, stratify)
-
-        Checks: input_columns must be exactly one
-            categorical_feature_translation is None
-
-        '''
-        # Allow only one input column
-        if len(self.args.data_inputs) != 1:
-            handle_error('Tabular-indirect file: can only have one input column', self.args.verbose)
-
-        # Input feature translation does not make sense with only a single input that contains a file
-        if not self.categorical_feature_translation is None:
-            handle_error('Tabular-indirect file: categorical_feature_translation is not supported', self.args.verbose)
-
-        # Return value (accumulated)
-        data = []
-
-        # List of file name, sheet name pairs (Sheet name is None if not specified)
-        file_list = zip(self.args.data_files,
-                        self.data_xlsx_sheet_names if self.data_xlsx_sheet_names is not None else [None]*len(self.args.data_files))
-        
-        for f, sn in file_list:
-            data_single = self.load_table_indirect_images(self.args.dataset_directory,
-                                                          self.args.dataset_indirect_directory,
-                                                                    f,
+        ins, outs, output_mapping = self.load_table_indirect_images(self.args.dataset_directory,
+                                                                    self.args.data_file,
                                                                     self.args.data_inputs,
                                                                     self.args.data_outputs,
-                                                                    data_weights=self.args.data_weights,
-                                                                    data_groups=self.args.data_groups,
-                                                                    data_tags=self.args.data_tag_examples,
-                                                                    data_stratify=self.args.data_stratify,
-                                                                    #categorical_translation=self.categorical_translation,
-                                                                    #categorical_feature_translation=self.categorical_feature_translation,
-                                                                    verbose_level=self.args.verbose,
+                                                                    self.args.data_output_sparse_categorical,
                                                                     tabular_column_range=self.args.tabular_column_range,
                                                                     tabular_column_list=self.args.tabular_column_list,
-                                                                    tabular_sheet_name=sn,
                                                                     tabular_header_row=self.args.tabular_header_row,
-                                                                    tabular_encoding=self.args.tabular_encoding,
-                                                                    debug=self.args.debug)
-            
-            data.append(data_single)
-
-        # Return the full set of files
-        return(data)
-    
-        # Right now, can only have one tabular file
-        #assert len(self.args.data_files) == 1, "Only support loading single tabular-indirect files"
-        #if len(self.args.data_files) != 1:
-        #    handle_error('Zero2Neuro only supports loading of a single tabular-indirect file', self.args.verbose)
-
-        #ins, outs, output_mapping = self.load_table_indirect_images(self.args.dataset_directory,
-        #                                                            self.args.data_file,
-        #                                                            self.args.data_inputs,
-        #                                                            self.args.data_outputs,
-        #                                                            data_weights=self.args.data_weights,
-        #                                                            data_tags=self.args.data_tag_examples,
-        #                                                            data_stratify=self.args.data_stratify,
-        #                                                            categorical_translation=self.categorical_translation,
-        #
-        #                                                             categorical_feature_translation=self.categorical_feature_translation,
-        #                                                            verbose_level=self.args.verbose,
-        #                                                            tabular_column_range=self.args.tabular_column_range,
-        #                                                            tabular_column_list=self.args.tabular_column_list,
-        #                                                            tabular_sheet_name=self.args.tabular_xlsx_sheet_name,
-        #                                                            tabular_header_row=self.args.tabular_header_row,
-        #                                                            tabular_encoding=self.args.tabular_encoding,
-        #                                                            debug=self.args.debug)
-        #self.output_mapping = output_mapping
-        #return [(ins, outs, None, None, None, None)] # TODO: add sample weights, group, tags
+                                                                    tabular_encoding=self.args.tabular_encoding)
+        self.output_mapping = output_mapping
+        return [(ins, outs)] # TODO: add sample weights and group
 
         
     @staticmethod
     def load_table_indirect_images(dataset_path:str,
-                                   dataset_indirect_path:str,
                                    file_name:str,
                                    input_columns:[str],
                                    output_columns:[str],
-                                   data_weights:str=None,
-                                   data_groups:str=None,
-                                   data_tags:list[str]=None,
-                                   data_stratify:str=None,
-                                   #categorical_translation:list[tuple[str, dict]]=None,
-                                   #categorical_feature_translation:list[tuple[str, dict]]=None,
-                                   verbose_level:int=0,
-                                   tabular_column_range:[int]=None,
-                                   tabular_column_list:[int]=None,
-                                   tabular_header_row:int=None,
-                                   tabular_sheet_name:str=None,
-                                   tabular_header_names:[str]=None,
-                                   tabular_encoding:str=None,
-                                   debug:int=0):
-        '''
-        Load a table and interpret the input column as containing an image file name.
-        Load each of these images as part of the inputs.
-
-        :return: a numpy dataset of the form (ins, outs, weights, tags, groups, stratify)
-
-        '''
-
-        # TODO: assume that file_name is absolute path if it is needed
-        if dataset_path is None:
-            file_path = file_name
-        else:
-            # Fix path construction for any OS
-            file_path = '%s/%s'%(dataset_path, file_name)
-        
+                                   output_sparse_categorical:bool=False,
+                                   tabular_column_range=None,
+                                   tabular_column_list=None,
+                                   tabular_header_row=None,
+                                   tabular_header_names=None,
+                                   tabular_encoding:str=None):
 
         # Load the table
-        df = SuperDataSet.load_tabular_file(file_path,
+        df = SuperDataSet.load_tabular_file(file_name,
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
-                                            skiprows=tabular_header_row,
-                                            sheet_name=tabular_sheet_name,
                                             header_names=tabular_header_names,
+                                            skiprows=tabular_header_row,
                                             encoding=tabular_encoding)
         
-        # TODO: do we need this?
-        # Default values
+        print(df['File'][0])
+
+        ins = None
         outs = None
-        weights = None
-        groups = None
-        tags = None
-        stratify = None
 
-        #        output_mapping = None
+        output_mapping = None
         
-        #   if len(input_columns) > 0:
-        #    assert len(input_columns) == 1, "Dataset only supports a single input column containing file names"
+        if len(input_columns) > 0:
+            assert len(input_columns) == 1, "Dataset only supports a single input column containing file names"
             
-        ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_columns].values[:,0])
+            ins = SuperDataSet.load_image_set_np(dataset_path, df[input_columns].values[:,0])
 
-        #if len(output_columns) > 0:
-        #    assert len(output_columns) == 1, "Dataset only supports a single output column"
-            
-        #    if output_sparse_categorical:
-        #        # Interpret the column as sparse categorical
-        #        categories = df[output_columns[0]].astype(pd.CategoricalDtype()).cat
-        #        output_mapping = dict(enumerate(categories.categories))
-        #        outs = categories.codes.astype(pd.SparseDtype("int", fill_value=-1)).values
-                
-        #    else:
-        #        # Interpret as ints or floats
-        #        outs = df[output_columns].values
-
-        #######
-        # Outputs
         if len(output_columns) > 0:
-            # Interpret as ints or floats
-            print_debug("Table dataframe columns: %s"%(df.columns), 4, debug)
-
-            # Check that the output columns are all in the table
-            diff = set(output_columns) - set(df.columns)
-            if len(diff) > 0:
-                handle_error("Columns %s not in %s"%(str(diff), file_name), verbose_level)
+            assert len(output_columns) == 1, "Dataset only supports a single output column"
             
-            outs = df[output_columns].values
+            if output_sparse_categorical:
+                # Interpret the column as sparse categorical
+                categories = df[output_columns[0]].astype(pd.CategoricalDtype()).cat
+                output_mapping = dict(enumerate(categories.categories))
+                outs = categories.codes.astype(pd.SparseDtype("int", fill_value=-1)).values
+                
+            else:
+                # Interpret as ints or floats
+                outs = df[output_columns].values
 
-        # Some datasets will have weights associated with each example
-        if data_weights is not None:
-            # Check that the column exists
-            if not data_weights in df.columns:
-                handle_error("Column %s not in %s"%(data_weights, file_name), verbose_level)
-
-            # Get the data
-            weights = df[data_weights].values
-
-        # Dataset groups
-        if data_groups is not None:
-            # Check that the column exists
-            if not data_groups in df.columns:
-                handle_error("Column %s not in %s"%(data_weights, file_name), verbose_level)
-
-            # Get the data
-            groups = df[data_groups].values
-
-        # Dataset tags
-        if data_tags is not None:
-            # Check that the tag columns are all in the table
-            diff = set(data_tags) - set(df.columns)
-            if len(diff) > 0:
-                handle_error("Data tag columns %s not in %s"%(str(diff), file_name), verbose_level)
-
-            # Create a dict: one key per data tag; associate each key with the corresponding table column values
-            tags = {c:df[c].values for c in data_tags}
-            
-        # Stratification column
-        if data_stratify is not None:
-            # Check that this column exists in the table
-            if not data_stratify in df.columns:
-                handle_error("Data stratify column %s not in %s"%(data_stratify, file_name), verbose_level)
-
-            # Extract the values
-            stratify = df[data_stratify].values
-
-        # Return all tables as a 6=tuple
-        return ins, outs, weights, tags, groups, stratify
-
+        return ins, outs, output_mapping
 
     def load_tf_set(self):
         # TODO: Add a path to the file names, check to make sure it exists.
@@ -2114,6 +1528,62 @@ class SuperDataSet:
             tf_datasets.append(tf.data.Dataset.load(datafile))
         
         return tf_datasets
+
+    def load_via_plugin(self):
+        '''
+        Delegate data loading to a plugin registered with role='dataloader'.
+
+        Called when --data_format=plugin.  The plugin is responsible for opening
+        the file, extracting the variables named in --data_inputs / --data_outputs /
+        --data_weights / --data_groups, and returning them as numpy arrays.
+
+        The plugin must return a dict containing the keys:
+            ins     -- numpy array of inputs   (required)
+            outs    -- numpy array of outputs  (or None)
+            weights -- numpy array of weights  (or None)
+            groups  -- numpy array of groups   (or None)
+
+        One plugin call is made per file listed in --data_files.
+
+        :return: list of (ins, outs, weights, groups) tuples, one per file
+        '''
+        if self.plugin_manager is None:
+            handle_error(
+                "data_format='plugin' requires a plugin with role='dataloader'.\n"
+                "Add a dataloader plugin to --plugin_list (e.g. netcdf_loader-dataloader).",
+                self.args.verbose
+            )
+
+        data = []
+
+        for f in self.args.data_files:
+            print_debug(f"load_via_plugin: loading '{f}'", 1, self.args.debug)
+
+            result = self.plugin_manager.apply_plugins(
+                'dataloader',
+                debug_level=self.args.debug,
+                args=self.args,
+                file_path=f,
+                dataset_directory=self.args.dataset_directory,
+            )
+
+            # The plugin returns its outputs by updating the kwargs dict.
+            # Extract the four standard arrays; any can be None.
+            ins     = result.get('ins')
+            outs    = result.get('outs')
+            weights = result.get('weights')
+            groups  = result.get('groups')
+
+            if ins is None:
+                handle_error(
+                    f"dataloader plugin returned no 'ins' array for file '{f}'.\n"
+                    "The plugin must set 'ins' in its return dict.",
+                    self.args.verbose
+                )
+
+            data.append((ins, outs, weights, groups))
+
+        return data
 
     @staticmethod
     def _calculate_fold_indices_for_rotation(n_train_folds:int, nfolds:int, rotation:int, data_split:str,
