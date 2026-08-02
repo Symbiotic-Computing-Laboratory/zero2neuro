@@ -37,15 +37,16 @@ from functools import reduce
 
 class SuperDataSet:
     # Valid file formats, as specified by --data_format
-    FORMATS = ['tabular', 'tabular-indirect', 'pickle', 'tf-dataset']
+    FORMATS = ['tabular', 'tabular-indirect', 'pickle', 'tf-dataset', 'plugin']
 
-    def __init__(self, args):
+    def __init__(self, args, plugin_manager=None):
         '''
         Constructor
         
         '''
         
         self.args = args
+        self.plugin_manager = plugin_manager
 
         # Data table list
         # For numpy format, individual data elements are organized as tuples: (ins, outs, weights, tags, groups, stratify)
@@ -250,6 +251,28 @@ class SuperDataSet:
         if self.args.data_representation == 'numpy':
             self.preprocess_datasets_strings_numpy()
 
+            ######
+            # Apply Plugin Preprocessors (Raw Numpy Math Only)
+            if getattr(self, 'plugin_manager', None) is not None:
+                preprocess_results = self.plugin_manager.apply_plugins(
+                    'preprocess', 
+                    debug_level=self.args.debug,
+                    ins_train=self.ins_training,    
+                    outs_train=self.outs_training,
+                    ins_val= self.ins_validation,   
+                    outs_val= self.outs_validation,
+                    ins_test= self.ins_testing,  
+                    outs_test= self.outs_testing
+                )
+                
+                # Merge mathematically scaled numpy arrays back into the dataset properties natively
+                self.ins_training    = preprocess_results.get('ins_train',  self.ins_training)
+                self.outs_training   = preprocess_results.get('outs_train', self.outs_training)
+                self.ins_validation  = preprocess_results.get('ins_val',    getattr(self, 'ins_validation', None))
+                self.outs_validation = preprocess_results.get('outs_val',   getattr(self, 'outs_validation', None))
+                self.ins_testing     = preprocess_results.get('ins_test',   getattr(self, 'ins_testing', None))
+                self.outs_testing    = preprocess_results.get('outs_test',  getattr(self, 'outs_testing', None))
+
     def preprocess_datasets_strings_numpy(self):
         '''
         When a string object in a pandas DF is converted to numpy, its dtype is 'object'.
@@ -441,7 +464,6 @@ class SuperDataSet:
             self.data = self.load_tf_set()
             
         elif self.args.data_format == 'plugin':
-            # TODO: Shayan to implement
             self.data = self.load_via_plugin()
 
         else:
@@ -481,8 +503,7 @@ class SuperDataSet:
         
         '''
 
-        if self.args.data_format == 'numpy':
-            # Numpy format
+        if self.args.data_format != 'tf-dataset':
             # Loop over each data table
             for i, dt in enumerate(self.data):
                 n_examples = dt[0].shape[0]
@@ -537,8 +558,8 @@ class SuperDataSet:
         '''
         
         if self.args.data_fold_split == 'identity':
-            # No translation
-            self.folds = self.data
+            # No translation: but ensure we only keep the first 4 elements for cross-validation compatibility
+            self.folds = [dt[:4] for dt in self.data]
             
         elif self.args.data_fold_split == 'group-by-file':
             if self.data_groups is not None:
@@ -2114,6 +2135,64 @@ class SuperDataSet:
             tf_datasets.append(tf.data.Dataset.load(datafile))
         
         return tf_datasets
+
+    def load_via_plugin(self):
+        '''
+        Delegate data loading to a plugin registered with role='dataloader'.
+
+        Called when --data_format=plugin.  The plugin is responsible for opening
+        the file(s), extracting the variables named in --data_inputs / --data_outputs /
+        --data_weights / --data_groups / --data_tag_examples / --data_stratify, and returning them as numpy arrays.
+
+        The plugin must return a dict containing the keys:
+            data -- list of (ins, outs, weights, tags, groups, stratify) tuples, one per file
+            OR fallback:
+            ins     -- numpy array of inputs   (required)
+            outs    -- numpy array of outputs  (or None)
+            weights -- numpy array of weights  (or None)
+            tags    -- dict of numpy arrays    (or None)
+            groups  -- numpy array of groups   (or None)
+            stratify-- numpy array of stratify (or None)
+
+        :return: list of (ins, outs, weights, tags, groups, stratify) tuples
+        '''
+        if self.plugin_manager is None:
+            handle_error(
+                "data_format='plugin' requires a plugin with role='dataloader'.\n"
+                "Add a dataloader plugin to --plugin_list (e.g. netcdf_loader-dataloader).",
+                self.args.verbose
+            )
+
+        print_debug(f"load_via_plugin: delegating to plugin", 1, self.args.debug)
+
+        result = self.plugin_manager.apply_plugins(
+            'dataloader',
+            debug_level=self.args.debug,
+            args=self.args,
+            dataset_directory=self.args.dataset_directory,
+        )
+
+        data = result.get('data')
+
+        # Fallback for older plugins
+        if data is None:
+            ins     = result.get('ins')
+            outs    = result.get('outs')
+            weights = result.get('weights')
+            tags    = result.get('tags')
+            groups  = result.get('groups')
+            stratify = result.get('stratify')
+
+            if ins is None:
+                handle_error(
+                    "dataloader plugin returned no 'data' list or 'ins' array.\n"
+                    "The plugin must set 'data' in its return dict.",
+                    self.args.verbose
+                )
+
+            data = [(ins, outs, weights, tags, groups, stratify)]
+
+        return data
 
     @staticmethod
     def _calculate_fold_indices_for_rotation(n_train_folds:int, nfolds:int, rotation:int, data_split:str,

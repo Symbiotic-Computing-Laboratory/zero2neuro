@@ -40,7 +40,7 @@ class NetworkBuilder:
             
 
     @staticmethod
-    def args2model(args, fbase:str):
+    def args2model(args, fbase:str, plugin_manager=None):
         model_text_vectorization = None
 
         # Starting epoch is typically 0
@@ -227,12 +227,20 @@ class NetworkBuilder:
 
 
             elif args.network_type == 'plugin':
-                # TODO
-                models = plugin_manager.apply_plugins(
+                if plugin_manager is None:
+                    handle_error("network_type='plugin' requires a PluginManager instance.", args.verbose)
+                result = plugin_manager.apply_plugins(
                     'custom_network_builder',
-                    chaining = False,
-                    args = args,
-                )    
+                    debug_level= args.debug,
+                    
+                    args=args,
+                )
+                models = result.get('model', None)
+                if models is None:
+                    handle_error(
+                        "network_type='plugin': the custom_network_builder plugin did not return a 'model' key.",
+                        args.verbose
+                    )
 
             else:
                 handle_error('Unsupported network type (%s)'%args.network_type, args.verbose)
