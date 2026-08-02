@@ -1,0 +1,57 @@
+# Mosquito dataset — Scenario A
+# Data format: per-location (year × epiweek × features) grid, assembled into folds.
+#
+# Each training example is one (location, year) pair:
+#   sequence length = 30 epiweeks
+#   features        = 47 bio/env features
+#   (year and epiweek are encoded as array axes, not feature values)
+#
+# Run prepare_data.py first to generate the fold pkl files in ./dataset/
+
+
+--data_format=pickle
+--data_representation=numpy
+--data_fold_split=identity
+--data_set_type=holistic-cross-validation
+
+# ---- preprocessing plugins ----
+# Each plugin entry is two consecutive lines:
+#   Line 1: <plugin-name>-<role>
+#   Line 2: <args-file>  OR  key=value pairs (no separate file needed)
+
+
+--dataset_directory=dataset
+
+--data_n_folds=5
+
+--data_files
+fold_0.pkl
+fold_1.pkl
+fold_2.pkl
+fold_3.pkl
+fold_4.pkl
+
+# ---- input features (47 biological/environmental) ----
+--data_inputs
+X.Green.RS.
+X.Water.RS.
+Daily.Mean..C..RS.
+Daily.Max..C..RS.
+Daily.Min..C..RS.
+Day.Min..C..RS.
+Night.Min..C..RS.
+Max.Wind.Speed.M.
+Solar.Radiation.MJ.m2..M.
+Mean.Humidity.M.
+Precip.RS.
+Mean.Soil.Moisture.M.
+data_mask
+
+
+# ---- prediction target ----
+--data_outputs
+Culex.pipiens
+
+#--data_weights
+#data_mask
+

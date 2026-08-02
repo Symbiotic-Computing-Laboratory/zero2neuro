@@ -1,0 +1,43 @@
+# ============================================================
+# network_rnn_drsu_image.txt
+# Zero2Neuro RNN architecture — image-derived features
+#
+# Input:  (10 time steps, 7 pixel features)
+# Output: 1 scalar (1-step-ahead prediction)
+#
+# Architecture: GRU (preferred over SimpleRNN for small data;
+#   more memory capacity, still fast to train)
+# ============================================================
+
+--network_type=rnn
+--rnn_type=gru
+
+# Input shape: (window_size=10, n_features=7)
+--input_shape
+10
+7
+
+# GRU layers — return_sequences for all but last
+--rnn_filters
+32
+16
+
+--rnn_activation=tanh
+--rnn_dropout=0.1
+--rnn_L2_regularization=0.001
+
+# Dense head
+--number_hidden_units
+16
+8
+
+--hidden_activation=elu
+--dropout=0.15
+
+# Output
+--output_shape
+1
+
+--output_activation=linear
+
+--L2_regularization=0.0001

@@ -1,0 +1,83 @@
+# Mosquito -- Option 2: Predict all species from environmental conditions only
+#
+# Use case: given ONLY remote-sensing and weather data at a brand-new trap location
+#           (no trap observations whatsoever), predict the full mosquito species profile.
+#           Environmental data is available from sensors before any trap is deployed.
+#
+# Inputs:  13 features (12 environmental + 1 mask)
+# Output:  35 mosquito species counts
+# Shape:   input (30, 13)  |  output (35,)
+
+--data_format=pickle
+--data_representation=numpy
+--data_fold_split=identity
+--data_set_type=holistic-cross-validation
+
+--dataset_directory=dataset
+--data_n_folds=5
+
+--data_files
+fold_0.pkl
+fold_1.pkl
+fold_2.pkl
+fold_3.pkl
+fold_4.pkl
+
+# ---- inputs: environmental features only (no trap data required) ----
+--data_inputs
+X.Green.RS.
+X.Water.RS.
+Daily.Mean..C..RS.
+Daily.Max..C..RS.
+Daily.Min..C..RS.
+Day.Min..C..RS.
+Night.Min..C..RS.
+Max.Wind.Speed.M.
+Solar.Radiation.MJ.m2..M.
+Mean.Humidity.M.
+Precip.RS.
+Mean.Soil.Moisture.M.
+data_mask
+
+# ---- outputs: full mosquito species profile ----
+--data_outputs
+Aedes.aegypti
+Aedes.albopictus
+Aedes.canadensis
+Aedes.epactius
+Aedes.erraticus
+Aedes.infirmatus
+Aedes.japonicus
+Aedes.sollicitans
+Aedes.triseriatus
+Aedes.trivittatus
+Aedes.vexans
+Anopheles.crucians
+Anopheles.pseudopunctipennis
+Anopheles.punctipennis
+Anopheles.quadrimaculatus
+Coquillettidia.perturbans
+Culex.coronator
+Culex.erraticus
+Culex.nigripalpus
+Culex.pipiens
+Culex.quinquefasciatus
+Culex.restuans
+Culex.salinarius
+Culex.tarsalis
+Culex.territans
+Culiseta.inornata
+Culiseta.melanirus
+Orthopodomyia.signifera
+Psorophora.ciliata
+Psorophora.columbiae
+Psorophora.cyanescens
+Psorophora.discolor
+Psorophora.ferox
+Aedes.Unidentified
+Culex.Unidentified
+
+# ---- plugins ----
+--plugin_list
+normalization-preprocess
+method=standard

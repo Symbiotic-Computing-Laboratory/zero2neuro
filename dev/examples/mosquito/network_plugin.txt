@@ -1,0 +1,28 @@
+# Custom Network Plugin — Mosquito Example
+# Uses the built-in fully-connected implementation from custom_network.py
+#
+# Architecture built by the plugin:
+#   Input(13) → Dense(128, relu) → Dropout(0.2) → Dense(128, relu) → Dropout(0.2) → Dense(1, linear)
+#
+# To switch to a deeper/wider network, just change the args below.
+
+# --- Tell Zero2Neuro to delegate network building to a plugin ---
+--network_type
+plugin
+
+# --- Input / Output shapes (must match the data) ---
+--input_shape
+13
+
+--output_shape
+1
+
+--output_activation=linear
+
+# --- Plugin registration ---
+# Format:
+#   Line 1:  <plugin_name>-<role>
+#   Line 2:  <plugin arguments as key=value pairs, comma-separated>
+--plugin_list
+custom_network-custom_network_builder
+arch_type=fully_connected,hidden_units=128,n_layers=2,activation=relu,learning_rate=0.001,dropout=0.2

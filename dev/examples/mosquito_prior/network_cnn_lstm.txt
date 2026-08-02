@@ -1,0 +1,30 @@
+# CNN-LSTM Hybrid Network — Mosquito Prior Scenario
+#
+# Academic context:
+#   CNN-LSTM is a well-published hybrid for environmental/epidemic time-series.
+#   - Conv1D extracts LOCAL patterns (e.g. 3-week sliding windows over features)
+#   - LSTM models GLOBAL temporal dependencies across all 30 epiweeks
+#
+#   References:
+#     Shi et al. NeurIPS 2015 — ConvLSTM for precipitation nowcasting
+#     Kim & Cho, Applied Sciences 2020 — CNN-LSTM for epidemic forecasting
+#
+# Input:  (30 epiweeks, 14 features)   ← matches the mosquito fold files
+# Output: 1 scalar (Culex.pipiens count)
+
+--network_type
+plugin
+
+--input_shape
+30
+14
+
+--output_shape
+1
+
+--output_activation=elup1
+
+# --- Single plugin, pick architecture with arch_type= ---
+--plugin_list
+custom_network-custom_network_builder
+arch_type=cnn_lstm,conv_filters=32,lstm_units=64,dense_units=32,learning_rate=0.001,dropout=0.2

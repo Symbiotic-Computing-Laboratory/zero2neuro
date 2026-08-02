@@ -1,0 +1,35 @@
+# ============================================================
+# experiment_drsu_image.txt
+# Zero2Neuro config — Dr. Su dataset (IMAGE-DERIVED features)
+#
+# SCENARIO: You only have the PNG frames.
+#   - 7 pixel-extracted features per time step
+#   - Sliding window = 10 steps -> shape (10, 7)
+#   - RNN predicts 1 step ahead (proxy: nonzero_fraction)
+#
+# TO TRAIN:
+#   1. Run the data prep script first:
+#      python prepare_drsu_data.py --mode image
+#   2. Then run z2n:
+#      python ../../src/zero2neuro.py @experiment_drsu_image.txt @network_rnn_image.txt @data_drsu_image.txt
+# ============================================================
+
+--experiment_name=drsu_image_rnn
+--loss=mse
+--metrics
+mae
+
+--learning_rate=0.0005
+--epochs=500
+--early_stopping
+--early_stopping_monitor=val_loss
+--early_stopping_patience=50
+--early_stopping_min_delta=0.0001
+
+--results_path=./results
+--output_file_base={args.experiment_name}
+
+--log_training_set
+--log_validation_set
+--log_testing_set
+--save_model

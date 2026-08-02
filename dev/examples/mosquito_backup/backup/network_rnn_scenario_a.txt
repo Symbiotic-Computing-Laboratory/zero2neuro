@@ -1,0 +1,35 @@
+# SimpleRNN network — Mosquito Scenario A (lighter baseline)
+# Input:  (30 epiweeks, 47 features)
+# Output: scalar Culex.pipiens count
+# (year and epiweek are the array axes, not extra features)
+
+--network_type=rnn
+--rnn_type=simple
+
+--input_shape
+30
+13
+
+--rnn_filters
+64
+32
+
+--rnn_filters_last
+16
+
+--rnn_activation=tanh
+--rnn_dropout=0.1
+
+--number_hidden_units
+32
+16
+
+--hidden_activation=elu
+
+--output_shape
+1
+
+--output_activation=linear
+
+--dropout=0.2
+--l2=0.0001

@@ -1,0 +1,1 @@
+..\..\..\..\.venv\Scripts\python.exe ..\..\src\zero2neuro.py @data.txt @network_plugin.txt @experiment.txt -vvv --force

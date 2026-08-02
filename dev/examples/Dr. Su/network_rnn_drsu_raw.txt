@@ -1,0 +1,52 @@
+# ============================================================
+# network_rnn_drsu_raw.txt
+# Zero2Neuro RNN architecture — raw numerical signal
+#
+# Input:  (20 time steps, F features)
+#         Adjust --input_shape to match your actual feature count
+# Output: 1 scalar (target signal, 1-step-ahead)
+#
+# Architecture: LSTM (best suited for longer sequences and
+#   richer signal; proven for biomedical time-series)
+#
+# References:
+#   - Hochreiter & Schmidhuber 1997 — Long Short-Term Memory
+#   - Lipton et al. 2015 — Modeling Clinical Time Series (arXiv:1511.03677)
+#   - Karim et al. 2018 — LSTM FCN for Time Series Classification
+# ============================================================
+
+--network_type=rnn
+--rnn_type=lstm
+
+# Input shape: (window_size=20, n_raw_features)
+# IMPORTANT: update n_raw_features to match your CSV column count
+--input_shape
+20
+16          # <-- REPLACE with actual number of raw features
+
+# LSTM layers (stacked; return_sequences for all but last)
+--rnn_filters
+64
+32
+
+--rnn_activation=tanh
+--rnn_dropout=0.2
+--rnn_L2_regularization=0.001
+--rnn_unroll
+
+# Dense head
+--number_hidden_units
+32
+16
+
+--hidden_activation=elu
+--dropout=0.2
+--batch_normalization
+
+# Output — single scalar, regression
+--output_shape
+1
+
+--output_activation=linear
+
+--L2_regularization=0.0001

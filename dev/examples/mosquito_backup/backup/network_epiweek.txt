@@ -1,0 +1,37 @@
+# SimpleRNN -- Sliding Window Forecast
+# Input:  (4 epiweeks, 47 features)
+# Output: scalar Culex.pipiens count for week 5
+#
+
+--network_type=rnn
+--rnn_type=simple
+
+--input_shape
+4
+47
+
+# ---- RNN layers ----
+--rnn_filters
+64
+32
+
+--rnn_filters_last
+16
+
+--rnn_activation=tanh
+--rnn_dropout=0.05
+
+# ---- Dense head ----
+--number_hidden_units
+16
+8
+
+--hidden_activation=elu
+
+--output_shape
+1
+
+--output_activation=linear
+
+--dropout=0.2
+--l2=0.01

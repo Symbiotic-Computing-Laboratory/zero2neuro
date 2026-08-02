@@ -1,0 +1,20 @@
+..\..\..\.venv\Scripts\python.exe prepare_data_prior_v2.py @data_prior.txt --data_file Mosquito_Data_Merged_with_Cov_Data_clean.xlsx
+..\..\..\.venv\Scripts\python.exe ..\..\src\zero2neuro.py @data_prior.txt @network_rnn_best.txt @experiment.txt @wandb.txt -vvv --force
+..\..\..\..\.venv\Scripts\python.exe ..\..\..\bin\pickle_viewer.py --file fold_0.pkl
+
+
+
+..\..\..\.venv\Scripts\python.exe prepare_data_prior_v2.py @data_prior.txt --data_file "C:\Users\shaf0043\Desktop\Mosquito_reserve\Mosquito_Data_Merged_with_Cov_Data_clean.xlsx"
+
+..\..\..\.venv\Scripts\python.exe ..\..\src\zero2neuro.py @data_prior.txt @network_rnn_best.txt @experiment.txt @wandb.txt -vvv --force
+
+..\..\..\.venv\Scripts\python.exe plot_true_vs_pred.py
+
+..\..\..\.venv\Scripts\python.exe plot_data_availability.py
+
+..\..\..\.venv\Scripts\python.exe ..\..\bin\pickle_viewer.py --file dataset\R132-C381.pkl
+
+
+
+
+

@@ -1,0 +1,43 @@
+# Mosquito dataset — Scenario A (with prior)
+# Data format: per-location (year × epiweek × features) grid, assembled into folds.
+
+--data_format=pickle
+--data_representation=numpy
+--data_fold_split=identity
+
+# Use fixed instead of cross validation
+--data_set_type=fixed
+
+--dataset_directory=dataset
+
+# We only have ONE fold, which will become the training set
+--data_n_folds=1
+
+--data_files
+fold_0.pkl
+
+# ---- input features (47 biological/environmental) ----
+--data_inputs
+X.Green.RS.
+X.Water.RS.
+Daily.Mean..C..RS.
+Daily.Max..C..RS.
+Daily.Min..C..RS.
+Day.Min..C..RS.
+Night.Min..C..RS.
+Max.Wind.Speed.M.
+Solar.Radiation.MJ.m2..M.
+Mean.Humidity.M.
+Precip.RS.
+Mean.Soil.Moisture.M.
+Culex.pipiens.prior
+data_mask
+
+data_mask.prior
+
+# ---- prediction target ----
+--data_outputs
+Culex.pipiens
+
+--data_weights
+data_mask

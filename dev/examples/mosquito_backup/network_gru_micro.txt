@@ -1,0 +1,37 @@
+# GRU Network — Mosquito Scenario A (Micro Architecture)
+# Input:  (30 epiweeks, 47 features)
+# Output: scalar Culex.pipiens count
+#
+# Shrinking the network capacity drastically to combat overfitting.
+# Replaced 3-layer SimpleRNN with a 1-layer GRU.
+
+--network_type=rnn
+--rnn_type=gru
+
+--input_shape
+30
+47
+
+# ---- RNN Layers (Reduced to 1 layer) ----
+# Removed the 64 and 32 stacked layers. Just a single 16-unit GRU.
+--rnn_filters_last
+16
+
+--rnn_activation=tanh
+--rnn_dropout=0.1
+
+# ---- Dense Head (Reduced) ----
+# Removed the 32-unit layer. Just a single 16-unit projection.
+--number_hidden_units
+16
+
+--hidden_activation=elu
+
+--output_shape
+1
+
+--output_activation=linear
+
+# Regularisation
+--dropout=0.2
+--l2=0.001

@@ -1,0 +1,148 @@
+# Mosquito dataset — Scenario A (custom fold variant)
+# Data format: per-location (year × epiweek × features) grid.
+#
+# Each training example is one (location, year) pair:
+#   sequence length = N_EPIWEEKS timesteps
+#   features        = n_input_features bio/env features
+#   (year and epiweek are encoded as array axes, not feature values)
+#
+# Fold assignment is delegated to the Zero2Neuro framework:
+#   - data_fold_split=group-by-file: each file gets a group number (= fold idx)
+#   - generate_folds_by_group_numpy concatenates all files in the same group
+#     along axis-0 -> (n_locs_in_fold * N_YEARS, N_EPIWEEKS, n_features)
+#
+# Workflow:
+#   1. Run prepare_data_custom_fold.py  (generates one .pkl per trap location in ./dataset/)
+#      The script prints the data_files block below — paste it in.
+#   2. To control which location lands in which fold, use:
+#        python prepare_data_custom_fold.py ... \
+#          --data_location_folds "TrapA:0" "TrapB:1" "TrapC:0" ...
+#      Locations not listed fall back to the seeded-random round-robin default.
+
+--data_format=pickle
+--data_representation=numpy
+--data_fold_split=group-by-file
+--data_set_type=holistic-cross-validation
+
+# ---- preprocessing plugins ----
+# Each plugin entry is two consecutive lines:
+#   Line 1: <plugin-name>-<role>
+#   Line 2: <args-file>  OR  key=value pairs (no separate file needed)
+--plugin-list
+normalization-preprocess
+method=minmax
+
+--dataset_directory=dataset
+
+--data_n_folds=5
+
+# ---- per-location pickle files with fold group assignment ----
+# Format:  <path>/<LocationName>.pkl, <fold_idx>
+# Generated automatically by prepare_data_custom_fold.py — replace the lines below
+# with the output printed by that script.
+--data_files
+dataset/R112-C363.pkl, 0
+dataset/R114-C380.pkl, 3
+dataset/R115-C381.pkl, 3
+dataset/R117-C364.pkl, 3
+dataset/R117-C384.pkl, 2
+dataset/R117-C385.pkl, 1
+dataset/R118-C380.pkl, 2
+dataset/R119-C362.pkl, 0
+dataset/R120-C374.pkl, 4
+dataset/R121-C369.pkl, 4
+dataset/R121-C372.pkl, 1
+dataset/R122-C367.pkl, 0
+dataset/R122-C370.pkl, 4
+dataset/R124-C372.pkl, 0
+dataset/R124-C379.pkl, 1
+dataset/R125-C369.pkl, 1
+dataset/R126-C372.pkl, 2
+dataset/R127-C370.pkl, 4
+dataset/R127-C372.pkl, 2
+dataset/R127-C373.pkl, 0
+dataset/R127-C383.pkl, 4
+dataset/R128-C371.pkl, 3
+dataset/R128-C372.pkl, 2
+dataset/R128-C376.pkl, 4
+dataset/R129-C366.pkl, 0
+dataset/R129-C372.pkl, 2
+dataset/R129-C374.pkl, 1
+dataset/R129-C376.pkl, 3
+dataset/R130-C366.pkl, 4
+dataset/R130-C372.pkl, 3
+dataset/R130-C376.pkl, 4
+dataset/R131-C375.pkl, 0
+dataset/R132-C372.pkl, 2
+dataset/R132-C380.pkl, 4
+dataset/R132-C381.pkl, 2
+dataset/R134-C368.pkl, 3
+dataset/R134-C379.pkl, 1
+dataset/R135-C368.pkl, 1
+dataset/R135-C379.pkl, 3
+dataset/R135-C380.pkl, 2
+dataset/R135-C383.pkl, 1
+dataset/R136-C365.pkl, 0
+dataset/R137-C372.pkl, 2
+dataset/R138-C379.pkl, 1
+dataset/R140-C378.pkl, 1
+dataset/R143-C379.pkl, 0
+dataset/R149-C343.pkl, 4
+dataset/R149-C381.pkl, 3
+dataset/R149-C394.pkl, 3
+dataset/R66-C529.pkl, 0
+
+# ---- input features (47 biological/environmental) ----
+--data_inputs
+Aedes.aegypti
+Aedes.albopictus
+Aedes.canadensis
+Aedes.epactius
+Aedes.erraticus
+Aedes.infirmatus
+Aedes.japonicus
+Aedes.sollicitans
+Aedes.triseriatus
+Aedes.trivittatus
+Aedes.vexans
+Anopheles.crucians
+Anopheles.pseudopunctipennis
+Anopheles.punctipennis
+Anopheles.quadrimaculatus
+Coquillettidia.perturbans
+Culex.coronator
+Culex.erraticus
+Culex.nigripalpus
+Culex.quinquefasciatus
+Culex.restuans
+Culex.salinarius
+Culex.tarsalis
+Culex.territans
+Culiseta.inornata
+Culiseta.melanirus
+Orthopodomyia.signifera
+Psorophora.ciliata
+Psorophora.columbiae
+Psorophora.cyanescens
+Psorophora.discolor
+Psorophora.ferox
+Aedes.Unidentified
+Culex.Unidentified
+Unknown
+X.Green.RS.
+X.Water.RS.
+Daily.Mean..C..RS.
+Daily.Max..C..RS.
+Daily.Min..C..RS.
+Day.Min..C..RS.
+Night.Min..C..RS.
+Max.Wind.Speed.M.
+Solar.Radiation.MJ.m2..M.
+Mean.Humidity.M.
+Precip.RS.
+Mean.Soil.Moisture.M.
+data_mask
+
+# ---- prediction target ----
+--data_outputs
+Culex.pipiens

@@ -1,0 +1,42 @@
+# SimpleRNN — Mosquito Scenario A (Optimized)
+# Input:  (30 epiweeks, 47 features)
+# Output: scalar Culex.pipiens count
+#
+# Best parameters found via greedy Cartesian search:
+# - L2_regularization = 0.01
+# - dropout = 0.2
+# - rnn_dropout = 0.05
+
+--network_type=rnn
+--rnn_type=simple
+
+
+
+--input_shape
+30
+13
+
+# ---- RNN layers ----
+--rnn_filters
+64
+32
+
+
+
+--rnn_activation=tanh
+#--rnn_dropout=0.05
+
+# ---- Dense head ----
+--number_hidden_units
+16
+8
+
+--hidden_activation=elu
+
+--output_shape
+1
+
+--output_activation=elup1
+
+--dropout=0.2
+#--l2=0.1

@@ -1,0 +1,65 @@
+# SimpleRNN — Mosquito Scenario A — Grid Search
+# Input:  (30 epiweeks, 47 features)
+# Output: scalar Culex.pipiens count
+#
+# Cartesian product over 3 key hyperparameters:
+#   learning_rate  : 3 values
+#   rnn_filters_last : 3 values
+#   rnn_dropout    : 3 values
+#
+# Total combinations: 3 × 3 × 3 = 27
+#
+# To enumerate all combinations first (dry run, no training):
+#   python zero2neuro.py @data_option1.txt @experiment.txt @network_rnn_gridsearch.txt
+#
+# To run combination N (0-based):
+#   python zero2neuro.py @data_option1.txt @experiment.txt @network_rnn_gridsearch.txt \
+#       --cartesian_selection_index N --force -vvv
+#
+# Run all 27:
+#   for ($i=0; $i -lt 27; $i++) {
+#       python zero2neuro.py @data_option1.txt @experiment.txt @network_rnn_gridsearch.txt `
+#           --cartesian_selection_index $i --force
+#   }
+
+--network_type=rnn
+--rnn_type=simple
+
+--input_shape
+30
+47
+
+# ---- RNN layers ----
+--rnn_filters
+64
+32
+
+--rnn_activation=tanh
+
+# ---- Dense head ----
+--number_hidden_units
+32
+16
+
+--hidden_activation=elu
+
+--output_shape
+1
+
+--output_activation=linear
+
+--l2=0.0001
+
+# ---- Cartesian search space ----
+# Round 2: all 3 LRs gave identical val_loss (~179), so LR is not the issue.
+# The train/val gap (27 vs 179) points to overfitting.
+# Now sweeping the regularisation knobs:
+#   L2_regularization : controls weight decay strength
+#   dropout           : FC-head dropout
+#   rnn_dropout       : recurrent dropout
+#
+# Combinations: 3 × 3 × 3 = 27  (fix LR at 0.0001, best from round 1)
+--cartesian_arguments
+L2_regularization:0.0001,0.001,0.01
+dropout:0.2,0.4,0.5
+rnn_dropout:0.05,0.1,0.2

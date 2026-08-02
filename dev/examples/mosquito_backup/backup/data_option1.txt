@@ -1,0 +1,82 @@
+# Mosquito -- Option 1: Predict one target species
+#
+# Use case: given the full season observations at a new trap location
+#           (all species counts + environmental conditions), predict Culex.pipiens.
+#
+# Inputs:  47 features (12 env + 34 other species + 1 mask)
+# Output:  Culex.pipiens
+# Shape:   input (30, 47)  |  output (1,)
+
+--data_format=pickle
+--data_representation=numpy
+--data_fold_split=identity
+--data_set_type=holistic-cross-validation
+
+# ---- preprocessing plugins ----
+--plugin-list
+normalization-preprocess
+method=minmax
+
+--dataset_directory=dataset
+--data_n_folds=5
+
+--data_files
+fold_0.pkl
+fold_1.pkl
+fold_2.pkl
+fold_3.pkl
+fold_4.pkl
+
+# ---- inputs: all features except the target ----
+--data_inputs
+Aedes.aegypti
+Aedes.albopictus
+Aedes.canadensis
+Aedes.epactius
+Aedes.erraticus
+Aedes.infirmatus
+Aedes.japonicus
+Aedes.sollicitans
+Aedes.triseriatus
+Aedes.trivittatus
+Aedes.vexans
+Anopheles.crucians
+Anopheles.pseudopunctipennis
+Anopheles.punctipennis
+Anopheles.quadrimaculatus
+Coquillettidia.perturbans
+Culex.coronator
+Culex.erraticus
+Culex.nigripalpus
+Culex.quinquefasciatus
+Culex.restuans
+Culex.salinarius
+Culex.tarsalis
+Culex.territans
+Culiseta.inornata
+Culiseta.melanirus
+Orthopodomyia.signifera
+Psorophora.ciliata
+Psorophora.columbiae
+Psorophora.cyanescens
+Psorophora.discolor
+Psorophora.ferox
+Aedes.Unidentified
+Culex.Unidentified
+X.Green.RS.
+X.Water.RS.
+Daily.Mean..C..RS.
+Daily.Max..C..RS.
+Daily.Min..C..RS.
+Day.Min..C..RS.
+Night.Min..C..RS.
+Max.Wind.Speed.M.
+Solar.Radiation.MJ.m2..M.
+Mean.Humidity.M.
+Precip.RS.
+Mean.Soil.Moisture.M.
+data_mask
+
+# ---- output: single target species ----
+--data_outputs
+Culex.pipiens

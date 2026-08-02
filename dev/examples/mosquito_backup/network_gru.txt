@@ -1,0 +1,38 @@
+# GRU network for 3D mosquito tensor
+# Input shape: (max_examples, n_features) — the epiweek axis is the sequence axis
+
+--network_type=rnn
+--rnn_type=gru
+
+# Input: each timestep (epiweek slice) has max_examples * n_features features
+# The framework receives (batch, epiweeks, max_examples * n_features) after
+# the pickle loader flattens the last two axes via np.concatenate(axis=-1).
+# We keep it as-is — the RNN treats epiweeks as the time axis.
+
+--input_shape
+101
+47
+
+--rnn_filters
+64
+32
+--rnn_filters_last
+16
+
+--rnn_dropout=0.1
+
+--number_hidden_units
+32
+16
+
+--hidden_activation=relu
+
+# Output: one value per (epiweek, example) cell -> outputs are also 3D
+# output_shape matches the last dimension of the outputs array (n_outputs=1)
+--output_shape
+1
+
+--output_activation=linear
+
+--dropout=0.2
+--l2=0.0001

@@ -1,0 +1,34 @@
+# GRU network -- Option 1: Predict Culex.pipiens from all 47 features
+# Input:  (30 epiweeks, 47 features)
+# Output: scalar -- Dense(1) broadcasts over the 30-step sequence target
+
+--network_type=rnn
+--rnn_type=gru
+
+--input_shape
+30
+47
+
+--rnn_filters
+64
+32
+
+--rnn_filters_last
+16
+
+--rnn_activation=tanh
+--rnn_dropout=0.1
+
+--number_hidden_units
+32
+16
+
+--hidden_activation=elu
+
+--output_shape
+1
+
+--output_activation=linear
+
+--dropout=0.2
+--l2=0.0001

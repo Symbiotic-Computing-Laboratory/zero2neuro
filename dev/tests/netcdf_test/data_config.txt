@@ -1,0 +1,25 @@
+# NetCDF test — data configuration
+# Same 4-bit parity problem as pickle_test, loaded via netcdf_loader plugin
+
+--data_format=plugin
+--data_representation=numpy
+--data_fold_split=identity
+--data_set_type=fixed
+
+--plugin_list
+netcdf_loader-dataloader
+engine=netcdf4
+
+--data_files
+parity.nc
+
+# Four input bits
+--data_inputs
+b0
+b1
+b2
+b3
+
+# Parity output
+--data_outputs
+parity

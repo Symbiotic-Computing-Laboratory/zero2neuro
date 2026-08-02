@@ -1,0 +1,47 @@
+# Simple Recurrent Neural Network for 3D Mosquito tensor
+# Time axis: (Year, Epiweek) composite — 135 unique time steps
+# Feature axis: 47 input features
+
+--network_type=rnn
+
+# Use a classical simple RNN
+--rnn_type=simple
+
+--input_shape
+135
+47
+
+
+--batch_normalization_input
+
+# Hidden RNN Layers
+--rnn_filters
+64
+32
+
+# The last RNN layer returns only its state at the end of the sequence
+--rnn_filters_last
+16
+
+--rnn_dropout=0.1
+--rnn_activation=tanh
+
+###
+# Hidden fully connected stack (processing the RNN's final state)
+--number_hidden_units
+32
+16
+--hidden_activation=elu
+
+###
+# Output: predict only a single value (Culex.pipiens)
+--output_shape
+1
+
+# linear output matching the target scaling
+--output_activation=linear
+
+###
+# Regularization
+--dropout=0.2
+--l2=0.0001

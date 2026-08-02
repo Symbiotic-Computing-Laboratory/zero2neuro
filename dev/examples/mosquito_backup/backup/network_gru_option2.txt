@@ -1,0 +1,35 @@
+# GRU network -- Option 2: Predict all 36 species from 12 environmental features
+# Input:  (30 epiweeks, 12 environmental features)
+# Output: 36-dimensional vector -- one count per mosquito species
+#         Dense(36) broadcasts over the 30-step sequence targets
+
+--network_type=rnn
+--rnn_type=gru
+
+--input_shape
+30
+12
+
+--rnn_filters
+64
+32
+
+--rnn_filters_last
+32
+
+--rnn_activation=tanh
+--rnn_dropout=0.1
+
+--number_hidden_units
+64
+36
+
+--hidden_activation=elu
+
+--output_shape
+36
+
+--output_activation=linear
+
+--dropout=0.2
+--l2=0.0001

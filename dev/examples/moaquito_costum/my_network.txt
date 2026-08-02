@@ -1,0 +1,41 @@
+# Custom Network — Mosquito Example
+# -----------------------------------
+# This is the only config file needed.
+# All hyper-parameters are set here using standard --flag value format,
+# exactly like amino/network_rnn.txt or any other Zero2Neuro network config.
+#
+# Usage:
+#   python zero2neuro.py @experiment.txt @data.txt @my_network.txt
+
+--network_type
+plugin
+
+###
+# Input / Output
+--input_shape
+13
+
+--output_shape
+1
+
+--output_activation=linear
+
+###
+# Hidden layers
+--number_hidden_units
+128
+64
+
+--hidden_activation=relu
+
+###
+# Regularization
+--dropout=0.2
+--learning_rate=0.001
+
+###
+# Plugin — only network_file goes here.
+# All other hyper-parameters are already above as standard flags.
+--plugin_list
+custom_network-custom_network_builder
+network_file=examples/moaquito_costum/my_custom_network.py

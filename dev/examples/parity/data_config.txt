@@ -7,8 +7,7 @@
 --data_set_type=fixed
 
 --plugin_list
-netcdf_loader-dataloader
-engine=netcdf4
+netcdf_loader-dataloader, engine=netcdf4
 
 --data_files
 parity.nc

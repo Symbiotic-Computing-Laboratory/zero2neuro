@@ -1,0 +1,19 @@
+# Fully-connected network for 3D mosquito tensor (baseline)
+# The input is flattened across all axes by the FC network
+
+--input_shape
+101
+47
+
+--network_type=fc
+
+--number_hidden_units
+128
+64
+32
+
+--hidden_activation=relu
+--output_activation=linear
+
+--dropout=0.2
+--l2=0.0001

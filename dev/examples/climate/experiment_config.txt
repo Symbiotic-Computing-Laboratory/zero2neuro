@@ -4,6 +4,6 @@
 --metrics
 mae
 --learning_rate=0.001
---epochs=10
+--epochs=100
 --results_path=./results
 --output_file_base={args.experiment_name}

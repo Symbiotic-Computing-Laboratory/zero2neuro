@@ -1,0 +1,44 @@
+# ============================================================
+# experiment_drsu_raw.txt
+# Zero2Neuro config — Dr. Su dataset (RAW numerical signal)
+#
+# SCENARIO: Dr. Su provides the raw CSV/Excel output of the
+#   microscope acquisition software.
+#   - F features (actual measured variables) per time step
+#   - Sliding window = 20 steps -> shape (20, F)
+#   - RNN predicts the target measurement 1 step ahead
+#
+# TO TRAIN:
+#   1. Obtain raw data from Dr. Su
+#   2. Run data prep:
+#      python prepare_drsu_data.py --mode raw \
+#             --data_file drsu_raw_data.csv \
+#             --data_inputs feat1 feat2 feat3 ... \
+#             --data_outputs target_signal \
+#             --window 20
+#   3. Then run z2n:
+#      python ../../src/zero2neuro.py @experiment_drsu_raw.txt @network_rnn_drsu_raw.txt @data_drsu_raw.txt
+# ============================================================
+
+--experiment_name=drsu_raw_rnn
+--loss=mse
+--metrics
+mae
+
+--learning_rate=0.0001
+--epochs=2000
+--early_stopping
+--early_stopping_monitor=val_loss
+--early_stopping_patience=100
+--early_stopping_min_delta=0.00001
+
+--results_path=./results
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+--data_rotation=0
+
+--log_training_set
+--log_validation_set
+--log_testing_set
+--save_model
+--report
+--report_testing

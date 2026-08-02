@@ -1,0 +1,40 @@
+# GRU network — Mosquito Scenario A
+# Input:  (30 epiweeks, 48 features)  — one (location, year) example
+# Output: scalar Culex.pipiens count (Dense(1) broadcasts over the 30-step target)
+
+--network_type=rnn
+--rnn_type=gru
+
+# Sequence length = 30 epiweeks; features = 47 bio/env (zero-padded)
+--input_shape
+30
+47
+
+# Stacked GRU layers (return_sequences=True) — capture within-season dynamics
+--rnn_filters
+64
+32
+
+# Final GRU layer collapses the sequence to a single state vector
+--rnn_filters_last
+16
+
+--rnn_activation=tanh
+#--rnn_dropout=0.1
+
+# Fully-connected head on top of the RNN state
+--number_hidden_units
+32
+16
+
+--hidden_activation=elu
+
+# Single scalar output — mean Culex.pipiens count for the (location, year) pair
+--output_shape
+1
+
+--output_activation=linear
+
+# Regularisation — tuned for small dataset (~350 examples)
+--dropout=0.2
+--l2=0.0001

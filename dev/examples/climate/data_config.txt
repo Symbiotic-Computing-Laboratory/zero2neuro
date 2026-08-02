@@ -15,6 +15,4 @@ humidity
 mosquito_count
 
 --plugin_list
-netcdf_loader-dataloader
-engine=netcdf4,sample_dim=sample,preserve_dims
-custom_network_builder
+netcdf_loader-dataloader, engine=netcdf4,sample_dim=sample
