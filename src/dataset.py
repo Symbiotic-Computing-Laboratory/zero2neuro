@@ -247,7 +247,7 @@ class SuperDataSet:
         '''
         After the training/validation/testing data sets have been created, we may have
         additional preprocessing that must take place before model training and evaluation
-        '''
+        ''' 
         if self.args.data_representation == 'numpy':
             self.preprocess_datasets_strings_numpy()
 
@@ -558,8 +558,14 @@ class SuperDataSet:
         '''
         
         if self.args.data_fold_split == 'identity':
-            # No translation: but ensure we only keep the first 4 elements for cross-validation compatibility
-            self.folds = [dt[:4] for dt in self.data]
+            if self.args.data_format == 'tf-dataset':
+                # TF-dataset elements are _LoadDataset objects (not subscriptable)
+                # Pass through as-is
+                self.folds = self.data
+            else:
+                # Numpy/pickle folds are 6-tuples (ins, outs, weights, tags, groups, stratify)
+                # Downstream split_cross_validation only unpacks 4 values, so trim here
+                self.folds = [dt[:4] for dt in self.data]
             
         elif self.args.data_fold_split == 'group-by-file':
             if self.data_groups is not None:
