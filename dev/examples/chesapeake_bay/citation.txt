@@ -1,0 +1,3 @@
+Robinson C, Hou L, Malkin K, Soobitsky R, Czawlytko J, Dilkina B, Jojic N. Large Scale High-Resolution Land Cover Mapping with Multi-Resolution Data. Proceedings of the 2019 Conference on Computer Vision and Pattern Recognition (CVPR 2019). (bibtex) 
+
+For more information visit: https://lila.science/datasets/chesapeakelandcover
