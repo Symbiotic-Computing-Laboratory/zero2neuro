@@ -94,6 +94,16 @@ Sequences](amino/README.md)
    - Loss function: sparse categorical cross-entropy
    - Metrics: sparse categorical accuracy
    - Cross-Validation
+- [Chesapeake Bay Pixel Classification](chesapeake_bay/): Pixel classification from satellite images
+    - Problem type: classification
+    - Input data: images
+    - Model type: U-Net (2D)
+    - Data file type: TF-Datasets that contain the images and labels for each pixel directly
+        - Note: The datasets are not included in this repository
+    - Images are 256x256 with 26 channels
+    - Output: 7 classes
+    - Loss function: Sparse Categorical Cross-entropy
+    - Metrics: Sparse Categorical Accuracy
 
 
 ## Test Examples

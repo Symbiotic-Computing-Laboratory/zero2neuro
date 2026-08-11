@@ -14,9 +14,28 @@ from keras.models import load_model
 from zero2neuro_debug import *
 
 class NetworkBuilder:
+    """
+    Utility class used for validating network construction arguments and constructing Keras models.
+
+    This class has methods to validate architecture arguments, create or load neural network models, perform compatibility
+    checks on arguments, and display summaries of model architectures.
+
+    Supported network types: Fully Connected, CNN, RNN, UNet, and custom models using plugins.
+    """
     
     @staticmethod
     def check_args_rnn(args):
+        """
+        Validate RNN arguments.
+        
+        Makes sure that the requested RNN type is supported and that the input
+        shape is compatible with RNN architectures.
+        
+        :param args: Parsed arguments.
+        :type args: argparse.Namespace
+        
+        :raises ValueError: handle_error is called if the RNN type is invalid or the input shape is incompatible. 
+        """
         rnn_types = ['simple', 'gru', 'lstm']
         
         if (args.rnn_type is None) or not (args.rnn_type in rnn_types):
@@ -28,6 +47,21 @@ class NetworkBuilder:
 
     @staticmethod
     def check_args_unet(args):
+        """
+        Validate arguments used to construct a U-Net.
+
+        Checks that the input shape has a supported dimensionality and that
+        the U-Net filter, pooling, and kernel-size configurations are
+        the same length.
+
+        :param args: Parsed arguments containing U-Net configuration parameters.
+        :type args: argparse.Namespace
+
+        :raises ValueError: handle_error is called if the input shape is not 2D, 3D, or 4D; if the
+            number of U-Net filter and pooling configurations differs; or if
+            a list-valued kernel-size configuration has an incompatible
+            length.
+        """
         if len(args.input_shape0) not in (2, 3, 4):
             handle_error("UNet input must be 2D, 3D, or 4D (including channels).", args.verbose)
 
@@ -41,6 +75,47 @@ class NetworkBuilder:
 
     @staticmethod
     def args2model(args, fbase:str, plugin_manager=None):
+        """
+        Load an existing model or construct a new model from arguments.
+
+        If ``args.load_trained_model`` is called the trained model is
+        loaded directly. Otherwise, if checkpoint loading is enabled and a
+        checkpoint exists, the most recent checkpoint is loaded. If neither
+        a new model is constructed according with ``args.network_type``.
+
+        Supported network types are ``fully_connected``, ``cnn``, ``rnn``,
+        ``unet``, and ``plugin``.
+
+        For plugin-based networks, ``plugin_manager`` must provide a
+        ``custom_network_builder`` plugin with a model key.
+
+        When checkpoints are used, the starting epoch is taken from
+        the checkpoint filename. Otherwise, the starting epoch is zero.
+
+        :param args: Parsed arguments containing model
+            construction, training, and loading configuration.
+        :type args: argparse.Namespace
+        
+        :param fbase: Base filename used when searching for model checkpoint
+            files. Checkpoints are expected to match the pattern
+            ``<fbase>_checkpoint_*.keras``.         
+        :type fbase: str
+        
+        :param plugin_manager: Plugin manager used to construct custom models
+            when ``args.network_type`` is ``"plugin"``.
+        :type plugin_manager: PluginManager
+
+        :return: A tuple containing the constructed or loaded model and the
+            starting training epoch. The model may be a Keras model or a
+            tuple containing a model and text-vectorization.
+        :rtype: tuple
+
+        :raises ValueError: If the selected network type or its configuration
+            is invalid.
+        :raises ValueError: If ``network_type`` is ``"plugin"`` but no plugin
+            is supplied or the custom network builder does not return a model.
+        """
+        
         model_text_vectorization = None
 
         # Starting epoch is typically 0
@@ -270,7 +345,10 @@ class NetworkBuilder:
         Recursively give a detailed summary of a model
 
         :param layer: A model or a layer
+        :type layer: keras.layers.Layer or keras.Model
+        
         :param indent: Indent level
+        :type indent: int
         '''
         
         pad = " " * indent
@@ -389,6 +467,20 @@ class NetworkBuilder:
 
     @staticmethod
     def compatibility_checks(args):
+        """
+        Validate compatibility between tokenizer and embedding arguments.
+
+        Checks that the required tokenizer configuration is supplied when
+        tokenization is enabled and that embedding dimensions are specified
+        whenever tokenization or embedding is enabled.
+
+        :param args: Parsed carguments containing tokenizer and
+            embedding configuration.
+        :type args: argparse.Namespace
+
+        :raises ValueError: If tokenizer configuration is incomplete or
+            embedding dimensions are not used when required.
+        """
         # Tokenizer
         if args.tokenizer:
             if args.tokenizer_max_tokens is None:

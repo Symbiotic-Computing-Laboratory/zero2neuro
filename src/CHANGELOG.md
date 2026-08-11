@@ -2,11 +2,18 @@
 
 Use inverse order
 
+## v0.11.1 2026-08-11
+* Added additional in-line documentation
+* Added a U-Net example into the examples directory
+
 ## v0.11.0 2026-07-31
 * Adding Plugin manager all plugins 
 * Adding custom network builder plugin
 * Adding preprocessing plugin (as normalization)
-* Adding netcdf loader plugin
+* Adding netcdf loader plugin  
+  
+## v0.10.0 2026-07-15
+* Added support for U-Net models
 
 ## v0.9.2 2026-07-07
 * Added desired output preprocessing + added documentation
