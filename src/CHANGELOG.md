@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.11.2 2026-08-19
+* Added XOR tutorial example
+
 ## v0.11.1 2026-08-11
 * Added additional in-line documentation
 * Added a U-Net example into the examples directory
