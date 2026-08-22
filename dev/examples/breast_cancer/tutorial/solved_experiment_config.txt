@@ -1,0 +1,33 @@
+# FILL IN ???
+--experiment_name=breast_cancer
+
+# Single output with sigmoid non-linearity calls for binary cross-entropy
+--loss=binary_crossentropy
+--metrics=binary_accuracy
+
+# TODO: Choose a learning rate for training.
+# Consider how quickly you want the model to update its weights.
+--learning_rate=0.001
+
+# TODO: Choose the maximum number of training epochs (how many times model goes through dataset while training).
+# NOTE: Early stopping can stop training before this limit is reached.
+--epochs=500
+
+# Stop training when the monitored metric stops improving.
+--early_stopping_monitor=loss
+
+# TODO: Choose how many epochs to wait for improvement before stopping the training.
+--early_stopping_patience=20
+
+--results_path=./results
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+--save_model
+--render_model
+
+# Save the training set results
+--log_training_set
+
+# Report the results to a XLSX file
+--report
+--report_training
+--report_training_ins

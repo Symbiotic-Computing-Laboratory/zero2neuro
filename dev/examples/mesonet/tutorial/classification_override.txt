@@ -1,0 +1,21 @@
+# Use this configuration file to turn the default regression problem
+#  into a classification one
+
+# Change experiment name
+--experiment_name=mesonet_categorical
+
+# Change column where desired outputs are coming from
+--data_outputs
+RAIN BINARY
+
+# Encodes the output labels
+--data_columns_categorical_to_int
+RAIN BINARY:NO_RAIN,RAINED
+
+# Change the output activation function
+--output_activation
+TODO
+
+# Change the loss and metrics
+--loss=TODO
+--metrics=TODO

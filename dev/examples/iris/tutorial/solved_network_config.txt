@@ -1,0 +1,24 @@
+--network_type=fully_connected
+
+# Four input features:
+# sepal length, sepal width, petal length, petal width
+--input_shape
+4
+
+# TODO: Choose the number of neurons in each hidden layer.
+# Experiment with different network sizes and observe the effect
+# they have on training and validation performance.
+--number_hidden_units
+32
+16
+8
+
+# TODO: Choose an activation function for the hidden layers.
+--hidden_activation=relu
+
+# Three output units: one for each iris species.
+--output_shape
+3
+
+# Softmax converts the three outputs into class probabilities (if there were two options you would use sigmoid)
+--output_activation=softmax

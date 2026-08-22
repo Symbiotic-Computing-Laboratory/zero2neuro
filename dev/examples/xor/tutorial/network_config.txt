@@ -3,7 +3,7 @@
 
 # TODO: How many input features are in the dataset
 --input_shape
-???
+TODO
 
 # Two hidden layers
 # TODO: Experiment with more complex hidden layers
@@ -14,8 +14,8 @@
 
 # TODO: How many outputs does the data have
 --output_shape
-???
+TODO
 
 # TODO: XOR can predict anywhere between 0 and 1, which output activation reflects that?
---output_activation=???
+--output_activation=TODO
 

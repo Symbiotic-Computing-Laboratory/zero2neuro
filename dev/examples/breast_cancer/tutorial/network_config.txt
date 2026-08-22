@@ -1,0 +1,19 @@
+--network_type=fully_connected
+--input_shape
+30
+
+# TODO: Choose the number of neurons in each hidden layer.
+# Try to balance the model's capacity for learning (ability to learn complex relationships) 
+# with the simplicity of the network (generalized and lightweight).
+--number_hidden_units
+TODO
+
+# TODO: Choose an activation function for the hidden layers.
+--hidden_activation=TODO
+
+# Single output encodes the probability of class M
+--output_shape
+1
+
+# Use sigmoid with binary cross-entropy
+--output_activation=sigmoid
