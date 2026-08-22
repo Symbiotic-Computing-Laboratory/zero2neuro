@@ -1,0 +1,30 @@
+--experiment_name=mesonet_regression
+--data_rotation=0
+--loss=TODO
+--metrics
+mae
+mse
+
+--learning_rate=TODO
+--epochs=TODO
+
+--early_stopping
+--early_stopping_monitor=val_loss
+--early_stopping_patience=50
+
+# The threshold for what we count as "not improving"
+--early_stopping_min_delta=0.01
+
+--results_path=./results
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+--save_model
+--render_model
+
+# Save the training set results
+--log_training_set
+
+# Save the validation set results
+--log_validation_set
+
+# Save the testing set results
+--log_testing_set

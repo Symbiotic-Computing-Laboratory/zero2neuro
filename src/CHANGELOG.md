@@ -2,6 +2,12 @@
 
 Use inverse order
 
+## v0.11.3 2026-08-21
+* Added breast cancer tutorial example 
+* Added iris tutorial example
+* Added mesonet tutorial example
+* Added README for chesapeake bay example
+
 ## v0.11.2 2026-08-19
 * Added XOR tutorial example
 

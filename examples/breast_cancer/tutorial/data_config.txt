@@ -1,0 +1,21 @@
+--data_format=tabular
+--data_file=../wdbc.csv
+--data_set_type=fixed
+
+# Desired output column contains one of two strings; these are
+#  translated into the values 0 and 1, respectively
+--data_columns_categorical_to_int
+Diagnosis:B,M
+
+# Input features
+--data_inputs
+TODO
+
+# Desired output
+--data_outputs
+Diagnosis
+
+# Training batch size
+# TODO: Choose a batch size for training.
+# Consider how many samples should be processed before the model updates its weights.
+--data_batch=TODO

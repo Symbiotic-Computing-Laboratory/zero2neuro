@@ -1,0 +1,47 @@
+--experiment_name=iris
+--data_rotation=0
+
+# There are three output classes so we'll use the loss function
+# designed for multiclass classification
+--loss=sparse_categorical_crossentropy
+
+# Measures how often the predicted class matches the true class
+--metrics=sparse_categorical_accuracy
+
+# TODO: Choose learning rate
+# How quickly should network update its parameters?
+--learning_rate=0.001
+
+# TODO: Choose the maximum number of training epochs (early stopping can make it less)
+--epochs=500
+
+# Stop training if the early stopping monitor stops improving
+--early_stopping
+
+# The training set is what the model learns directly off of
+# The validation set tests the adjustments on a seperate set
+# So we use our validation performance to judge whether to stop early or not
+--early_stopping_monitor=val_loss
+
+# TODO: Choose how many epochs to wait for improvement before stopping training
+--early_stopping_patience=50
+
+--results_path=./results
+--output_file_base={args.experiment_name}_R{args.data_rotation:02d}
+--save_model
+--render_model
+
+# Save the training set results
+--log_training_set
+
+# Save the validation set results
+--log_validation_set
+
+# Save the testing set results
+--log_testing_set
+
+# Report the results to a XLSX file
+--report
+--report_training
+--report_training_ins
+--report_testing
