@@ -1,0 +1,22 @@
+# Must explicitly define tf-dataset as the incoming data format and
+#  the internal representation
+--data_format=tf-dataset
+--data_representation=tf-dataset
+
+# We are still doing holistic cross-validation
+--data_set_type=holistic-cross-validation
+
+
+# Specify each of the folds separately.  A single TF-Dataset cannot be
+#  partitioned further to create other folds
+--data_files
+/home/fagg/datasets/chesapeake_tf/tf_dataset_train_large_F0/, 0
+/home/fagg/datasets/chesapeake_tf/tf_dataset_valid_F0/, 1
+/home/fagg/datasets/chesapeake_tf/tf_dataset_test_F0/, 2
+
+# TF training/evaluation arguments
+--data_tf_shuffle=4500
+--data_tf_repeat
+--data_steps_per_epoch=100
+--data_batch=64
+--data_tf_cache=

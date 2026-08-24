@@ -1,0 +1,17 @@
+--network_type
+plugin
+
+--plugin_list
+custom_network_builder, network_file=my_network.py
+
+--input_shape
+24
+5
+5
+2
+
+--output_shape
+24
+5
+5
+1

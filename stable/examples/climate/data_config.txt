@@ -1,0 +1,18 @@
+--data_format=plugin
+--data_representation=numpy
+--data_fold_split=identity
+--data_set_type=fixed
+
+
+--data_files
+climate_4d.nc
+
+--data_inputs
+temperature
+humidity
+
+--data_outputs
+mosquito_count
+
+--plugin_list
+netcdf_loader-dataloader, engine=netcdf4,sample_dim=sample
