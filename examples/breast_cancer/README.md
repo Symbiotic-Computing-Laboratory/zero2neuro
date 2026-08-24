@@ -30,3 +30,6 @@ contained within the 0-1 range, which can be interpretted as a probability.
 ## Experiment Suggestion
 Try to limit the set of input features to identify if some are more
 more important to the prediction process than others.  
+
+## Interactive Notebook Tutorial
+[Tutorial Notebook](tutorial/breast_cancer_tutorial.ipynb)

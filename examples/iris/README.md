@@ -35,3 +35,6 @@ changes
 - [network_skl2.txt](network_skl2.txt): Decision tree classifier
 - [network_skl3.txt](network_skl3.txt): Random forest classifier
 
+
+## Interactive Notebook Tutorial
+[Tutorial Notebook](tutorial/iris_tutorial.ipynb)

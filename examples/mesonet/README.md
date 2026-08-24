@@ -63,3 +63,7 @@ We've provided a fully connected architecture for regression and classification:
 This example helps highlight how a single dataset can support **multiple machine learning tasks**
 - Predicting exact rainfall (regression)
 - Predicting rainfall occurence (classification)
+
+
+## Interactive Notebook Tutorial
+[Tutorial Notebook](tutorial/mesonet_tutorial.ipynb)
