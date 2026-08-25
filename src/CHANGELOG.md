@@ -2,6 +2,9 @@
 
 Use inverse order
 
+## v0.11.4 2026-08-25
+* Fixed file formatting and citation data
+
 ## v0.11.3 2026-08-21
 * Added breast cancer tutorial example 
 * Added iris tutorial example
