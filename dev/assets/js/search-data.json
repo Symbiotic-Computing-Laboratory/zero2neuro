@@ -43,7 +43,7 @@
   },"6": {
     "doc": "Exclusive-Or",
     "title": "Scikit-Learn Models",
-    "content": ". | | | . ",
+    "content": ". | network_skl1.txt: Linear model (cannot solve this problem) | network_skl2.txt: Polynomial features + linear model using Linear Regression | network_skl3.txt: Polynomial features + linear model using Ridge Regression | . ",
     "url": "/zero2neuro/dev/examples/xor/README.html#scikit-learn-models",
     
     "relUrl": "/examples/xor/README.html#scikit-learn-models"
