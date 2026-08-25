@@ -29,9 +29,9 @@ python $NEURO_REPOSITORY_PATH/zero2neuro/src/zero2neuro.py @network.txt @data.tx
 - File: [batch.sh](batch.sh)
 
 ## Scikit-Learn Models
-- [network_skl1.txt)[network_skl1.txt]: Linear model (cannot solve this problem)
-- [network_skl2.txt)[network_skl2.txt]: Polynomial features + linear model using Linear Regression
-- [network_skl3.txt)[network_skl3.txt]: Polynomial features + linear model using Ridge Regression
+- [network_skl1.txt](network_skl1.txt): Linear model (cannot solve this problem)
+- [network_skl2.txt](network_skl2.txt): Polynomial features + linear model using Linear Regression
+- [network_skl3.txt](network_skl3.txt): Polynomial features + linear model using Ridge Regression
 
 ## Interactive Notebook Tutorial
 [Tutorial Notebook](tutorial/xor_tutorial.ipynb)
