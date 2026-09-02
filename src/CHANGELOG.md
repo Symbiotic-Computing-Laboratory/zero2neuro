@@ -2,8 +2,11 @@
 
 Use inverse order
 
+## v0.11.5 2026-08-25
+* Updated documentation
+
 ## v0.11.4 2026-08-25
-* Fixed file formatting and citation data
+* Fixed file format for citations
 
 ## v0.11.3 2026-08-21
 * Added breast cancer tutorial example 

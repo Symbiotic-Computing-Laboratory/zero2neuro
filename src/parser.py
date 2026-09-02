@@ -114,7 +114,7 @@ def create_parser(description='Zero2Neuro'):
     parser.add_argument('--dataset_indirect_directory', type=str, default=None, help='Indirect data set location (e.g., image location)')
     parser.add_argument('--training_mode', type=str, default=None, help='EXPIRED')
 
-    parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, tabular-indirect, netcdf, pickle, tf-dataset)')
+    parser.add_argument('--data_format', type=str, default=None, help='Incoming format for the data (tabular, pickle, tf-dataset, plugin)')
     parser.add_argument('--data_representation', type=str, default='numpy', help='Internal format for the data (numpy, tf-dataset)')
     # TOOD: fix set of options
     parser.add_argument('--data_split', type=str, default=None, help='Deprecated')
@@ -134,8 +134,15 @@ def create_parser(description='Zero2Neuro'):
     #parser.add_argument('--data_table_merge', nargs='+', type=str, default=None, help='Table merge specification')   # removed
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_inputs_file_name', type=str, default=None, help='Column in the table that is a file name (image)')
+    parser.add_argument('--data_inputs_file_type', type=str, default='image', help='File type for individual examples (image, plugin)')
+    
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
     parser.add_argument('--data_outputs_file_name', type=str, default=None, help='Column in the table that is a file name (image)')
+    parser.add_argument('--data_outputs_file_type', type=str, default='image', help='File type for individual examples (image, plugin)')
+
+    parser.add_argument('--data_input_outputs_file_name', type=str, default=None, help='Column in the table that is a file name for both inputs and outputs')
+    parser.add_argument('--data_input_outputs_file_type', type=str, default='plugin', help='File type for individual input/output examples (plugin)')
+
     parser.add_argument('--data_tag_examples', nargs='+', type=str, default=None, help='Columns in the table that are to be used as example-wise tags.  These will be saved in the results pkl file.')
     parser.add_argument('--data_weights', type=str, default=None, help='Column in the table that are the sample weights')
     parser.add_argument('--data_groups', '--data_folds', type=str, default=None, help='Column in the table that correspond to the dataset group')

@@ -1796,7 +1796,8 @@ class SuperDataSet:
         else:
             # Fix path construction for any OS
             file_path = '%s/%s'%(dataset_path, file_name)
-            
+
+        # Load the dataframe
         df = SuperDataSet.load_tabular_file(file_path,
                                             col_range=tabular_column_range,
                                             col_list=tabular_column_list,
@@ -1818,6 +1819,8 @@ class SuperDataSet:
         #output_mapping = None
         
         if input_columns is not None and len(input_columns) > 0:
+            # Features are specified by input_columns
+
             # Check that all of the input columns are in the table
             diff = set(input_columns) - set(df.columns)
             
@@ -1828,7 +1831,7 @@ class SuperDataSet:
             ins = df[input_columns].values
         else:
             if input_column_file_name is not None:
-                # Alternative path: the a file name has been specified for inputs
+                # Alternative path: a file name has been specified for inputs
 
                 # Check to make sure that the column exists
                 if input_column_file_name in df.columns:
@@ -1868,6 +1871,8 @@ class SuperDataSet:
         #######
         # Outputs
         if len(output_columns) > 0:
+            # Columns have been specified explicitly
+
             # Interpret as ints or floats
             print_debug("Table dataframe columns: %s"%(df.columns), 4, debug)
 
@@ -2032,6 +2037,8 @@ class SuperDataSet:
         Load each of these images as part of the inputs.
 
         :return: a numpy dataset of the form (ins, outs, weights, tags, groups, stratify)
+
+        NOTE: this is deprecated (now covered by load_table)
 
         '''
 
