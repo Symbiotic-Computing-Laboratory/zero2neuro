@@ -455,6 +455,7 @@ class SuperDataSet:
             self.data = self.load_table_set()
             
         elif self.args.data_format == 'tabular-indirect':
+            # Deprecated
             self.data = self.load_table_indirect_set()
             
         elif self.args.data_format == 'pickle':
@@ -1706,7 +1707,11 @@ class SuperDataSet:
                                                          self.args.data_tag_examples,
                                                          self.args.data_stratify,
                                                          input_column_file_name=self.args.data_inputs_file_name,
+                                                         input_column_file_type=self.args.data_inputs_file_type,
                                                          output_column_file_name=self.args.data_outputs_file_name,
+                                                         output_column_file_type=self.args.data_outputs_file_type,
+                                                         generic_column_file_name=self.args.data_generic_file_name,
+                                                         generic_column_file_type=self.args.data_generic_file_type,
                                                          dataset_indirect_path=self.args.dataset_indirect_directory,
                                                          categorical_translation=self.categorical_translation,
                                                          categorical_feature_translation=self.categorical_feature_translation,
@@ -1757,8 +1762,8 @@ class SuperDataSet:
                     
 
 
-    @staticmethod
-    def load_table(dataset_path:str,
+    def load_table(self,
+                   dataset_path:str,
                    file_name:str,
                    input_columns:[str],
                    output_columns:[str],
@@ -1767,7 +1772,11 @@ class SuperDataSet:
                    data_tags:list[str]=None,
                    data_stratify:str=None,
                    input_column_file_name:str=None,
+                   input_column_file_type:str=None,
                    output_column_file_name:str=None,
+                   output_column_file_type:str=None,
+                   generic_column_file_name:str=None,
+                   generic_column_file_type:str=None,
                    dataset_indirect_path:str=None,
                    categorical_translation:list[tuple[str, dict]]=None,
                    categorical_feature_translation:list[tuple[str, dict]]=None,
@@ -1836,7 +1845,14 @@ class SuperDataSet:
                 # Check to make sure that the column exists
                 if input_column_file_name in df.columns:
                     # It does: load the specified set of files
-                    ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_column_file_name].values)
+                    if data_inputs_file_type == 'image':
+                        ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_column_file_name].values)
+                    elif data_inputs_file_type == 'npy':
+                        ins = SuperDataSet.load_npy_set_np(dataset_indirect_path, df[input_column_file_name].values)
+                    elif data_inputs_file_type == 'plugin':
+                        outs = self.load_plugin_set_np(dataset_indirect_path, df[input_column_file_name].values)
+                    else:
+                        handle_error('Data inputs file type %s is unknown'%data_inputs_file_type, verbose_level)
                 else:
                     # Column is missing
                     handle_error("Column %s not in table %s"%(input_column_file_name, file_name), verbose_level)
@@ -1866,7 +1882,7 @@ class SuperDataSet:
             mat = np.vstack(vecs).T
             ins = np.concatenate([ins, mat], axis=1)
             
-
+        
 
         #######
         # Outputs
@@ -1890,12 +1906,19 @@ class SuperDataSet:
                 # Check to make sure that the column exists
                 if output_column_file_name in df.columns:
                     # It does: load the specified set of files
-                    outs = SuperDataSet.load_image_set_np(dataset_indirect_path, df[output_column_file_name].values)
-                else:
+                    if data_outputs_file_type == 'image':
+                        outs = SuperDataSet.load_image_set_np(dataset_indirect_path, df[output_column_file_name].values)
+                    elif data_outputs_file_type == 'npy':
+                        outs = SuperDataSet.load_npy_set_np(dataset_indirect_path, df[output_column_file_name].values)
+                    elif data_outputs_file_type == 'plugin':
+                        outs = self.load_plugin_set_np(dataset_indirect_path, df[output_column_file_name].values)
+                    else:
+                        handle_error('Data outputs file type %s is unknown'%data_outputs_file_type, verbose_level)
+
                     # Column is missing
                     handle_error("Column %s not in table %s"%(output_column_file_name, file_name), verbose_level)
 
-
+        ####
         # Some datasets will have weights associated with each example
         if data_weights is not None:
             # Check that the column exists
@@ -1904,6 +1927,21 @@ class SuperDataSet:
 
             # Get the data
             weights = df[data_weights].values
+
+        ####
+        # In some cases, we will use a plugin to load ins/outs/weights from a set of files
+        if generic_column_file_name is not None:
+            if generic_column_file_type == 'plugin':
+                if (ins == None) and (outs == None) and (weights == None):
+                    ins, outs, weights = self.load_generic_plugin_set_np(dataset_indirect_path, df[generic_column_file_name].values)
+                else:
+                    handle_error("Load_table: cannot have tabular inputs/outputs/weights and also specify a dat_generic_file_type", 
+                                verbose_level)
+            else:
+                handle_error("Invalid data_generic_file_type (%s)"%generic_column_file_type, 
+                                verbose_level)
+
+        ####
 
         # Dataset groups
         if data_groups is not None:
@@ -2329,3 +2367,140 @@ class SuperDataSet:
         images = [SuperDataSet.load_image_np(base_dir, f, channels) for f in fnames]
         # TODO: validate that all images are the same size
         return np.stack(images, axis = 0)
+
+    @staticmethod
+    def load_npy_set_np(base_dir:str, fnames:[str])->np.array:
+        '''
+        Load a set of npy files.  We assume that all objects are the same size
+
+        :param base_dir: Base directory from which the file names are relative to
+        :param fnames: List of file names
+        :return: Numpy array, N x rows x cols x channels
+        
+        '''
+        dat = [SuperDataSet.load_plugin_np(base_dir, f) for f in fnames]
+
+        return np.stack(dat, axis = 0)
+
+    @staticmethod
+    def load_npy_np(base_dir:str, fname:str)->np.array:
+        '''
+        Load a single npy file
+        '''
+
+        # Construct the full path
+        # TODO: generalize this implementation
+        path = f'{base_dir}/{fname}'
+
+        # TODO: we are assuming that the loaded object is a numpy array (a good assumption), but
+        #   we could have any python object.
+        return np.load(path)
+
+    def load_plugin_set_np(self, base_dir:str, fnames:[str])->np.array:
+        '''
+        Load a set of files with a plugin.  We assume that all objects are the same size
+
+        :param base_dir: Base directory from which the file names are relative to
+        :param fnames: List of file names
+        :return: Numpy array, N x ...
+        
+        '''
+        dat = [self.load_plugin_np(base_dir, f) for f in fnames]
+
+        return np.stack(dat, axis = 0)
+
+    def load_plugin_np(self, base_dir:str, fnames:[str])->np.array:
+        '''
+        Load a single file using a plugin
+        '''
+        if self.plugin_manager is None:
+            # TODO: is this the right check and error message?
+            handle_error(
+                "input/output_column_file_type='plugin' requires that the plugin manager is configured.\n",
+                self.args.verbose
+            )
+
+        print_debug(f"load_plugin_np: delegating to plugin", 1, self.args.debug)
+
+        # TOOD: need file name!
+        result = self.plugin_manager.apply_plugins(
+            'nd_array_loader',
+            debug_level=self.args.debug,
+            args=self.args,
+            dataset_directory=self.args.dataset_directory,
+        )
+
+        data = result.get('data')
+
+        return data
+
+    def load_generic_plugin_set_np(self, base_dir:str, fnames:[str])->np.array:
+        '''
+        Load a set of files with a plugin; each file potentially contains ins, outs, weights.  
+        We assume that all of these objects are the same size
+
+        :param base_dir: Base directory from which the file names are relative to
+        :param fnames: List of file names
+        :return: Numpy array, N x ...
+        
+        '''
+        # Load the data from the individual files
+        dat = [self.load_generic_plugin_np(base_dir, f) for f in fnames]
+
+        # Extract separate ins, outs, weights
+        ins = [d[0] for d in dat]
+        outs = [d[0] for d in dat]
+        weights = [d[0] for d in dat]
+
+        # Individual elements are either numpy arrays or None
+        if ins[0] is None:
+            ins = None
+        else:
+            ins = np.stack(ins, axis=0)
+
+        # Outs
+        if outs[0] is None:
+            outs = None
+        else:
+            outs = np.stack(outs, axis=0)
+
+        # Weights
+        if weights[0] is None:
+            weights = None
+        else:
+            weights = np.stack(weights, axis=0)
+
+        return ins, outs, weights
+
+def load_generic_plugin_np(self, base_dir:str, fnames:[str])->np.array:
+        '''
+        Load a single file using a plugin.  
+        This single file will provide ins, outs, and weights.  Each is either 
+            a numpy array or None
+
+        :param base_dir: Base directory from which the file names are relative to
+        :param fnames: List of file names
+        :return: Numpy array, N x ...
+        '''
+        if self.plugin_manager is None:
+            # TODO: is this the right check and error message?
+            handle_error(
+                "generic_file_type='plugin' requires that the plugin manager is configured.\n",
+                self.args.verbose
+            )
+
+        print_debug(f"load_plugin_np: delegating to plugin", 1, self.args.debug)
+
+        # TODO: need to add the file name!
+        result = self.plugin_manager.apply_plugins(
+            'ins_outs_weights_loader',
+            debug_level=self.args.debug,
+            args=self.args,
+            dataset_directory=self.args.dataset_directory,
+        )
+
+        ins = result.get('ins')
+        outs = result.get('ins')
+        weights = result.get('ins')
+
+        return ins, outs, weights

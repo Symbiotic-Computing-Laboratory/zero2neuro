@@ -2,6 +2,14 @@
 
 Use inverse order
 
+## v0.12.1 2026-09-01 Andrew H. Fagg
+* Added support for loading individual npy files for individual examples (both input and output)
+* Added hooks for loading individual files for individual examples using a plugin
+* Added hook for loading ins, outs, weights for individual examples using a plugin
+
+## v0.12.0 2026-09-01 Andrew H. Fagg
+* Adding new arguments in preparation for new file input options (in particular, supporting a plugin for single-example input, output, and input/output loading)
+
 ## v0.11.5 2026-08-25
 * Updated documentation
 
