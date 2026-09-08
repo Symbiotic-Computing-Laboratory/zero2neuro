@@ -135,11 +135,11 @@ def create_parser(description='Zero2Neuro'):
     
     parser.add_argument('--data_inputs', nargs='+', type=str, default=None, help='Columns in the table that are inputs')
     parser.add_argument('--data_inputs_file_name', type=str, default=None, help='Column in the table that is a file name (image)')
-    parser.add_argument('--data_inputs_file_type', type=str, default='image', help='File type for individual examples (image, plugin)')
+    parser.add_argument('--data_inputs_file_type', type=str, default='image', help='File type for individual examples (image, npy, plugin)')
     
     parser.add_argument('--data_outputs', nargs='+', type=str, default=None, help='Columns in the table that are outputs')
     parser.add_argument('--data_outputs_file_name', type=str, default=None, help='Column in the table that is a file name (image)')
-    parser.add_argument('--data_outputs_file_type', type=str, default='image', help='File type for individual examples (image, plugin)')
+    parser.add_argument('--data_outputs_file_type', type=str, default='image', help='File type for individual examples (image, npy, plugin)')
 
     parser.add_argument('--data_generic_file_name', type=str, default=None, help='Column in the table that is a file name for both inputs and outputs')
     parser.add_argument('--data_generic_file_type', type=str, default='plugin', help='File type for individual input/output examples (plugin)')

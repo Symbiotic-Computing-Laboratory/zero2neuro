@@ -2409,7 +2409,7 @@ class SuperDataSet:
 
         return np.stack(dat, axis = 0)
 
-    def load_plugin_np(self, base_dir:str, fnames:[str])->np.array:
+    def load_plugin_np(self, base_dir:str, fname:str)->np.array:
         '''
         Load a single file using a plugin
         '''
@@ -2428,6 +2428,7 @@ class SuperDataSet:
             debug_level=self.args.debug,
             args=self.args,
             dataset_directory=self.args.dataset_directory,
+            file_name=fname,
         )
 
         data = result.get('data')
@@ -2449,8 +2450,8 @@ class SuperDataSet:
 
         # Extract separate ins, outs, weights
         ins = [d[0] for d in dat]
-        outs = [d[0] for d in dat]
-        weights = [d[0] for d in dat]
+        outs = [d[1] for d in dat]
+        weights = [d[2] for d in dat]
 
         # Individual elements are either numpy arrays or None
         if ins[0] is None:
@@ -2472,7 +2473,7 @@ class SuperDataSet:
 
         return ins, outs, weights
 
-def load_generic_plugin_np(self, base_dir:str, fnames:[str])->np.array:
+def load_generic_plugin_np(self, base_dir:str, fname:str)->np.array:
         '''
         Load a single file using a plugin.  
         This single file will provide ins, outs, and weights.  Each is either 
@@ -2497,10 +2498,11 @@ def load_generic_plugin_np(self, base_dir:str, fnames:[str])->np.array:
             debug_level=self.args.debug,
             args=self.args,
             dataset_directory=self.args.dataset_directory,
+            file_name=fname,
         )
 
         ins = result.get('ins')
-        outs = result.get('ins')
-        weights = result.get('ins')
+        outs = result.get('outs', None)
+        weights = result.get('weights', None)
 
         return ins, outs, weights
