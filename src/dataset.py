@@ -1845,11 +1845,11 @@ class SuperDataSet:
                 # Check to make sure that the column exists
                 if input_column_file_name in df.columns:
                     # It does: load the specified set of files
-                    if data_inputs_file_type == 'image':
+                    if input_column_file_type == 'image':
                         ins = SuperDataSet.load_image_set_np(dataset_indirect_path, df[input_column_file_name].values)
-                    elif data_inputs_file_type == 'npy':
+                    elif input_column_file_type == 'npy':
                         ins = SuperDataSet.load_npy_set_np(dataset_indirect_path, df[input_column_file_name].values)
-                    elif data_inputs_file_type == 'plugin':
+                    elif input_column_file_type == 'plugin':
                         outs = self.load_plugin_set_np(dataset_indirect_path, df[input_column_file_name].values)
                     else:
                         handle_error('Data inputs file type %s is unknown'%data_inputs_file_type, verbose_level)
@@ -1906,11 +1906,11 @@ class SuperDataSet:
                 # Check to make sure that the column exists
                 if output_column_file_name in df.columns:
                     # It does: load the specified set of files
-                    if data_outputs_file_type == 'image':
+                    if output_column_file_type == 'image':
                         outs = SuperDataSet.load_image_set_np(dataset_indirect_path, df[output_column_file_name].values)
-                    elif data_outputs_file_type == 'npy':
+                    elif output_column_file_type == 'npy':
                         outs = SuperDataSet.load_npy_set_np(dataset_indirect_path, df[output_column_file_name].values)
-                    elif data_outputs_file_type == 'plugin':
+                    elif output_column_file_type == 'plugin':
                         outs = self.load_plugin_set_np(dataset_indirect_path, df[output_column_file_name].values)
                     else:
                         handle_error('Data outputs file type %s is unknown'%data_outputs_file_type, verbose_level)
